@@ -1,0 +1,26 @@
+---
+######################################################################################
+### File:     ping.yml
+### Command:  ansible-playbook ./playbooks/tasks/ping.yml
+###
+### Description: Playbook to Ping and display few information about the servers that you will target.
+###
+######################################################################################
+
+- name: Ping and Display some info
+  hosts: all
+  serial: 1
+
+  tasks:
+    # Print Facts
+    - name: Print facts - FQDN - distribution - version
+      ansible.builtin.debug:
+        msg:
+          - "This is playing on hosts: {{ ansible_play_hosts }}"
+          - "{{ ansible_fqdn }} - {{ ansible_distribution }} {{ ansible_distribution_version }}, connexion with {{ ansible_user }}, install with {{ install_user }}"
+          - "OS Family: {{ ansible_os_family }}"
+
+    - name: Print facts - FQDN - interface
+      ansible.builtin.debug:
+        msg: "{{ ansible_fqdn }} - {{ hostvars[inventory_hostname]['ansible_' + item]['device'] }}"
+      loop: "{{ ansible_interfaces }}"

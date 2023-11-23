@@ -1,0 +1,43 @@
+---
+### REQUIRED
+namespace: mozebaltyk
+name: rkub
+version: 1.0.0
+
+readme: README.md
+
+authors:
+  - morze.baltyk@proton.me
+
+### OPTIONAL but strongly recommended
+description: >
+  Ansible Collection to deploy a rancher RKE2 cluster.
+
+license:
+- Apache-2.0
+
+license_file: 'LICENSE'
+
+tags: 
+  - devops
+  - collection 
+  - ansible
+
+dependencies: {}
+
+repository: https://github.com/MozeBaltyk/rkub
+documentation: https://github.com/MozeBaltyk/rkub/README.md
+homepage: https://github.com/MozeBaltyk/rkub
+issues: https://github.com/MozeBaltyk/rkub/issues
+
+build_ignore:
+  - .gitignore
+  - '.*.swp' 
+  - .govmomi 
+  - '.terraform*'
+  - 'terraform.tfstate*'
+  - .DS_Store
+  - .vscode
+  - '.*.tar.gz'
+  - '*.zip'
+

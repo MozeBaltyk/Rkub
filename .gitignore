@@ -1,0 +1,13 @@
+.*.swp
+.govmomi
+.terraform*
+terraform.tfstate*
+# Workstation 
+.DS_Store
+.vscode
+# loaded images
+**/roles/**/files/images/*
+images
+# Galaxy artifacts.
+*.tar.gz
+*.zip

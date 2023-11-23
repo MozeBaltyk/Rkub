@@ -1,0 +1,8 @@
+---
+requires_ansible: '>=2.15.5'
+
+#action_groups:
+#  # let's keep this in alphabetical order
+#  rkub:
+#    - example_module_get
+#    - example_module_delete

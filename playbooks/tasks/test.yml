@@ -1,0 +1,44 @@
+---
+######################################################################################
+### File:     test.yml
+### Command:  ansible-playbook ./playbooks/tasks/test.yml
+###
+### Description: Playbook to test and display some variables during your dev.
+###
+######################################################################################
+
+- name: Test and Display some vars
+  hosts: all
+  serial: 1
+  vars:
+    ip_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    iface: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['interface'] }}"
+    disk_limit: "0.8"
+    fs:  "/tmp"
+
+  tasks:
+    # Network
+    - name: Print Default interface info
+      ansible.builtin.debug:
+        msg: "{{ iface }} - {{ ip_address }}"
+
+    # Disks
+    - name: Set Fact
+      ansible.builtin.set_fact:
+        mount: '{{ ansible_mounts | selectattr("mount", "eq", fs) }}'
+    - name: Set Fact
+      ansible.builtin.set_fact:
+        disk_usage:         "{{ mount[0]['size_total'] - mount[0]['size_available'] }}"
+    - name: Set Fact
+      ansible.builtin.set_fact:
+        disk_usage_ratio:   "{{ disk_usage | float / mount[0]['size_total'] }}"
+    - name: Set Fact
+      ansible.builtin.set_fact:
+        disk_usage_s:       "{{ (disk_usage | float / 1000000000) | round(1, 'common') }}GB"
+        disk_total_s:       "{{ (mount[0]['size_total'] / 1000000000) | round(1, 'common') }}GB"
+        disk_usage_ratio_s: "{{ 100 * (disk_usage_ratio | float) | round(1, 'common') }}%"
+        disk_limit_ratio_s: "{{ (100 * disk_limit | float) | round }}%"
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "fs {{ mount[0]['mount'] }} - disk usage {{ disk_usage_s }} of total {{ disk_total_s }} ({{ disk_usage_ratio_s }}) (should be within limit {{ disk_limit_ratio_s }})"

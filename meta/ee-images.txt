@@ -1,0 +1,2 @@
+#source/images:tags;target_path
+#quay.io/kiali/kiali:v1.67;roles/installIstio/files/images
