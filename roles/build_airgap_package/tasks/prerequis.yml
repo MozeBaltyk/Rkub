@@ -1,0 +1,28 @@
+# for RHEL-like
+- name: Install zstd and skopeo
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zstd
+    - skopeo
+  when:
+    - ansible_os_family == "RedHat"
+
+# for Debian-like
+- name: Install zstd and skopeo
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zstd
+    - skopeo
+  when:
+    - ansible_os_family == "Debian"
+
+- name: Create monster package directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  loop: "{{ list_directory_package }}"

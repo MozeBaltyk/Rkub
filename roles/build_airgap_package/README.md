@@ -1,7 +1,7 @@
 Role Name
 =========
 
-This is just an example role
+Build a package for airgap installation
 
 Requirements
 ------------

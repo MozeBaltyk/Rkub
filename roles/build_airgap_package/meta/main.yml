@@ -2,7 +2,7 @@
 galaxy_info:
   standalone: false # Part of a collection
   author: morze.baltyk@proton.me
-  description: This is just an example role
+  description: Build a package for airgap installation
   company: Opensource
 
   # If the issue tracker for your role is not on github, uncomment the

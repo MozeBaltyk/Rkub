@@ -1,0 +1,3 @@
+- name: Compress files using zstd and create an archive
+  ansible.builtin.command:
+    "tar -I zstd -vcf {{ directory_package }}/../rke2_rancher_longhorn.zst {{ directory_package }}"

@@ -4,7 +4,5 @@ collections:
   - name: community.general
   - name: ansible.posix
   - name: ansible.utils
-  # Custom collections
-  - source: https://gitlab.example.com/some-group/cots.common.git
-    type: git
-    version: "v1.0.0"
+  # Kubernetes context
+  - name: kubernetes.core

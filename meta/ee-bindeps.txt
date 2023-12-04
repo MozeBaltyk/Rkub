@@ -4,3 +4,7 @@ python3-jmespath [platform:dpkg]
 # Need to load images
 podman [platform:rpm]
 podman [platform:dpkg]
+openssl [platform:rpm]
+openssl [platform:dpkg]
+sshpass [platform:rpm]
+sshpass [platform:dpkg]
