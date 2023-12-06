@@ -6,7 +6,7 @@
 
 - name: Install Helm binary
   ansible.builtin.shell: |
-    tar -zxvf helm-v3.11.3-linux-amd64.tar.gz > /dev/null 2>&1
+    tar -zxvf helm-{{ helm_version }}-linux-amd64.tar.gz > /dev/null 2>&1
     rsync -avP linux-amd64/helm /usr/local/bin/ > /dev/null 2>&1
     rm -rf linux-amd64 > /dev/null 2>&1
   args:

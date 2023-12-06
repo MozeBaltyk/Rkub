@@ -20,7 +20,7 @@
   when:
     - ansible_os_family == "Debian"
 
-- name: Create monster package directories
+- name: Create package directories
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory

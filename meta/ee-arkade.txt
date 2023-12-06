@@ -1,3 +1,2 @@
 #Packages to install
-arkade jq yq just helm
-
+arkade jq yq just helm kubectl kubecm

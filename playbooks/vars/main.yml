@@ -1,9 +1,14 @@
+# Version products
 global_rke2_version: "1.26.10"
 global_helm_version: "3.11.3"
 global_CERT_VERSION: "1.12.2"    
 global_RANCHER_VERSION: "2.7.6" 
 global_LONGHORN_VERSION: "1.5.1"
 global_NEU_VERSION: "2.6.3"     
-global_directory_package_build: "$HOME/rkub"
-global_directory_package_target: "$HOME/rkub"
-global_directory_registry: "/mnt/rkub/registry"
+
+# General
+global_install_user: "{{ install_user | default('kuberoot') }}"
+global_directory_package_build: "{{ dir_build | default('$HOME/rkub') }}"
+global_path_to_package_zst: "{{ global_directory_package_build }}/../rke2_rancher_longhorn.zst"
+global_directory_package_target: "{{ dir_target | default('/opt') }}"
+global_directory_registry: "{{ dir_registry | default('/mnt/rkub/registry') }}"
