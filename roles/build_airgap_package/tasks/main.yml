@@ -12,6 +12,9 @@
 - name: Prerequisites
   import_tasks: prerequis.yml
 
+- name: Import utils binaries
+  import_tasks: utils.yml
+
 - name: Import RKE2
   import_tasks: rke2.yml
 
@@ -20,9 +23,6 @@
 
 - name: Import images
   import_tasks: images.yml
-
-#- name: Import arkade binaries
-#  import_tasks: arkade.yml
 
 - name: Compress the all thing 
   import_tasks: compress.yml

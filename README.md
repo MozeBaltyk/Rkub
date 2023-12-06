@@ -13,12 +13,13 @@ I tried it and the idea pleased me but I had small frustrations about the Shell 
 With Ansible:
 - Idempotency: can be relaunch multiple time. 
 - User agnostic: can be launch any user (with sudo rights). 
-- OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation)
+- OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project)
 
 Add-on from my part:
-- Arkade to install helm and extra binaries
+- Arkade to install utilities binaries
 - Nerdctl (as complement of containerd) 
-
+- Firewalld settings if firewalld is activated
+- Uninstall playbook to cleanup (and maybe reinstall)
 
 ## Prerequisites
 
@@ -28,27 +29,13 @@ Add-on from my part:
 
 ## Getting started
 
-1. Clone this project
+1. Clone the project on local machine which have an access.
+
+2. Build your package by running:
 ```sh
-git clone https://github.com/Namespace/example.git 
+ansible-playbook  playbooks/tasks/build.yml
 ```
 
-2. Define your inventory respecting the template in ./plugins/inventory/hosts.yml
-   NotaBene: you can change it directly in ./plugins/inventory/hosts.yml or give your own custom inventory!
-
-```sh
-# You can check your inventory with:
-ansible-inventory --graph EXAMPLE
-ansible-inventory --graph INSTANCE01
-```
-
-3. Kustomize your variables inside ./playbooks/vars/main.yml or in the inventory's group_vars.
-
-4. Use it
-```sh
-make          # Give the command available
-make help     # Give a more details about options available
-```
 
 ## Roadmap
 milestones:

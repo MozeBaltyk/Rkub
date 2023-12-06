@@ -10,7 +10,7 @@ directory_package: "{{ global_directory_package_build }}"
 list_directory_package:
     - "{{ directory_package }}/rke2_{{ rke2_version }}"
     - "{{ directory_package }}/helm"
-    - "{{ directory_package }}/arkade"
+    - "{{ directory_package }}/utils"
     - "{{ directory_package }}/images/cert"
     - "{{ directory_package }}/images/rancher"
     - "{{ directory_package }}/images/longhorn"

@@ -1,0 +1,29 @@
+- name: Set CURRENT_SHELL 
+  set_fact:
+    CURRENT_SHELL: "{{ lookup('env','SHELL') }}"
+
+- name: Set HOME_PROFILE 
+  set_fact:
+    HOME_PROFILE: "$HOME/.zshrc"
+  when: CURRENT_SHELL | regex_search("zsh")
+
+- name: Set HOME_PROFILE
+  set_fact:
+    HOME_PROFILE: "$HOME/.bashrc"
+  when: CURRENT_SHELL | regex_search("bash") 
+
+- name: Get Latest version of arkade
+  ansible.builtin.get_url:
+    url: "{{ lookup('url', 'https://api.github.com/repos/alexellis/arkade/releases/latest', split_lines=false) | regex_search('browser_download_url.*(https://github.com/alexellis/arkade/releases/download(.*?)/arkade)', '\\1') | first }}"
+    dest: '{{ directory_package }}/utils/arkade'
+    mode: '0740'
+
+- name: Arkade get packages
+  ansible.builtin.shell:
+    "{{ directory_package }}/utils/arkade get --progress=false --path {{ directory_package }}/utils/ {{ item }} > /dev/null"
+  loop: 
+    - yq
+    - jq
+    - helm
+    - just
+    - nerdctl
