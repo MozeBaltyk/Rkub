@@ -7,6 +7,7 @@ RANCHER_VERSION: "{{ global_RANCHER_VERSION }}"
 LONGHORN_VERSION: "{{ global_LONGHORN_VERSION }}"
 NEU_VERSION: "{{ global_NEU_VERSION }}"
 directory_package: "{{ global_directory_package_build }}"
+tar_zst_name: "{{ global_package_name }}"
 path_to_package_zst: "{{ global_path_to_package_zst }}"
 list_directory_package:
     - "{{ directory_package }}/rke2_{{ rke2_version }}"

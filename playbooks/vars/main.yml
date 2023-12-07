@@ -9,6 +9,7 @@ global_NEU_VERSION: "2.6.3"
 # General
 global_install_user: "{{ install_user | default('kuberoot') }}"
 global_directory_package_build: "{{ dir_build | default('$HOME/rkub') }}"
-global_path_to_package_zst: "{{ global_directory_package_build }}/../rke2_rancher_longhorn.zst"
+global_package_name: "{{ package_name | default('rke2_rancher_longhorn.zst') }}"
+global_path_to_package_zst: "{{ global_directory_package_build }}/../{{ global_package_name }}"
 global_directory_package_target: "{{ dir_target | default('/opt') }}"
 global_directory_registry: "{{ dir_registry | default('/mnt/rkub/registry') }}"
