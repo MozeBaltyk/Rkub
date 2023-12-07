@@ -1,0 +1,50 @@
+- name: Dowload Rkub package on first controler
+  hosts: CONTROLERS[0]
+  gather_facts: false
+  vars_files: 
+    - ../vars/main.yml
+  tags: controler
+
+  tasks:
+  # Download
+  - name: Prompt for package zst path
+    when: package_path is undefined
+    block:
+      - name: Conditionally prompt for package zst path
+        ansible.builtin.pause:
+          prompt: "Please give the absolute path to package zst"
+          echo: true
+        register: package_path_prompt
+
+      - name: Set package_path
+        ansible.builtin.set_fact:
+          package_path: "{{ package_path_prompt.user_input }}"
+
+  - name: Install rsync packages
+    ansible.builtin.dnf:
+      name: "rsync"
+      state: present
+    become: true
+
+  - name: Ensure target directory exist and accessible to connexion user
+    ansible.builtin.file:
+      path: "{{ global_directory_package_target }}/rancher"
+      state: directory
+      recurse: true
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: '0770'
+    become: true
+
+  - name: Synchronization of Monster zst package on first controler
+    ansible.posix.synchronize:
+      src: "{{ package_path }}"
+      dest: "{{ global_directory_package_target }}"
+      archive: false
+
+  - name: Unarchive Monster zst package on first controler
+    ansible.builtin.unarchive:
+      src: "{{ global_directory_package_target }}/{{ global_package_name }}"
+      dest: "{{ global_directory_package_target }}/rancher"
+      remote_src: true
+ 

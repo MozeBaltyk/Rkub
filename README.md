@@ -32,25 +32,32 @@ Add-on from my part:
 
 ## Getting started
 
-1. Clone the project on local machine which have an access.
+1. Clone this project on local machine which have an internet access.
 
-2. Build your package by running:  `ansible-playbook playbooks/tasks/build.yml`
+2. Build your package by running (works on Debian-like and Redhat-like):  
+```sh 
+ansible-playbook playbooks/tasks/build.yml
+-e dir_build="$HOME/rkub"                    # directory where to upload everything (count 30G)
+-e package_name="rke2_rancher_longhorn.zst"  # Name of the package, by default rke2_rancher_longhorn.zst
+-u admin -Kk                                 # Other Ansible Arguments 
+```
 
-By default, it will download everything in `$HOME/rkub` but can be redefined with `-e dir_build=$HOME/rkub2`.
 Count 30G of free space in your build directory (17G for download + 7G for the zst package).
-this part works on Debian-like and Redhat-like.
 
-3. Push your package to first controler:  `ansible-playbook playbooks/tasks/download.yml`
-
-By default, it will download everything in `$HOME/rkub` but can be redefined with `-e dir_build=$HOME/rkub2`.
-Count 30G of free space on your target directory (7G for the zst package + 17G to unarchive the package).
+3. Push your package to first controler:  
+```sh
+ansible-playbook playbooks/tasks/download.yml
+-e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
+-e dir_target=/opt  # Directory where to sync and unarchive (by default /opt, count 30G available) 
+-u admin -Kk        # Other Ansible Arguments   
+```
 
 4. Start installation: `ansible-playbook playbooks/tasks/install.yml`
 
 ## Roadmap
 milestones:
 - To deploy sone staffs
-- To add flavors
+- To add bootstrap with ArgoCD
 
 Improvment:
 - Add a option to chooce by url or by copy
