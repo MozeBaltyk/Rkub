@@ -1,0 +1,30 @@
+---
+# tasks file for uninstall_rke2
+- name: Stop and uninstall RKE2
+  become: true
+  block:      
+  - name: Stop RKE2 server
+    systemd:
+      name: "rke2-server.service"
+      state: stopped
+    failed_when: false
+
+  - name: Stop RKE2 agent
+    systemd:
+      name: "rke2-agent.service"
+      state: stopped
+    failed_when: false
+
+  - name: Uninstall k3s
+    shell: /usr/local/bin/rke2-uninstall.sh
+    failed_when: false
+
+  - name: Remove Helm 
+    file:
+      path: /usr/local/bin/helm
+      state: absent
+
+  - name: Remove Helm
+    file:
+      path: /usr/local/bin/nerdctl
+      state: absent
