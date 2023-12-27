@@ -1,0 +1,5 @@
+  - name: Ensure admin_user exist
+    ansible.builtin.user:
+      name: "{{ admin_user }}"
+      comment: "rke2 user for administration"
+      createhome: true

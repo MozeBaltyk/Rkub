@@ -1,0 +1,5 @@
+---
+# handlers file for install_common
+- name: Apply_sysctl_settings
+  command: sysctl -p
+  ignore_errors: true

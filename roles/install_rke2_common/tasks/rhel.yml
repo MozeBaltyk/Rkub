@@ -1,0 +1,37 @@
+# For RHEL >= 8 as root
+- block:
+  - name: Install common packages
+    ansible.builtin.dnf:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - zstd
+      - nfs-utils
+      - iptables
+      - skopeo
+      - container-selinux
+      - libnetfilter_conntrack
+      - libnfnetlink
+      - libnftnl
+      - policycoreutils-python-utils
+      - cryptsetup
+  
+  - name: Create sysctl.conf from template
+    ansible.builtin.template:
+      src: rke2.conf
+      dest: /etc/sysctl.d/rke2.conf
+    notify: Apply_sysctl_settings
+
+  - name: Configure NetworkManager for RKE2 and Canal
+    ansible.builtin.copy:
+      content: |
+        [keyfile]
+        unmanaged-devices=interface-name:cali*;interface-name:flannel*
+      dest: /etc/NetworkManager/conf.d/rke2-canal.conf
+
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+
+ 
