@@ -1,0 +1,27 @@
+
+# share out directory
+- name: NFS share
+  block:
+  - name: Install common packages
+    ansible.builtin.dnf:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - nfs-utils
+
+  - name: Share out directory via NFS
+    ansible.builtin.lineinfile:
+      path: /etc/exports
+      line: "{{ export_nfs_path }} *(ro)"
+    notify: Restart_NFS_Server
+
+  - name: Enable and start NFS server service
+    ansible.builtin.systemd:
+      name: nfs-server
+      enabled: yes
+      state: started
+
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8

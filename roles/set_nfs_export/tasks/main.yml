@@ -1,0 +1,18 @@
+---
+# tasks file for export_nfs
+- name: Gather facts
+  setup:
+    gather_subset:
+      - "distribution"
+      - "distribution_major_version"
+      - "!min"
+  when: >
+    ansible_os_family is not defined
+
+- name: Tasks for Linux
+  import_tasks: selinux.yml
+
+- name: Tasks for RHEL-like OS
+  import_tasks: rhel.yml
+  when:
+    - ansible_os_family == "RedHat"

@@ -1,0 +1,5 @@
+---
+# defaults file for export_nfs
+
+export_nfs_path: "/opt/rancher"
+export_nfs_registry_path: "{{ export_nfs_path }}/registry"

@@ -1,0 +1,14 @@
+# Set Arkade in your user path
+- name: Set CURRENT_SHELL 
+  set_fact:
+    CURRENT_SHELL: "{{ lookup('env','SHELL') }}"
+
+- name: Set HOME_PROFILE 
+  set_fact:
+    HOME_PROFILE: "$HOME/.zshrc"
+  when: CURRENT_SHELL | regex_search("zsh")
+
+- name: Set HOME_PROFILE
+  set_fact:
+    HOME_PROFILE: "$HOME/.bashrc"
+  when: CURRENT_SHELL | regex_search("bash") 

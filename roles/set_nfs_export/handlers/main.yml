@@ -1,0 +1,7 @@
+---
+# handlers file for export_nfs
+
+- name: Restart_NFS_Server
+  systemd:
+    name: nfs-server
+    state: restarted

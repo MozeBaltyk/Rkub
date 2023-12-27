@@ -1,0 +1,23 @@
+- name: Create package directories
+  ansible.builtin.file:
+    path: "{{ export_nfs_registry_path }}"
+    state: directory
+    recurse: true
+
+- name: Test whether SELinux is enabled
+  ansible.builtin.command: /usr/sbin/selinuxenabled
+  ignore_errors: yes
+  register: selinux_status
+
+- name: SElinux config
+  when: selinux_status.rc == 0
+  block:
+    # chcon system_u:object_r:container_file_t:s0 /opt/rancher/registry
+    - name: Ensures registry container can be executed on path
+      community.general.sefcontext:
+        target: "{{ export_nfs_registry_path }}(/.*)?"
+        setype: container_file_t
+        state: present
+
+    - name: Restorecon
+      ansible.builtin.command: "restorecon -v {{ export_nfs_registry_path }}"
