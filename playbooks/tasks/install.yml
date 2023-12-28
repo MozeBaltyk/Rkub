@@ -1,12 +1,12 @@
 ---
-- name: preinstall RKE2
-  hosts: CONTROLERS:WORKERS
-  gather_facts: false
-  become: true
-  vars_files: ../vars/main.yml
-  tags: controler, worker
-  roles:
-  - {role: install_rke2_common, tags: rke2,}
+#- name: preinstall RKE2
+#  hosts: CONTROLERS:WORKERS
+#  gather_facts: false
+#  become: true
+#  vars_files: ../vars/main.yml
+#  tags: controler, worker
+#  roles:
+#  - {role: install_rke2_common, tags: rke2,}
 
 - name: Install RKE2 cluster first controler
   hosts: CONTROLERS[0]
@@ -16,8 +16,8 @@
     - ../vars/main.yml
   tags: controler
   roles:
-  - {role: set_nfs_export, tags: nfs,}
   - {role: install_rke2_controler, tags: rke2,}
+  - {role: set_nfs_export, tags: nfs,}
   - {role: install_utils_nerdctl, tags: nerdctl,}
   - {role: install_utils_registry, tags: registry,}
 

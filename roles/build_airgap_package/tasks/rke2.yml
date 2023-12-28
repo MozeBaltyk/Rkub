@@ -14,6 +14,11 @@
     url: "https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/sha256sum-amd64.txt"
     dest: "{{ directory_package }}/rke2_{{ rke2_version }}/sha256sum-amd64.txt"
 
+- name: Download repo GPG key
+  get_url:
+    url: "https://rpm.rancher.io/public.key"
+    dest: "{{ directory_package }}/rke2_{{ rke2_version }}/public.key"
+
 - name: Download get.rke2.io
   get_url:
     url: "https://get.rke2.io"
@@ -23,13 +28,13 @@
 - block:
     - name: Download rke2-common RPM
       get_url:
-        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-common-{{ rke2_version }}.rke2r1-0.el{{ ansible_distribution_major_version }}.x86_64.rpm"
-        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/rke2-common-{{ rke2_version }}.rke2r1-0.el{{ ansible_distribution_major_version }}.x86_64.rpm"
+        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
+        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
 
     - name: Download rke2-selinux RPM
       get_url:
-        url: "https://github.com/rancher/rke2-selinux/releases/download/v0.14.stable.1/rke2-selinux-0.14-1.el{{ ansible_distribution_major_version }}.noarch.rpm"
-        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/rke2-selinux-0.14-1.el{{ ansible_distribution_major_version }}.noarch.rpm"
+        url: "https://github.com/rancher/rke2-selinux/releases/download/{{ rke2_selinux_repo_version }}/{{ rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
+        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
   when:
     - ansible_os_family == "RedHat"
 
@@ -37,12 +42,12 @@
 - block:
     - name: Download rke2-common RPM
       get_url:
-        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-common-{{ rke2_version }}.rke2r1-0.el8.x86_64.rpm"
-        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/rke2-common-{{ rke2_version }}.rke2r1-0.el8.x86_64.rpm"
+        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ rke2_common_rpm_version }}.el8.x86_64.rpm"
+        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_common_rpm_version }}.el8.x86_64.rpm"
 
     - name: Download rke2-selinux RPM
       get_url:
-        url: "https://github.com/rancher/rke2-selinux/releases/download/v0.14.stable.1/rke2-selinux-0.14-1.el8.noarch.rpm"
-        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/rke2-selinux-0.14-1.el8.noarch.rpm"
+        url: "https://github.com/rancher/rke2-selinux/releases/download/{{ rke2_selinux_repo_version }}/{{ rke2_selinux_rpm_version }}.el8.noarch.rpm"
+        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_selinux_rpm_version }}.el8.noarch.rpm"
   when:
     - ansible_os_family != "RedHat"

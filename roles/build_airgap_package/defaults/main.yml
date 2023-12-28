@@ -18,3 +18,8 @@ list_directory_package:
     - "{{ directory_package }}/images/longhorn"
     - "{{ directory_package }}/images/registry"
     - "{{ directory_package }}/images/neuvector"
+
+# extras RPM
+rke2_common_rpm_version: "{{ global_rke2_common_rpm_version }}"
+rke2_selinux_repo_version: "{{ global_rke2_selinux_repo_version }}"
+rke2_selinux_rpm_version: "{{ global_rke2_selinux_rpm_version }}" 

@@ -9,6 +9,13 @@
   when: >
     ansible_os_family is not defined
 
+- name: RKE2 common to agent and server tasks
+  vars:
+    caller_role_name: server
+  ansible.builtin.include_role:
+    name: install_rke2_common
+    tasks_from: main
+
 - name: Tasks for RHEL-like OS
   import_tasks: rhel.yml
   when:

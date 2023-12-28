@@ -2,7 +2,7 @@
 # share out directory
 - name: NFS share
   block:
-  - name: Install common packages
+  - name: Install NFS packages
     ansible.builtin.dnf:
       name: "{{ item }}"
       state: present

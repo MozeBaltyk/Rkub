@@ -1,5 +1,6 @@
 ---
 # handlers file for install_common
-- name: Apply_sysctl_settings
-  command: sysctl -p
-  ignore_errors: true
+- name: Restart_systemd-sysctl
+  ansible.builtin.service:
+    state: restarted
+    name: systemd-sysctl
