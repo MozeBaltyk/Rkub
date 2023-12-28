@@ -12,7 +12,7 @@ I tried it and the idea pleased me but I had small frustrations about the Shell 
 
 With Ansible:
 - Idempotency: can be relaunch multiple time. 
-- User agnostic: can be launch any user (with sudo rights). 
+- User agnostic: can be launch by any user (with sudo rights). 
 - OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)
 
 Add-on from my part:
@@ -36,8 +36,8 @@ Add-on from my part:
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
-ansible-playbook playbooks/tasks/build.yml
--e dir_build="$HOME/rkub"                    # directory where to upload everything (count 30G)
+ansible-playbook playbooks/tasks/build.yml   # Args below are not mandatory
+-e dir_build="$HOME/rkub"                    # Directory where to upload everything (count 30G)
 -e package_name="rke2_rancher_longhorn.zst"  # Name of the package, by default rke2_rancher_longhorn.zst
 -u admin -Kk                                 # Other Ansible Arguments 
 ```
@@ -46,10 +46,10 @@ Count 30G of free space in your build directory (17G for download + 7G for the z
 
 3. Push your package to first controler:  
 ```sh
-ansible-playbook playbooks/tasks/download.yml
+ansible-playbook playbooks/tasks/download.yml      # Args below are not mandatory
 -e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
--e dir_target=/opt  # Directory where to sync and unarchive (by default /opt, count 30G available) 
--u admin -Kk        # Other Ansible Arguments   
+-e dir_target=/opt                                 # Directory where to sync and unarchive (by default /opt, count 30G available) 
+-u admin -Kk                                       # Other Ansible Arguments   
 ```
 
 4. Start installation: `ansible-playbook playbooks/tasks/install.yml`
@@ -69,7 +69,8 @@ Improvment:
 
 ## Github sources 
 [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh)
-[RKE2-ansible](https://github.com/rancherfederal/rke2-ansible)
+[RKE2-ansible from rancherfederal](https://github.com/rancherfederal/rke2-ansible)
+[RKE2-role from lablabs](https://github.com/lablabs/ansible-role-rke2)
 [RKE2](https://github.com/rancher/rke2)
 
 ## Authors

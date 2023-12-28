@@ -10,13 +10,11 @@ Fix:
 
 Bugfixes:       
 
-## 1.0.0 (2014-08-13)
+## 1.0.0 (2023-12-25)
 
-**Example how should look a changelog.md**      
+**Init Ansible Collection**      
 
 Security:
-
-  - Fix for CVE-2013-0334, installing gems from an unexpected source -> [95f32s5b](http://www.google.com)
 
 Features:
 
