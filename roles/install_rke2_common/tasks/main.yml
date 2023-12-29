@@ -1,7 +1,7 @@
 ---
 # tasks file for install_common
 - name: Gather facts
-  setup:
+  ansible.builtin.setup:
     gather_subset:
       - "distribution"
       - "distribution_major_version"
@@ -10,9 +10,12 @@
     ansible_os_family is not defined
 
 - name: Tasks common to Linux servers
-  import_tasks: linux.yml
+  ansible.builtin.import_tasks: linux.yml
 
 - name: Tasks for RHEL-like OS
-  import_tasks: rhel.yml
+  ansible.builtin.import_tasks: rhel.yml
   when:
     - ansible_os_family == "RedHat"
+
+- name: Install nerdctl on all nodes
+  ansible.builtin.import_tasks: nerdctl.yml

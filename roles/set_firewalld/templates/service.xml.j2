@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>{{ rule['name'] }}</short>
+  <description>{{ rule['description'] | default( rule['name'] + ' firewall service' ) }}</description>
+{% if rule['ports'] is defined %}{% for port in rule['ports'] %}
+  <port port="{{ port['port'] }}" protocol="{{ port['protocol'] }}"/>
+{% endfor %}{% endif %}
+{% if rule['source_ports'] is defined %}{% for port in rule['source_ports'] %}
+  <source-port port="{{ port['port'] }}" protocol="{{ port['protocol'] }}"/>
+{% endfor %}{% endif %}
+{% if rule['protocols'] is defined %}{% for protocol in rule['protocols'] %}
+  <protocol value="{{ protocol }}"/>
+{% endfor %}{% endif %}
+{% if rule['modules'] is defined %}{% for module in rule['modules'] %}
+  <module name="{{ module }}"/>
+{% endfor %}{% endif %}
+{% if rule['destination'] is defined %}
+  <destination {% if rule['destination']['ipv4'] is defined %}ipv4="{{ rule['destination']['ipv4'] }}"{% endif %} {% if rule['destination']['ipv6'] is defined %}ipv6="{{ rule['destination']['ipv6'] }}"{% endif %}/>
+{% endif %}
+</service>
+

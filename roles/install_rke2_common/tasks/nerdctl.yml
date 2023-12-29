@@ -1,0 +1,36 @@
+- name: Create the NERDCTL directory
+  ansible.builtin.file:
+    path: /etc/nerdctl
+    state: directory
+    mode: '0754'
+
+- name: Check if file does exist
+  ansible.builtin.stat:
+    path: /usr/local/bin/nerdctl
+  register: file_data
+
+- name: Copy Nerdctl bin into /usr/local/bin
+  ansible.builtin.copy:
+    src: "{{ pkg_nerdctl }}"
+    dest: /usr/local/bin/
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    mode: '0750'
+    remote_src: true
+  when: not file_data.stat.exists
+
+- name: Copy NERDCTL configuration file
+  ansible.builtin.template:
+    src: nerdctl.toml
+    dest: /etc/nerdctl
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    mode: '0644'
+
+- name: Copy SUDO configuration
+  ansible.builtin.template:
+    src: secure-path
+    dest: /etc/sudoers.d
+    owner: "root"
+    group: "root"
+    mode: '0440'

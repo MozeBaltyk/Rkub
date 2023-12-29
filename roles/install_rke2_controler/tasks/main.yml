@@ -5,9 +5,14 @@
     gather_subset:
       - "distribution"
       - "distribution_major_version"
-      - "!min"
+      - "!all,!min"
   when: >
     ansible_os_family is not defined
+  tags: [always]
+
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
 
 - name: RKE2 common to agent and server tasks
   vars:
@@ -15,8 +20,50 @@
   ansible.builtin.include_role:
     name: install_rke2_common
     tasks_from: main
+  tags: common
 
-- name: Tasks for RHEL-like OS
-  import_tasks: rhel.yml
-  when:
-    - ansible_os_family == "RedHat"
+- name: RKE2 firewalld
+  vars:
+    firewalld_rules: "{{ controller_firewalld_rules }}"
+  ansible.builtin.include_role:
+    name: set_firewalld
+    tasks_from: main
+  when: (ansible_facts.services["firewalld.service"] is defined) and
+        (ansible_facts.services["firewalld.service"].status == "running")
+  tags: firewall
+
+- name: RKE2 Install controler specific for RHEL-like OS
+  ansible.builtin.import_tasks: rhel.yml
+  when: ansible_os_family == "RedHat"
+  tags: rhel
+
+- name: Arkade utils push in admin user
+  ansible.builtin.import_tasks: arkade.yml
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
+  tags: arkade
+
+- name: RKE2 Install controler
+  ansible.builtin.import_tasks: install.yml
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
+  tags: install
+
+- name: Set NFS export on first node
+  ansible.builtin.include_role:
+    name: set_nfs_export
+    tasks_from: main
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
+  tags: nfs_export
+
+- name: Install registry on first node
+  ansible.builtin.include_role:
+    name: install_utils_registry
+    tasks_from: main
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
+  tags: registry
+
+- name: Set NFS mount on other nodes
+  ansible.builtin.include_role:
+    name: set_nfs_mount
+    tasks_from: main
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][1:]
+  tags: nfs_mount

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone {% if zone['target'] is defined %}target="{{ zone['target'] }}"{% endif %}>
+  <short>{{ zone['name'] }}</short>
+  <description>{{ zone['description'] | default( 'firewall zone ' + zone['name'] ) }}</description>
+{% if zone['interfaces'] is defined %}{% for interface in zone['interfaces'] %}
+  <interface name="{{ interface }}"/>
+{% endfor %}{% endif %}
+{% if zone['sources'] is defined %}{% for source in zone['sources'] %}
+  <source address="{{ source }}"/>
+{% endfor %}{% endif %}
+</zone>

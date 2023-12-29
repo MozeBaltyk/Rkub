@@ -1,14 +1,49 @@
-# Set Arkade in your user path
-- name: Set CURRENT_SHELL 
-  set_fact:
-    CURRENT_SHELL: "{{ lookup('env','SHELL') }}"
+# As root
+- name: Ensure that admin user can access
+  ansible.builtin.file:
+    path: "{{ airgap_path }}/.."
+    mode: "0755"
+    recurse: true
+  become: true
 
-- name: Set HOME_PROFILE 
-  set_fact:
-    HOME_PROFILE: "$HOME/.zshrc"
-  when: CURRENT_SHELL | regex_search("zsh")
+- name: Ensure admin user access airgap_utils_path
+  ansible.builtin.file:
+    path: "{{ airgap_utils_path }}/"
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    recurse: true
+  become: true
 
-- name: Set HOME_PROFILE
-  set_fact:
-    HOME_PROFILE: "$HOME/.bashrc"
-  when: CURRENT_SHELL | regex_search("bash") 
+# As Admin User
+- block:
+  - name: Ensure Arkade directory exist
+    ansible.builtin.file:
+      path: "$HOME/.arkade/bin"
+      state: directory
+      recurse: true
+      owner: "{{ admin_user }}"
+      group: "{{ admin_user }}"
+      mode: '0700'
+
+  - name: Copy utils into .arkade/bin
+    ansible.builtin.copy:
+      src: "{{ airgap_utils_path }}/{{ item }}"
+      dest: "$HOME/.arkade/bin/{{ item }}"
+      force: true
+      remote_src: true
+      mode: '0700'
+    loop:
+    - yq
+    - jq
+    - helm
+    - just
+
+  - name: Update .bashrc
+    ansible.builtin.blockinfile:
+      path: "$HOME/.bashrc"
+      block: |
+        export PATH=$PATH:$HOME/.arkade/bin
+      marker: "# {mark} ANSIBLE install arkade utils"
+
+  become: true
+  become_user: "{{ admin_user }}"

@@ -1,0 +1,19 @@
+# Remove service from zone
+- name: Delete {{ service['name'] }} firewalld service
+  firewalld:
+    service: "{{ service['name'] }}"
+    permanent: yes
+    immediate: yes
+    zone: "{{ service['zone'] | default( firewalld_default_zone ) }}"
+    state: disabled
+
+# Completely delete service
+- name: Delete {{ service['name'] }} firewalld service definition
+  file:
+    path: "{{ firewalld_path }}/services/{{ service['name'] }}.xml"
+    state: absent
+  when:  service['erase'] == true
+  notify: restart firewalld
+
+- meta: flush_handlers
+

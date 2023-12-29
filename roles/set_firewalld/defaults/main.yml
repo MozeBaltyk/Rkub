@@ -1,0 +1,6 @@
+---
+# defaults file for firewalld
+
+firewall_enabled: true
+firewalld_default_zone: public
+firewalld_path: "/etc/firewalld"
