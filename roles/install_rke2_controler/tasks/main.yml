@@ -19,7 +19,7 @@
 - name: RKE2 common to agent and server tasks
   vars:
     caller_role_name: server
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: install_rke2_common
     tasks_from: main
   tags: common
@@ -27,7 +27,7 @@
 - name: RKE2 firewalld
   vars:
     firewalld_rules: "{{ controller_firewalld_rules }}"
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: set_firewalld
     tasks_from: main
   when: (ansible_facts.services["firewalld.service"] is defined) and
@@ -60,21 +60,21 @@
   tags: localhost
 
 - name: Set NFS export on first node
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: set_nfs_export
     tasks_from: main
   when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
   tags: nfs_export
 
 - name: Install registry on first node
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: install_utils_registry
     tasks_from: main
   when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
   tags: registry
 
 - name: Set NFS mount on other nodes
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: set_nfs_mount
     tasks_from: main
   when: inventory_hostname in groups['RKE2_CONTROLERS'][1:]

@@ -2,4 +2,7 @@
 # tasks file for install_local_registry
 
 - name: Kubernetes tasks
-  import_tasks: deploy.yml
+  ansible.builtin.import_tasks: deploy.yml
+
+- name: Load images in local registry
+  ansible.builtin.import_tasks: load.yml
