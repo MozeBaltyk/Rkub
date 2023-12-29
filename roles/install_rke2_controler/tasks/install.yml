@@ -128,25 +128,3 @@
       marker: "# {mark} ANSIBLE install_rke2_controler"
 
   become: true
-
-
-# Admin setup
-- block:
-  - name: Copy kubeconfig in Admin home dir
-    ansible.builtin.copy:
-      src: "/etc/rancher/rke2/rke2.yaml"
-      dest: "$HOME/.kube/{{ inventory_hostname }}.yaml"
-      owner: "{{ admin_user }}"
-      group: "{{ admin_user }}"
-      force: true
-      remote_src: true
-      mode: '0700'
-    become: true
-
-  - name: Update Admin .bashrc
-    ansible.builtin.blockinfile:
-      path: "$HOME/.bashrc"
-      block: |
-        export KUBECONFIG="~/.kube/{{ inventory_hostname }}.yaml"
-      marker: "# {mark} ANSIBLE setup Kubeconfig"
-    become_user: "{{ admin_user }}"
