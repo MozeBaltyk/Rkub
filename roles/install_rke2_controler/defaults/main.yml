@@ -8,6 +8,13 @@ airgap_utils_path: "{{ airgap_path }}/utils"
 airgap_rke2_common_rpm_path: "{{ airgap_rke2_path }}/{{ global_rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
 airgap_rke2_selinux_rpm_path: "{{ airgap_rke2_path }}/{{ global_rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
 
+# Options - Not used yet
+data_dir:  "/rke2"
+domain:    "{{ hostvars[groups['RKE2_CONTROLERS'][0]]['ansible_domain'] }}"
+master_ip: "{{ hostvars[groups['RKE2_CONTROLERS'][0]]['ansible_default_ipv4']['address'] }}"
+cluster_cidr: "10.42.0.0/16" #Default Value
+service_cidr: "10.43.0.0/16" #Default Value
+
 # Firewall rules
 controller_firewalld_rules: 
   inbound:

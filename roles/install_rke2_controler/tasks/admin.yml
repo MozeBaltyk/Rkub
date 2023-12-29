@@ -1,20 +1,41 @@
 # Admin setup
 - block:
+  - name: Remove old Kubeconfig file
+    ansible.builtin.file:
+      path: "$HOME/.kube/{{ inventory_hostname }}.yaml"
+      state: absent
+    become_user: "{{ admin_user }}"
+
+  - name: Ensure .kube dir exist
+    ansible.builtin.file:
+      path: "$HOME/.kube"
+      state: directory
+      mode: 0700
+      recurse: yes
+    become_user: "{{ admin_user }}"
+    
   - name: Copy kubeconfig in Admin home dir
     ansible.builtin.copy:
       src: "/etc/rancher/rke2/rke2.yaml"
-      dest: "$HOME/.kube/{{ inventory_hostname }}.yaml"
+      dest: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
       owner: "{{ admin_user }}"
       group: "{{ admin_user }}"
       force: true
       remote_src: true
-      mode: '0700'
+      mode: '0600'
     become: true
+
+  - name: Change localhost with master_ip in kubeconfig
+    ansible.builtin.lineinfile:
+      path: "$HOME/.kube/{{ inventory_hostname }}.yaml"
+      search_string: '127.0.0.1'
+      line: "    server: https://{{ master_ip }}:6443"
+    become_user: "{{ admin_user }}"
 
   - name: Update Admin .bashrc
     ansible.builtin.blockinfile:
       path: "$HOME/.bashrc"
       block: |
         export KUBECONFIG="~/.kube/{{ inventory_hostname }}.yaml"
-      marker: "# {mark} ANSIBLE setup Kubeconfig"
+      marker: "# {mark} ANSIBLE setup Kubeconfig"      
     become_user: "{{ admin_user }}"
