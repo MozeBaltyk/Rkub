@@ -13,3 +13,5 @@
     - helm
     - just
     - nerdctl
+    - k9s
+    - kubectl
