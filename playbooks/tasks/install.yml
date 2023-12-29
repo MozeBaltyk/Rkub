@@ -1,15 +1,6 @@
 ---
-#- name: preinstall RKE2
-#  hosts: CONTROLERS:WORKERS
-#  gather_facts: false
-#  become: true
-#  vars_files: ../vars/main.yml
-#  tags: controler, worker
-#  roles:
-#  - {role: install_rke2_common, tags: rke2,}
-
-- name: Install RKE2 cluster first controler
-  hosts: CONTROLERS[0]
+- name: Install RKE2 Controlers
+  hosts: RKE2_CONTROLERS
   gather_facts: true
   become: true
   vars_files: 
@@ -17,12 +8,9 @@
   tags: controler
   roles:
   - {role: install_rke2_controler, tags: rke2,}
-  - {role: set_nfs_export, tags: nfs,}
-  - {role: install_utils_nerdctl, tags: nerdctl,}
-  - {role: install_utils_registry, tags: registry,}
 
 # - name: Install K3S agents
-#   hosts: WORKERS
+#   hosts: RKE2_WORKERS
 #   gather_facts: true
 #   become: true
 #   vars_files: ../vars/main.yml

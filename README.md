@@ -56,8 +56,11 @@ ansible-playbook playbooks/tasks/download.yml      # Args below are not mandator
 
 ## Roadmap
 milestones:
-- To deploy sone staffs
+- To deploy some staff
 - To add bootstrap with ArgoCD
+- HA masters with kubevip
+- more install customization and options
+- Github Workflows / Release
 
 Improvment:
 - Add a option to chooce by url or by copy
@@ -68,10 +71,35 @@ Improvment:
 * Alex Ellis, for its [Arkade project](https://github.com/alexellis/arkade). I cannot live without anymore.
 
 ## Github sources 
-[Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh)
-[RKE2-ansible from rancherfederal](https://github.com/rancherfederal/rke2-ansible)
-[RKE2-role from lablabs](https://github.com/lablabs/ansible-role-rke2)
-[RKE2](https://github.com/rancher/rke2)
+
+[Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh)   
+
+what I like: 
+  - Can package the all stuff
+  - Airgap
+  - Local registry shared in NFS
+
+What is missing: 
+  - Ansible - to make it idempotent and executable from a single point.
+  - Upload package to target.
+
+[rancherfederal/RKE2-ansible](https://github.com/rancherfederal/rke2-ansible)
+
+what I like: 
+  - Ansible   
+
+What is missing:
+  - Airgap
+
+[lablabs/ansible-role-rke2](https://github.com/lablabs/ansible-role-rke2)     
+what I like: 
+  - Ansible   
+
+What is missing:
+  - no packaging for airgap.
+  - no script to transfert
+
+[rancher/RKE2](https://github.com/rancher/rke2)
 
 ## Authors
 morze.baltyk@proton.me
