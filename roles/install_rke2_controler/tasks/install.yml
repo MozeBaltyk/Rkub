@@ -118,7 +118,7 @@
       dest: /var/run/containerd/containerd.sock
       state: link
 
-  - name: Update .bashrc
+  - name: Update root .bashrc
     ansible.builtin.blockinfile:
       path: ~/.bashrc
       block: |
@@ -126,5 +126,19 @@
           export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml 
           PATH=$PATH:/var/lib/rancher/rke2/bin
       marker: "# {mark} ANSIBLE install_rke2_controler"
+
+  # Get Token
+  - name: Wait for node-token
+    ansible.builtin.wait_for:
+      path: /var/lib/rancher/rke2/server/node-token
+
+  - name: Read node-token from master
+    ansible.builtin.slurp:
+      src: /var/lib/rancher/rke2/server/node-token
+    register: node_token
+
+  - name: Store Master node-token
+    ansible.builtin.set_fact:
+      rke2_config_token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
 
   become: true

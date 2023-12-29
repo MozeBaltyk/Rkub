@@ -1,7 +1,9 @@
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: registry
+  namespace: {{ registry_namespace }}
   labels:
     app: registry
 spec:

@@ -9,7 +9,7 @@
       - "!all,!min"
   when: >
     ansible_os_family is not defined
-    
+
   tags: [always]
 
 - name: Populate service facts
@@ -53,6 +53,11 @@
   ansible.builtin.import_tasks: admin.yml
   when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
   tags: admin
+
+- name: Setup Ansible controler with new cluster
+  ansible.builtin.import_tasks: localhost.yml
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
+  tags: localhost
 
 - name: Set NFS export on first node
   ansible.builtin.include_role:

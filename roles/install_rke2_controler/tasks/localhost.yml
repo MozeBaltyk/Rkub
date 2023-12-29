@@ -1,0 +1,59 @@
+# All tasks to do realize on ansible controler
+- name: Fetch RKE2 kubeconfig to localhost
+  fetch:
+    src: "$HOME/.kube/{{ inventory_hostname }}.yaml"
+    dest: "~/.kube/{{ inventory_hostname }}.yaml"
+    flat: true
+    validate_checksum: true
+  become_user: "{{ admin_user }}"
+
+# check kubecm is installed on your localhost
+- block: 
+  - name: Check kubecm is installed (part of prerequisites) 
+    shell: type kubecm
+    register: is_installed
+
+  - block:
+    - name: Test if default context already exist in your kubeconfig.
+      shell: "kubecm list default > /dev/null  2>&1"
+    
+    - name: Message to you
+      debug: 
+        msg: "Kubeconfig was added to your kubecm." 
+
+    rescue:
+    - name: Add to kubecm 
+      shell: "kubecm add -c -f ~/.kube/{{ inventory_hostname }}.yaml"
+      
+    - name: Switch to default
+      shell: "kubecm switch default"
+
+  rescue:
+  - name: No Kubecm
+    debug: 
+      msg: "Kubecm is not installed on your localhost! Not a big problem, but I did not add it to your local kubeconfig."
+
+  always: 
+  - name: Message to you
+    debug: 
+      msg: "Kubeconfig of this cluster was imported in your localhost in ~/.kube/{{ inventory_hostname }}.yaml"
+
+  delegate_to: localhost
+  become: false
+
+
+# Check Flux to Kube API
+- name: Check if flux 6443 is open between localhost and master
+  delegate_to: localhost
+  become: false
+  block: 
+    - name: "Check"
+      uri:
+        url: "https://{{ master_ip }}:6443"
+        validate_certs: false
+        status_code: 401
+
+  rescue:
+  - fail:
+      msg: >
+        "Something wrong in your network since localhost does not reach master on 6443"
