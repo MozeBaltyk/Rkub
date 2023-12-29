@@ -86,10 +86,11 @@ What is missing:
 [rancherfederal/RKE2-ansible](https://github.com/rancherfederal/rke2-ansible)
 
 what I like: 
-  - Ansible   
+  - Ansible 
+  - HA controlers  
 
 What is missing:
-  - Airgap
+  - proper Airgap
 
 [lablabs/ansible-role-rke2](https://github.com/lablabs/ansible-role-rke2)     
 what I like: 
