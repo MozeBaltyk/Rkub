@@ -10,21 +10,14 @@ Fix:
 
 Bugfixes:       
 
-## 1.0.0 (2023-12-25)
+## 1.0.0 (2023-12-31)
 
 **Init Ansible Collection**      
 
-Security:
-
 Features:
-
-  - Gemfile `source` calls now take a block containing gems from that source -> [95f32s5b](http://www.google.com)
-  - added the `:source` option to `gem` to specify a source -> [95f32s5b](http://www.google.com)
-
-Fix:
-
-  - warn on ambiguous gems available from more than one source -> [95f32s5b](http://www.google.com)
-
-Bugfixes:
-
-  - require openssl explicitly to fix rare HTTPS request failures -> [95f32s5b](http://www.google.com)
+  - Install RKE2 one controler and several workers (currently no HA)
+  - with nerdctl.
+  - with an admin setup on master node (kuberoot).
+  - with local registry and images loaded inside.
+  - with firewalld rules if needed
+  - with script to uninstall 

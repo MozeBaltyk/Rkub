@@ -17,7 +17,9 @@ With Ansible:
 
 Add-on from my part:
 - Some part which were manual in Clemenko procedure are automated with Ansible (like the download)
+- Some flexibility about path (possible to export or mount NFS in choosen place)
 - Arkade to install utilities binaries
+- Admin user (by default kuberoot) on first controler node with all necessary tools
 - Nerdctl (as complement of containerd) 
 - Firewalld settings if firewalld is activated
 - Uninstall playbook to cleanup (and maybe reinstall)
@@ -28,18 +30,19 @@ Add-on from my part:
 
 * An Ansible Controler, can be the same host for ansible and for building package, at your convenience...
 
-* 3 RHEL-like hosts for the cluster RKE2.
+* minimum of 2 hosts RHEL-like for the cluster RKE2.
 
 ## Getting started
 
-1. Clone this project on local machine which have an internet access.
+1. Clone this project on local machine which have an internet access and complete directory inside ./plugins/inventory/hosts.yml. 
+
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
 ansible-playbook playbooks/tasks/build.yml   # Args below are not mandatory
 -e dir_build="$HOME/rkub"                    # Directory where to upload everything (count 30G)
 -e package_name="rke2_rancher_longhorn.zst"  # Name of the package, by default rke2_rancher_longhorn.zst
--u admin -Kk                                 # Other Ansible Arguments 
+-u admin -Kk                                 # Other Ansible Arguments (like -vvv)
 ```
 
 Count 30G of free space in your build directory (17G for download + 7G for the zst package).
@@ -48,22 +51,29 @@ Count 30G of free space in your build directory (17G for download + 7G for the z
 ```sh
 ansible-playbook playbooks/tasks/download.yml      # Args below are not mandatory
 -e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
--e dir_target=/opt                                 # Directory where to sync and unarchive (by default /opt, count 30G available) 
--u admin -Kk                                       # Other Ansible Arguments   
+-e dir_target=/opt                                 # Directory where to sync and unarchive (by default /opt, count 50G available) 
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)   
 ```
 
-4. Start installation: `ansible-playbook playbooks/tasks/install.yml`
+4. Start installation: 
+```sh
+ansible-playbook playbooks/tasks/install.yml       # Args below are not mandatory
+-e package_name="rke2_rancher_longhorn.zst"        # Name of the package, by default rke2_rancher_longhorn.zst
+-e dir_target=/opt                                 # Dir on first master which is going to be export (by default /opt, count 50G available) 
+-e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)
+```
 
 ## Roadmap
 milestones:
-- To deploy some staff
-- To add bootstrap with ArgoCD
+- To deploy some stuff
 - HA masters with kubevip
 - more install customization and options
 - Github Workflows / Release
+- To add bootstrap with ArgoCD
 
 Improvment:
-- Add a option to chooce by url or by copy
+- Add a option to chooce by url mode or airgap mode
 
 # Special thanks to 📢
 
