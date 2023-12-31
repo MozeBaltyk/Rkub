@@ -1,0 +1,18 @@
+- name: Stop and uninstall RKE2
+  become: true
+  block:      
+  - name: Stop RKE2 server
+    ansible.builtin.systemd:
+      name: "rke2-server.service"
+      state: stopped
+    failed_when: false
+
+  - name: Stop RKE2 agent
+    ansible.builtin.systemd:
+      name: "rke2-agent.service"
+      state: stopped
+    failed_when: false
+
+  - name: Uninstall RKE2
+    ansible.builtin.shell: /usr/local/bin/rke2-uninstall.sh
+    failed_when: false

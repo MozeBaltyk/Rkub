@@ -1,8 +1,13 @@
 ---
 # tasks file for install_local_registry
 
+- name: Push registry tar in RKE2 images
+  ansible.builtin.import_tasks: push.yml
+
 - name: Kubernetes tasks
   ansible.builtin.import_tasks: deploy.yml
+  when: caller_role_name == "controler"
 
 - name: Load images in local registry
   ansible.builtin.import_tasks: load.yml
+  when: caller_role_name == "controler"

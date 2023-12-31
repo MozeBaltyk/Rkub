@@ -1,5 +1,3 @@
 ---
 # defaults file for install_common
 admin_user: "{{ global_install_user }}"
-airgap_path: "{{ global_directory_package_target }}/rancher"
-pkg_nerdctl: "{{ airgap_path }}/utils/nerdctl"

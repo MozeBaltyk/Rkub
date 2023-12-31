@@ -1,0 +1,63 @@
+---
+# tasks file for install_rke2_worker
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset:
+      - "distribution"
+      - "distribution_major_version"
+      - "default_ipv4"
+      - "!all,!min"
+  when: >
+    ansible_os_family is not defined
+  tags: [always]
+
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
+
+- name: RKE2 firewalld
+  vars:
+    firewalld_rules: "{{ worker_firewalld_rules }}"
+  ansible.builtin.import_role:
+    name: set_firewalld
+    tasks_from: main
+  #when: (ansible_facts.services["firewalld.service"] is defined) and
+  #      (ansible_facts.services["firewalld.service"].status == "running")
+  tags: firewalld
+
+# NFS share
+- name: Set NFS mount on other nodes
+  ansible.builtin.import_role:
+    name: set_nfs_mount
+    tasks_from: main
+  tags: nfs_mount
+
+# Start install
+- name: RKE2 common to worker and controler tasks
+  vars:
+    caller_role_name: worker
+  ansible.builtin.import_role:
+    name: install_rke2_common
+    tasks_from: main
+  tags: common
+
+- name: RKE2 Install worker
+  ansible.builtin.import_tasks: install.yml
+  tags: install
+
+# Utils
+- name: Install registry on worker
+  vars:
+    caller_role_name: worker
+  ansible.builtin.import_role:
+    name: install_utils_registry
+    tasks_from: main
+  tags: registry
+
+- name: RKE2 install nerdctl
+  vars:
+    caller_role_name: worker
+  ansible.builtin.import_role:
+    name: install_utils_nerdctl
+    tasks_from: main
+  tags: nerdctl

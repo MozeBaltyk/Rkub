@@ -1,0 +1,15 @@
+- name: Remove Helm 
+  ansible.builtin.file:
+    path: /usr/local/bin/helm
+    state: absent
+  failed_when: false
+
+- name: Remove Nerdctl
+  ansible.builtin.file:
+    path: /usr/local/bin/nerdctl
+    state: absent
+  failed_when: false
+  loop:
+    - "/usr/local/bin/nerdctl"
+    - "/etc/nerdctl"
+    - "/etc/sudoers.d/secure-path"

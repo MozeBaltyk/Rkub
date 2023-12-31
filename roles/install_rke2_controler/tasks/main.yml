@@ -9,20 +9,11 @@
       - "!all,!min"
   when: >
     ansible_os_family is not defined
-
   tags: [always]
 
 - name: Populate service facts
   ansible.builtin.service_facts: {}
   tags: [always]
-
-- name: RKE2 common to agent and server tasks
-  vars:
-    caller_role_name: server
-  ansible.builtin.import_role:
-    name: install_rke2_common
-    tasks_from: main
-  tags: common
 
 - name: RKE2 firewalld
   vars:
@@ -30,24 +21,49 @@
   ansible.builtin.import_role:
     name: set_firewalld
     tasks_from: main
-  when: (ansible_facts.services["firewalld.service"] is defined) and
-        (ansible_facts.services["firewalld.service"].status == "running")
-  tags: firewall
+  #when: (ansible_facts.services["firewalld.service"] is defined) and
+  #      (ansible_facts.services["firewalld.service"].status == "running")
+  tags: firewalld
 
-- name: RKE2 Install controler specific for RHEL-like OS
-  ansible.builtin.import_tasks: rhel.yml
-  when: ansible_os_family == "RedHat"
-  tags: rhel
-
-- name: Arkade utils push in admin user
-  ansible.builtin.import_tasks: arkade.yml
+# Here, we start export NFS on first controler and mounting on all other controlers
+- name: Set NFS export on first node
+  ansible.builtin.import_role:
+    name: set_nfs_export
+    tasks_from: main
   when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
-  tags: arkade
+  tags: nfs_export
+
+- name: Set NFS mount on other nodes
+  ansible.builtin.import_role:
+    name: set_nfs_mount
+    tasks_from: main
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][1:]
+  tags: nfs_mount
+
+# Start install
+- name: RKE2 common to worker and controler tasks
+  vars:
+    caller_role_name: controler
+  ansible.builtin.import_role:
+    name: install_rke2_common
+    tasks_from: main
+  tags: common
 
 - name: RKE2 Install controler
   ansible.builtin.import_tasks: install.yml
   when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
   tags: install
+
+- name: RKE2 Get Token
+  ansible.builtin.import_tasks: token.yml
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
+  tags: token
+
+# Admin setup
+- name: Arkade utils push in admin user
+  ansible.builtin.import_tasks: arkade.yml
+  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
+  tags: arkade
 
 - name: Admin user setup
   ansible.builtin.import_tasks: admin.yml
@@ -59,23 +75,20 @@
   when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
   tags: localhost
 
-- name: Set NFS export on first node
-  ansible.builtin.import_role:
-    name: set_nfs_export
-    tasks_from: main
-  when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
-  tags: nfs_export
-
+# Utils
 - name: Install registry on first node
+  vars:
+    caller_role_name: controler
   ansible.builtin.import_role:
     name: install_utils_registry
     tasks_from: main
   when: inventory_hostname in groups['RKE2_CONTROLERS'][0]
   tags: registry
 
-- name: Set NFS mount on other nodes
+- name: RKE2 install nerdctl
+  vars:
+    caller_role_name: controler
   ansible.builtin.import_role:
-    name: set_nfs_mount
+    name: install_utils_nerdctl
     tasks_from: main
-  when: inventory_hostname in groups['RKE2_CONTROLERS'][1:]
-  tags: nfs_mount
+  tags: nerdctl

@@ -12,7 +12,5 @@
 - name: Tasks for Linux
   import_tasks: selinux.yml
 
-- name: Tasks for RHEL-like OS
-  import_tasks: rhel.yml
-  when:
-    - ansible_os_family == "RedHat"
+- name: Tasks to install and setup NFS export
+  import_tasks: install.yml

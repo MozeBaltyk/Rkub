@@ -1,0 +1,5 @@
+---
+# defaults file for mount_nfs
+
+export_nfs_path: "{{ global_directory_package_target }}/rancher"
+nfs_mount_path: "{{ global_directory_mount }}"

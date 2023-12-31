@@ -1,5 +1,6 @@
 # As root
 - block:
+
   - name: Create etcd group
     ansible.builtin.group:
       name: etcd
@@ -57,28 +58,37 @@
 
   - name: Install RKE2 server node
     ansible.builtin.shell:
-      cmd: "INSTALL_RKE2_ARTIFACT_PATH={{ airgap_rke2_path }} INSTALL_RKE2_TYPE=server sh {{ airgap_rke2_path }}/install.sh"
-      chdir: "{{ airgap_rke2_path }}"
+      cmd: "INSTALL_RKE2_ARTIFACT_PATH={{ mount_rke2_path }} INSTALL_RKE2_TYPE=server sh {{ mount_rke2_path }}/install.sh"
+      chdir: "{{ mount_rke2_path }}"
     register: install_server_output
     failed_when: false
 
   - ansible.builtin.debug:
       var: install_server_output['stdout_lines']
 
-  - name: Wait for RKE2 to start
-    ansible.builtin.wait_for:
-      timeout: 10
+  # RPM
+  - name: Install packages common to controlers
+    ansible.builtin.dnf:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - zstd
+      - skopeo
+    become: true
+    when:
+      - ansible_os_family == "RedHat"
+      - ansible_distribution_major_version | int >= 8 
 
   - name: Import a key from a file
     ansible.builtin.rpm_key:
       state: present
-      key: "{{ airgap_rke2_path }}/public.key"
+      key: "{{ mount_rke2_path }}/public.key"
     when:
       - ansible_os_family == "RedHat"
 
   - name: Install RKE2 selinux packages (dependency for RKE2 common)
     ansible.builtin.dnf:
-      name: "{{ airgap_rke2_selinux_rpm_path }}"
+      name: "{{ mount_rke2_selinux_rpm_path }}"
       state: present
     when:
       - ansible_os_family == "RedHat"
@@ -86,12 +96,13 @@
 
   - name: Install RKE2 common packages
     ansible.builtin.dnf:
-      name: "{{ airgap_rke2_common_rpm_path }}"
+      name: "{{ mount_rke2_common_rpm_path }}"
       state: present
     when:
       - ansible_os_family == "RedHat"
       - ansible_distribution_major_version | int >= 8
 
+  # Service
   - name: Mask RKE2 agent service on the first server
     ansible.builtin.systemd:
       name: "rke2-agent.service"
@@ -126,19 +137,5 @@
           export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml 
           PATH=$PATH:/var/lib/rancher/rke2/bin
       marker: "# {mark} ANSIBLE install_rke2_controler"
-
-  # Get Token
-  - name: Wait for node-token
-    ansible.builtin.wait_for:
-      path: /var/lib/rancher/rke2/server/node-token
-
-  - name: Read node-token from master
-    ansible.builtin.slurp:
-      src: /var/lib/rancher/rke2/server/node-token
-    register: node_token
-
-  - name: Store Master node-token
-    ansible.builtin.set_fact:
-      rke2_config_token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
 
   become: true

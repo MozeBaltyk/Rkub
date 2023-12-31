@@ -1,0 +1,8 @@
+server: https://{{ master_ip }}:9345
+token: {{ rke2_config_token }}
+write-kubeconfig-mode: 0600
+#profile: cis-1.23
+kube-apiserver-arg:
+- "authorization-mode=RBAC,Node"
+kubelet-arg:
+- "protect-kernel-defaults=true"

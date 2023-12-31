@@ -1,0 +1,27 @@
+- name: Ensure admin_user exist
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    comment: "rke2 user for administration"
+    createhome: true
+
+- name: Install common packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - iptables
+    - container-selinux
+    - libnetfilter_conntrack
+    - libnfnetlink
+    - libnftnl
+    - policycoreutils-python-utils
+    - cryptsetup
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8 
+
+- name: Create sysctl.conf from template
+  ansible.builtin.template:
+    src: rke2.conf
+    dest: /etc/sysctl.d/rke2.conf
+  notify: Restart systemd-sysctl

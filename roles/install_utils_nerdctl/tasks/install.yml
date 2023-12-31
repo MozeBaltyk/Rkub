@@ -11,7 +11,7 @@
 
 - name: Copy Nerdctl bin into /usr/local/bin
   ansible.builtin.copy:
-    src: "{{ pkg_nerdctl }}"
+    src: "{{ mount_pkg_nerdctl }}"
     dest: /usr/local/bin/
     owner: "{{ admin_user }}"
     group: "{{ admin_user }}"

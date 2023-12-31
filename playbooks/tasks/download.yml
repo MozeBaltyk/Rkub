@@ -1,5 +1,5 @@
 - name: Dowload Rkub package on first controler
-  hosts: CONTROLERS[0]
+  hosts: RKE2_CONTROLERS[0]
   gather_facts: false
   vars_files: 
     - ../vars/main.yml
@@ -20,11 +20,17 @@
         ansible.builtin.set_fact:
           package_path: "{{ package_path_prompt.user_input }}"
 
-  - name: Install rsync packages
+  - name: Install needed packages
     ansible.builtin.dnf:
-      name: "rsync"
+      name: "{{ item }}"
       state: present
+    with_items:
+      - zstd
+      - rsync
     become: true
+    when:
+      - ansible_os_family == "RedHat"
+      - ansible_distribution_major_version | int >= 8 
 
   - name: Ensure target directory exist and accessible to connexion user
     ansible.builtin.file:

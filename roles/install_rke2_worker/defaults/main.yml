@@ -1,0 +1,21 @@
+---
+# defaults file for install_worker
+rke2_version: "{{ global_rke2_version }}"
+admin_user: "{{ global_install_user }}"
+
+# Mount share
+mount_path: "{{ global_directory_mount }}"
+mount_rke2_path: "{{ mount_path }}/rke2_{{ rke2_version }}"
+mount_utils_path: "{{ mount_path }}/utils"
+mount_rke2_common_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
+mount_rke2_selinux_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
+
+# Firewall rules
+worker_firewalld_rules:
+  inbound:
+  - name: rke2
+    zone: public
+    ports:
+    - {port: 10250, protocol: tcp}
+    - {port: 8472, protocol: udp}
+    erase: true

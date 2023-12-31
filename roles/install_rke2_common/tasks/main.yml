@@ -9,13 +9,13 @@
   when: >
     ansible_os_family is not defined
 
-- name: Tasks common to Linux servers
-  ansible.builtin.import_tasks: linux.yml
+- name: Tasks common to Linux servers for RKE2 installation
+  ansible.builtin.import_tasks: install.yml
 
-- name: Tasks for RHEL-like OS
+- name: Get Token if one exist
+  ansible.builtin.import_tasks: token.yml
+
+- name: RKE2 Install specific for RHEL-like OS
   ansible.builtin.import_tasks: rhel.yml
-  when:
-    - ansible_os_family == "RedHat"
-
-- name: Install nerdctl on all nodes
-  ansible.builtin.import_tasks: nerdctl.yml
+  when: ansible_os_family == "RedHat"
+  tags: rhel

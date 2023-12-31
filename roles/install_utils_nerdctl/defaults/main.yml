@@ -1,0 +1,6 @@
+---
+# defaults file for install_utils_nerdctl
+
+# Mount
+mount_path: "{{ global_directory_mount }}"
+mount_pkg_nerdctl: "{{ global_directory_mount }}/utils/nerdctl"

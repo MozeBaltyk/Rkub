@@ -1,8 +1,12 @@
 ---
 # defaults file for install_local_registry
-airgap_path: "{{ global_directory_package_target }}/rancher"
-airgap_registry_path: "{{ airgap_path }}/registry"
-airgap_images_path: "{{ airgap_path }}/images"
-airgap_registry_tar: "{{ airgap_path }}/images/registry/registry.tar"
+
+# Mount share
+mount_path: "{{ global_directory_mount }}"
+mount_registry_path: "{{ mount_path }}/registry"
+mount_images_path: "{{ mount_path }}/images"
+mount_registry_tar: "{{ mount_path }}/images/registry/registry.tar"
+
+# General
 rke2_images_path: "/var/lib/rancher/rke2/agent/images/"
 registry_namespace: "kube-registry"

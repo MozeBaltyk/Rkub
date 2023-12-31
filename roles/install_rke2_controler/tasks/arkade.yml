@@ -1,14 +1,14 @@
 # As root
 - name: Ensure that admin user can access
   ansible.builtin.file:
-    path: "{{ airgap_path }}/.."
+    path: "{{ mount_path }}/.."
     mode: "0755"
     recurse: true
   become: true
 
-- name: Ensure admin user access airgap_utils_path
+- name: Ensure admin user access mount_utils_path
   ansible.builtin.file:
-    path: "{{ airgap_utils_path }}/"
+    path: "{{ mount_utils_path }}/"
     owner: "{{ admin_user }}"
     group: "{{ admin_user }}"
     recurse: true
@@ -27,7 +27,7 @@
 
   - name: Copy utils into .arkade/bin
     ansible.builtin.copy:
-      src: "{{ airgap_utils_path }}/{{ item }}"
+      src: "{{ mount_utils_path }}/{{ item }}"
       dest: "$HOME/.arkade/bin/{{ item }}"
       force: true
       remote_src: true

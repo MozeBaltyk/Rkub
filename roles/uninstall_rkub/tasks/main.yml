@@ -1,30 +1,35 @@
 ---
 # tasks file for uninstall_rke2
-- name: Stop and uninstall RKE2
-  become: true
-  block:      
-  - name: Stop RKE2 server
-    systemd:
-      name: "rke2-server.service"
-      state: stopped
-    failed_when: false
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset:
+      - "distribution"
+      - "distribution_major_version"
+      - "default_ipv4"
+      - "!all,!min"
+  when: >
+    ansible_os_family is not defined
+  tags: [always]
 
-  - name: Stop RKE2 agent
-    systemd:
-      name: "rke2-agent.service"
-      state: stopped
-    failed_when: false
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
 
-  - name: Uninstall k3s
-    shell: /usr/local/bin/rke2-uninstall.sh
-    failed_when: false
+- name: RKE2 Uninstall
+  ansible.builtin.import_tasks: uninstall.yml
 
-  - name: Remove Helm 
-    file:
-      path: /usr/local/bin/helm
-      state: absent
+- name: Utils Uninstall
+  ansible.builtin.import_tasks: utils.yml
 
-  - name: Remove Helm
-    file:
-      path: /usr/local/bin/nerdctl
-      state: absent
+- name: Admin Uninstall
+  ansible.builtin.import_tasks: admin.yml
+
+- name: NFS Uninstall
+  ansible.builtin.import_tasks: nfs.yml
+
+- name: RKE2 firewalld remove
+  vars:
+    firewalld_remove: "{{ firewalld_rules_to_remove }}"
+  ansible.builtin.import_role:
+    name: set_firewalld
+    tasks_from: main

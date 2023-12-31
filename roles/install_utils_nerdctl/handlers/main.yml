@@ -1,0 +1,24 @@
+---
+# handlers file for install_utils_nerdctl
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Config file changed
+  ansible.builtin.set_fact:
+    rke2_restart_needed: true
+
+- name: Service (re)started
+  ansible.builtin.set_fact:
+    rke2_restart_needed: false
+
+- name: Restart rke2-server
+  ansible.builtin.systemd:
+    name: rke2-server.service
+    state: restarted
+  notify: "Service (re)started"
+
+- name: Restart rke2-agent
+  ansible.builtin.systemd:
+    name: rke2-agent.service
+    state: restarted
+  notify: "Service (re)started"

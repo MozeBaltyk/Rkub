@@ -3,3 +3,4 @@
 
 export_nfs_path: "{{ global_directory_package_target }}/rancher"
 export_nfs_registry_path: "{{ export_nfs_path }}/registry"
+symlink_mount_path: "{{ global_directory_mount }}"

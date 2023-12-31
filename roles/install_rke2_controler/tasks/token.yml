@@ -1,0 +1,24 @@
+
+# As root
+- block:
+  # Get and Write Token
+  - name: Wait for node-token
+    ansible.builtin.wait_for:
+      path: /var/lib/rancher/rke2/server/node-token
+
+  - name: Read node-token from master
+    ansible.builtin.slurp:
+      src: /var/lib/rancher/rke2/server/node-token
+    register: node_token
+
+  - name: Store Master node-token
+    ansible.builtin.set_fact:
+      rke2_config_token: "{{ node_token['content'] | b64decode | regex_replace('\n', '') }}"
+
+  - name: Write token on mount path
+    ansible.builtin.copy:
+      content: "{{ rke2_config_token }}"
+      dest: "{{ mount_path }}/token"
+      follow: yes
+
+  become: true
