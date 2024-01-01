@@ -12,5 +12,8 @@
 - name: Tasks for Linux
   import_tasks: selinux.yml
 
+- name: Tasks for Linux
+  import_tasks: firewalld.yml
+
 - name: Tasks to install and setup NFS export
   import_tasks: install.yml

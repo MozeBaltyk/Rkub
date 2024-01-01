@@ -23,7 +23,7 @@
       state: absent
 
   - name: Remove NFS packages
-    dnf:
+    ansible.builtin.dnf:
       name: "{{ item }}"
       state: absent
     with_items:
@@ -33,3 +33,22 @@
       - ansible_distribution_major_version | int >= 8
 
   become: true
+
+# Remove NFS firewalld 
+- block: 
+
+  - name: firewalld NFS port enabled 
+    ansible.posix.firewalld:
+      service: nfs
+      permanent: true
+      state: disabled 
+
+  - name: Always reload firewalld
+    ansible.builtin.service:
+      name: firewalld
+      state: reloaded
+
+  become: true
+  when:
+    - ansible_facts['services']['firewalld.service'] is defined
+    - ansible_facts['services']['firewalld.service']['state'] == "running"
