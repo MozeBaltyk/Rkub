@@ -2,9 +2,13 @@
 
   - name: firewalld NFS port enabled 
     ansible.posix.firewalld:
-      service: nfs
+      service: "{{ item }}"
       permanent: true
-      state: enabled 
+      state: enabled
+    loop:
+      - nfs
+      - rpc-bind
+      - mountd
 
   - name: Always reload firewalld
     ansible.builtin.service:

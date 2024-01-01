@@ -8,7 +8,7 @@
       - "!min"
   when: >
     ansible_os_family is not defined
-
+  
 - name: Tasks for RHEL-like OS
   import_tasks: rhel.yml
   when:
