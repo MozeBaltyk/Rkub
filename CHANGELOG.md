@@ -8,7 +8,9 @@ Features:
 
 Fix:    
 
-Bugfixes:       
+Bugfixes: 
+  - Firewalld conditions to apply only when running
+  - Correct names and tasks order       
 
 ## 1.0.0 (2023-12-31)
 

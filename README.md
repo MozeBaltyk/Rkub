@@ -34,8 +34,10 @@ Add-on from my part:
 
 ## Getting started
 
-1. Clone this project on local machine which have an internet access and complete directory inside ./plugins/inventory/hosts.yml. 
-
+1. Preparation steps:     
+- Clone this project on local machine which have an internet access.   
+- Execute `Make prerequis` to install all prerequisites.
+- Complete directory inside `./plugins/inventory/hosts.yml`. 
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
