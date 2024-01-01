@@ -21,8 +21,9 @@
   ansible.builtin.import_role:
     name: set_firewalld
     tasks_from: main
-  #when: (ansible_facts.services["firewalld.service"] is defined) and
-  #      (ansible_facts.services["firewalld.service"].status == "running")
+  when:
+    - ansible_facts['services']['firewalld.service'] is defined
+    - ansible_facts['services']['firewalld.service']['state'] == "running"
   tags: firewalld
 
 # NFS share
