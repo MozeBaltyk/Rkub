@@ -48,9 +48,9 @@
     patterns: "*.tar"
   register: found_images
 
-#- name: Copy Rancher images with skopeo
-#  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/rancher/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_',':') }} --dest-tls-verify=false"
-#  with_items: "{{ found_images['files'] }}"
+- name: Copy Rancher images with skopeo
+  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/rancher/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_',':') }} --dest-tls-verify=false"
+  with_items: "{{ found_images['files'] }}"
 
 # Result
 - name: List docker registry

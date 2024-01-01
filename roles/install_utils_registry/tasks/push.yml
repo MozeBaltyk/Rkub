@@ -4,7 +4,7 @@
     dest: "{{ rke2_images_path }}"
     remote_src: true
   notify: Restart rke2-server
-  when:  caller_role_name == "controler"
+  when:  caller_role_name == "controller"
 
 - name: Pre-load registry image
   ansible.builtin.copy:

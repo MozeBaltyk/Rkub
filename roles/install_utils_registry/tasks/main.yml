@@ -6,8 +6,8 @@
 
 - name: Kubernetes tasks
   ansible.builtin.import_tasks: deploy.yml
-  when: caller_role_name == "controler"
+  when: caller_role_name == "controller"
 
 - name: Load images in local registry
   ansible.builtin.import_tasks: load.yml
-  when: caller_role_name == "controler"
+  when: caller_role_name == "controller"
