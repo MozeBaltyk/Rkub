@@ -1,5 +1,5 @@
 - name: uninstall RKE2
-  hosts: RKE2_CONTROLERS:RKE2_WORKERS
+  hosts: RKE2_CONTROLLERS:RKE2_WORKERS
   gather_facts: false
   become: true
   vars_files: ../vars/main.yml

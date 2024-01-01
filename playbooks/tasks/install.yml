@@ -1,12 +1,12 @@
 ---
 - name: Install RKE2 Controlers
-  hosts: RKE2_CONTROLERS
+  hosts: RKE2_CONTROLLERS
   gather_facts: true
   become: true
   vars_files: ../vars/main.yml
-  tags: controler
+  tags: controller
   roles:
-    - {role: install_rke2_controler, tags: rke2,}
+    - {role: install_rke2_controller, tags: rke2,}
 
 - name: Install RKE2 Workers
   hosts: RKE2_WORKERS
