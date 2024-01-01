@@ -24,10 +24,10 @@ global_directory_package_target: "{{ dir_target | default('/opt') }}"
 global_directory_mount: "{{ dir_mount | default('/mnt/rkub') }}"
 
 # Options
-master_ip: "{{ hostvars[groups['RKE2_CONTROLERS'][0]]['ansible_default_ipv4']['address'] }}"
+master_ip: "{{ hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address'] }}"
 
 # Options - Not used yet
 data_dir:  "/rke2"
-domain:    "{{ hostvars[groups['RKE2_CONTROLERS'][0]]['ansible_domain'] }}"
+domain:    "{{ hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_domain'] }}"
 cluster_cidr: "10.42.0.0/16" #Default Value
 service_cidr: "10.43.0.0/16" #Default Value
