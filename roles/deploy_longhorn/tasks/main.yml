@@ -12,6 +12,6 @@
 - name: Tasks for RHEL-like OS
   import_tasks: install.yml
 
-- name: Tasks for RHEL-like OS
+- name: Deploy with the Helm Charts on master
   import_tasks: deploy.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]

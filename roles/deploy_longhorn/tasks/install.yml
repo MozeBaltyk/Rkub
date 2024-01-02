@@ -15,3 +15,10 @@
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int >= 8
+
+- name: Ensure longhorn directory exist
+  ansible.builtin.file:
+    path: "{{ longhorn_datapath }}"
+    state: directory
+    recurse: true
+    mode: '0750'

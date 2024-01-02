@@ -30,13 +30,13 @@ Add-on from my part:
 
 * An Ansible Controler, can be the same host for ansible and for building package, at your convenience...
 
-* minimum of 2 hosts RHEL-like for the cluster RKE2.
+* A minimum of 2 hosts RHEL-like for the cluster RKE2 with 80G at least on target directory.
 
 ## Getting started
 
 1. Preparation steps:     
 - Clone this project on local machine which have an internet access.   
-- Execute `Make prerequis` to install all prerequisites.
+- Execute `make prerequis` to install all prerequisites.
 - Complete directory inside `./plugins/inventory/hosts.yml`. 
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
@@ -62,26 +62,35 @@ ansible-playbook playbooks/tasks/download.yml      # All arguments below are not
 ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
 -e dir_target=/opt                                 # Dir on first master which is going to be export (by default /opt, count 50G available) 
 -e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
--e domain="example.com"                            # by default take the host domain from master server. 
+-e domain="example.com"                            # By default take the host domain from master server 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
 5. Deploy Longhorn:
 ```sh
 ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not mandatory
--e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
--e domain="example.com"                            # by default take the host domain from master server. 
+-e dir_mount=/mnt/rkub                             # NFS mount point (default value is /mnt/rkub)
+-e domain="example.com"                            # By default take the host domain from master server
+-e datapath="/opt/longhorn"                        # By default equal "{{ dir_target }}/longhorn". The best is to have a dedicated LVM filesystem for this one. 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
+6. Deploy Rancher:
+```sh
+ansible-playbook playbooks/tasks/rancher.yml       # All arguments below are not mandatory
+-e dir_mount=/mnt/rkub                             # NFS mount point (default value is /mnt/rkub)
+-e domain="example.com"                            # By default take the host domain from master server 
+-e password="BootStrapAllTheThings"                # Default password is "BootStrapAllTheThings"
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)
+```
 
 ## Roadmap
 milestones:
 - To deploy some stuff
-- HA masters with kubevip
-- more install customization and options
-- Github Workflows / Release
+- More install customization and options
 - To add bootstrap with ArgoCD
+- HA masters with kubevip
+- Github Workflows / Release
 
 Improvment:
 - Add a option to chooce by url mode or airgap mode

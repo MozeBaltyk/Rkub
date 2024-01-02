@@ -20,4 +20,6 @@
         ingress:
           enabled: true
           host: "{{ longhorn_url }}"
+        defaultSettings:
+          defaultDataPath: "{{ longhorn_datapath }}"
       kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"

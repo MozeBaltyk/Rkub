@@ -5,8 +5,9 @@ longhorn_charts: "longhorn-{{ longhorn_version }}.tgz"
 longhorn_servicename: "longhorn"
 longhorn_domain: "{{ global_domain }}"
 longhorn_url: "{{ longhorn_servicename }}.{{ longhorn_domain }}"
+longhorn_datapath: "{{ global_longhorn_datapath }}"
 
-# Genaral
+# General
 admin_user: "{{ global_install_user }}"
 master: "{{ global_master_ip }}"
 mount_path: "{{ global_directory_mount }}"

@@ -23,7 +23,7 @@ global_path_to_package_zst: "{{ global_directory_package_build }}/../{{ global_p
 global_directory_package_target: "{{ dir_target | default('/opt') }}"
 global_directory_mount: "{{ dir_mount | default('/mnt/rkub') }}"
 
-# Options
+# Options RKE2
 global_master_ip: "{{ master_ip | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address']) }}"
 global_domain:    "{{ domain | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_domain']) }}"
 
@@ -31,3 +31,10 @@ global_domain:    "{{ domain | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['
 global_data_dir:  "/rke2"
 global_cluster_cidr: "10.42.0.0/16" #Default Value
 global_service_cidr: "10.43.0.0/16" #Default Value
+
+# Longhorn 
+default_longhorn_datapath: "{{ global_directory_package_target }}/longhorn"
+global_longhorn_datapath: "{{ datapath | default(default_longhorn_datapath) }}"
+
+# Rancher
+global_rancher_password: "{{ password | default('BootStrapAllTheThings') }}"
