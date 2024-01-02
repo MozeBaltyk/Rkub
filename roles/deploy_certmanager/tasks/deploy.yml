@@ -1,0 +1,29 @@
+- name: "Deploy Rancher"
+  run_once: true
+  become: true
+  become_user: "{{ admin_user }}"
+  become_method: sudo
+  become_flags: "-i"
+  block:
+
+  - name: Deploy helm charts
+    kubernetes.core.helm:
+      atomic: true
+      name: "cert-manager"
+      chart_ref: "{{ mount_helm_path }}/{{ cert_charts }}"
+      release_namespace: "cert-manager"
+      create_namespace: true
+      values:
+        installCRDs: true 
+        image:
+          repository: localhost:5000/cert/cert-manager-controller
+        webhook:
+          image:
+            repository: localhost:5000/cert/cert-manager-webhook 
+        cainjector:
+          image:
+            repository: localhost:5000/cert/cert-manager-cainjector 
+        startupapicheck:
+          image:
+            repository: localhost:5000/cert/cert-manager-ctl 
+      kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"

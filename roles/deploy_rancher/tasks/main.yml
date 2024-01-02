@@ -1,0 +1,12 @@
+---
+# tasks file for deploy_rancher
+
+- name: Install Cert-manager as Rancher prerequisites
+  ansible.builtin.import_role:
+    name: deploy_certmanager
+    tasks_from: main
+  tags: certmanager
+
+- name: Deploy with the Helm Charts on master
+  import_tasks: deploy.yml
+  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]

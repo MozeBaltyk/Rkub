@@ -1,0 +1,8 @@
+- name: Install Rancher
+  hosts: RKE2_CONTROLLERS:RKE2_WORKERS
+  gather_facts: true
+  become: true
+  vars_files: ../vars/main.yml
+  tags: [ controller, worker ]
+  roles:
+    - {role: deploy_rancher, tags: rancher,}
