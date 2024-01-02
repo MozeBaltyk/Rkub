@@ -1,0 +1,47 @@
+- name: "Deploy Neuvector"
+  run_once: true
+  become: true
+  become_user: "{{ admin_user }}"
+  become_method: sudo
+  become_flags: "-i"
+  block:
+
+  - name: Deploy helm charts
+    kubernetes.core.helm:
+      atomic: true
+      name: "neuvector"
+      chart_ref: "{{ mount_helm_path }}/{{ neuvector_charts }}"
+      release_namespace: "neuvector"
+      create_namespace: true
+      values:
+        imagePullSecrets: regsecret
+        registry: localhost:5000
+        k3s:
+          enabled: true
+          runtimePath: /run/k3s/containerd/containerd.sock
+        manager:
+          image:
+            repository: neuvector/manager
+          ingress:
+            enabled: true
+            ingress:
+              host: "{{ neuvector_url }}"
+          svc:
+            type: ClusterIP
+        controller:
+          image:
+            repository: neuvector/controller
+          pvc: 
+            enabled: true
+            capacity: 500Mi
+        enforcer:
+          image:
+            repository: neuvector/enforcer
+        internal:
+          certmanager:
+            enabled: true
+        cve:
+          updater:
+            image:
+              repository: neuvector/updater
+      kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
