@@ -25,11 +25,11 @@
       mode: '0600'
     become: true
 
-  - name: Change localhost with master_ip in kubeconfig
+  - name: Change localhost with master ip in kubeconfig
     ansible.builtin.lineinfile:
       path: "$HOME/.kube/{{ inventory_hostname }}.yaml"
       search_string: '127.0.0.1'
-      line: "    server: https://{{ master_ip }}:6443"
+      line: "    server: https://{{ master }}:6443"
     become_user: "{{ admin_user }}"
 
   - name: Update Admin .bashrc

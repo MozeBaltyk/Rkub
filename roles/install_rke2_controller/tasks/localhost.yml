@@ -49,7 +49,7 @@
   block: 
     - name: "Check"
       uri:
-        url: "https://{{ master_ip }}:6443"
+        url: "https://{{ master }}:6443"
         validate_certs: false
         status_code: 401
 

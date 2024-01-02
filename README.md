@@ -41,7 +41,7 @@ Add-on from my part:
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
-ansible-playbook playbooks/tasks/build.yml   # Args below are not mandatory
+ansible-playbook playbooks/tasks/build.yml   # All arguments below are not mandatory
 -e dir_build="$HOME/rkub"                    # Directory where to upload everything (count 30G)
 -e package_name="rke2_rancher_longhorn.zst"  # Name of the package, by default rke2_rancher_longhorn.zst
 -u admin -Kk                                 # Other Ansible Arguments (like -vvv)
@@ -51,7 +51,7 @@ Count 30G of free space in your build directory (17G for download + 7G for the z
 
 3. Push your package to first controler:  
 ```sh
-ansible-playbook playbooks/tasks/download.yml      # Args below are not mandatory
+ansible-playbook playbooks/tasks/download.yml      # All arguments below are not mandatory
 -e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
 -e dir_target=/opt                                 # Directory where to sync and unarchive (by default /opt, count 50G available) 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)   
@@ -59,10 +59,11 @@ ansible-playbook playbooks/tasks/download.yml      # Args below are not mandator
 
 4. Start installation: 
 ```sh
-ansible-playbook playbooks/tasks/install.yml       # Args below are not mandatory
+ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
 -e package_name="rke2_rancher_longhorn.zst"        # Name of the package, by default rke2_rancher_longhorn.zst
 -e dir_target=/opt                                 # Dir on first master which is going to be export (by default /opt, count 50G available) 
 -e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
+-e domain="example.com"                            # by default take the host domain from master server. 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 

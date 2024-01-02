@@ -16,12 +16,12 @@
   - name: Add NFS entry to /etc/fstab
     ansible.builtin.lineinfile:
       path: /etc/fstab
-      line: "{{ master_ip }}:{{ export_nfs_path }} {{ nfs_mount_path }} nfs rw,hard,rsize=1048576,wsize=1048576 0 0"
+      line: "{{ master }}:{{ export_nfs_path }} {{ nfs_mount_path }} nfs rw,hard,rsize=1048576,wsize=1048576 0 0"
 
   - name: Mount NFS share
     ansible.posix.mount:
       path: "{{ nfs_mount_path }}"
-      src: "{{ master_ip }}:{{ export_nfs_path }}"
+      src: "{{ master }}:{{ export_nfs_path }}"
       fstype: nfs
       opts: rw,hard,rsize=1048576,wsize=1048576
       state: mounted

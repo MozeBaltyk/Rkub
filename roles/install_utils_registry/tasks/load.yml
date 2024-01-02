@@ -57,7 +57,7 @@
   ansible.builtin.shell: |
     for i in $(curl -sk localhost:5000/v2/_catalog | jq -r '.repositories[]'); do 
       for tag in $(curl -sk localhost:5000/v2/${i}/tags/list | jq -r '.tags[]'); do 
-        echo ${i}/${tag}; 
+        echo ${i}:${tag}; 
       done; 
     done
   register: docker
