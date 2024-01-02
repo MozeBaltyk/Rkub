@@ -1,7 +1,7 @@
 Role Name
 =========
 
-Uninstall all RKE2 cluster and utils
+Role to bootstrap with ArgoCD the installation of rancher, longhorn, neuvector
 
 License
 -------

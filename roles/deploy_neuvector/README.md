@@ -1,7 +1,7 @@
 Role Name
 =========
 
-Uninstall all RKE2 cluster and utils
+Deploy NeuVector as security manager solution
 
 License
 -------

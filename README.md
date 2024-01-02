@@ -21,8 +21,8 @@ Add-on from my part:
 - Arkade to install utilities binaries
 - Admin user (by default kuberoot) on first controler node with all necessary tools
 - Nerdctl (as complement of containerd) 
-- Firewalld settings if firewalld is activated
-- Uninstall playbook to cleanup (and maybe reinstall)
+- Firewalld settings if firewalld running
+- Uninstall playbook to cleanup (and maybe reinstall if needed)
 
 ## Prerequisites
 

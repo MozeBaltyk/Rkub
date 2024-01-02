@@ -1,16 +1,13 @@
 Role Name
 =========
 
-Installation RKE2 controlers
+Deploy Rancher as cluster manager solution
 
 Requirements
 ------------
 
 dependency on roles:
-  - install_rke2_common
-  - set_firewalld
-  - set_nfs_export
-  - install_utils_registry
+  - deploy_certmanager
 
 License
 -------
