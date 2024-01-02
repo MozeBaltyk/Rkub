@@ -41,10 +41,10 @@ Add-on from my part:
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
-ansible-playbook playbooks/tasks/build.yml   # All arguments below are not mandatory
--e dir_build="$HOME/rkub"                    # Directory where to upload everything (count 30G)
--e package_name="rke2_rancher_longhorn.zst"  # Name of the package, by default rke2_rancher_longhorn.zst
--u admin -Kk                                 # Other Ansible Arguments (like -vvv)
+ansible-playbook playbooks/tasks/build.yml         # All arguments below are not mandatory
+-e dir_build="$HOME/rkub"                          # Directory where to upload everything (count 30G)
+-e package_name="rke2_rancher_longhorn.zst"        # Name of the package, by default rke2_rancher_longhorn.zst
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
 Count 30G of free space in your build directory (17G for download + 7G for the zst package).
@@ -69,18 +69,27 @@ ansible-playbook playbooks/tasks/install.yml       # All arguments below are not
 5. Deploy Longhorn:
 ```sh
 ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not mandatory
--e dir_mount=/mnt/rkub                             # NFS mount point (default value is /mnt/rkub)
--e domain="example.com"                            # By default take the host domain from master server
--e datapath="/opt/longhorn"                        # By default equal "{{ dir_target }}/longhorn". The best is to have a dedicated LVM filesystem for this one. 
+-e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
+-e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
+-e datapath="/opt/longhorn"                        # Longhorn Path for PVC, by default equal "{{ dir_target }}/longhorn". 
+						                                       # The best is to have a dedicated LVM filesystem for this one. 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
 6. Deploy Rancher:
 ```sh
 ansible-playbook playbooks/tasks/rancher.yml       # All arguments below are not mandatory
--e dir_mount=/mnt/rkub                             # NFS mount point (default value is /mnt/rkub)
--e domain="example.com"                            # By default take the host domain from master server 
+-e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
+-e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server 
 -e password="BootStrapAllTheThings"                # Default password is "BootStrapAllTheThings"
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)
+```
+
+7. Deploy Neuvector
+```sh
+ansible-playbook playbooks/tasks/neuvector.yml     # All arguments below are not mandatory
+-e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
+-e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
@@ -104,36 +113,16 @@ Improvment:
 
 [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh)   
 
-what I like: 
-  - Can package the all stuff
-  - Airgap
-  - Local registry shared in NFS
-
-What is missing: 
-  - Ansible - to make it idempotent and executable from a single point.
-  - Upload package to target.
-
 [rancherfederal/RKE2-ansible](https://github.com/rancherfederal/rke2-ansible)
 
-what I like: 
-  - Ansible 
-  - HA controlers  
-
-What is missing:
-  - proper Airgap
-
 [lablabs/ansible-role-rke2](https://github.com/lablabs/ansible-role-rke2)     
-what I like: 
-  - Ansible   
-
-What is missing:
-  - no packaging for airgap.
-  - no script to transfert
 
 [rancher/RKE2](https://github.com/rancher/rke2)
 
+
 ## Authors
 morze.baltyk@proton.me
+
 
 ## Project status
 Still on developement

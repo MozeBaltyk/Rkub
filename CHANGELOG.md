@@ -1,13 +1,13 @@
 # CHANGELOG.md
 
-## 1.0.1 (unreleased)
-
-Security:    
+## 1.0.1 (2024-01-02)
 
 Features:    
   - Make "master_ip" and "domain" parametrable
   - Deploy longhorn
- 
+  - Deploy Rancher
+  - Deploy Neuvector
+
 Fix:    
   - Firewalld conditions to apply only when running.
   - Correct names and tasks order.        
