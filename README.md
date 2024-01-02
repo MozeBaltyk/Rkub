@@ -60,12 +60,20 @@ ansible-playbook playbooks/tasks/download.yml      # All arguments below are not
 4. Start installation: 
 ```sh
 ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
--e package_name="rke2_rancher_longhorn.zst"        # Name of the package, by default rke2_rancher_longhorn.zst
 -e dir_target=/opt                                 # Dir on first master which is going to be export (by default /opt, count 50G available) 
 -e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
 -e domain="example.com"                            # by default take the host domain from master server. 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
+
+5. Deploy Longhorn:
+```sh
+ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not mandatory
+-e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
+-e domain="example.com"                            # by default take the host domain from master server. 
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)
+```
+
 
 ## Roadmap
 milestones:

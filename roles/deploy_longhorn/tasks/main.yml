@@ -1,0 +1,17 @@
+---
+# tasks file for deploy_longhorn
+- name: Gather facts
+  setup:
+    gather_subset:
+      - "distribution"
+      - "distribution_major_version"
+      - "!min"
+  when: >
+    ansible_os_family is not defined
+
+- name: Tasks for RHEL-like OS
+  import_tasks: install.yml
+
+- name: Tasks for RHEL-like OS
+  import_tasks: deploy.yml
+  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]

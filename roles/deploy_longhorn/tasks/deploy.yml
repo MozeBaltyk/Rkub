@@ -1,0 +1,23 @@
+- name: "Deploy Longhorn"
+  run_once: true
+  become: true
+  become_user: "{{ admin_user }}"
+  become_method: sudo
+  become_flags: "-i"
+  block: 
+
+  - name: Deploy helm charts
+    kubernetes.core.helm:
+      atomic: true
+      name: "longhorn"
+      chart_ref: "{{ mount_helm_path }}/{{ longhorn_charts }}"
+      release_namespace: "longhorn-system"
+      create_namespace: true
+      values:
+        global:
+          cattle:
+            systemDefaultRegistry: "localhost:5000"
+        ingress:
+          enabled: true
+          host: "{{ longhorn_url }}"
+      kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"

@@ -1,0 +1,13 @@
+---
+# defaults file for deploy_longhorn
+longhorn_version: "{{ global_LONGHORN_VERSION }}"
+longhorn_charts: "longhorn-{{ longhorn_version }}.tgz"
+longhorn_servicename: "longhorn"
+longhorn_domain: "{{ global_domain }}"
+longhorn_url: "{{ longhorn_servicename }}.{{ longhorn_domain }}"
+
+# Genaral
+admin_user: "{{ global_install_user }}"
+master: "{{ global_master_ip }}"
+mount_path: "{{ global_directory_mount }}"
+mount_helm_path: "{{ mount_path }}/helm"

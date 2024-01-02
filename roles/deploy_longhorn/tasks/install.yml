@@ -1,0 +1,17 @@
+# Install and start iscsid 
+- block:
+  - name: Ensure iscsi-initiator-utils package is installed on Redhat based OS
+    dnf:
+      name:  iscsi-initiator-utils
+      state: present
+
+  - name: Start and enable iscsid
+    systemd:
+      name: iscsid
+      state: started
+      enabled: yes
+
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8

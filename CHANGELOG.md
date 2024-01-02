@@ -5,8 +5,9 @@
 Security:    
 
 Features:    
-  - make "master_ip" and "domain" parametrable
-   
+  - Make "master_ip" and "domain" parametrable
+  - Deploy longhorn
+ 
 Fix:    
   - Firewalld conditions to apply only when running.
   - Correct names and tasks order.        
