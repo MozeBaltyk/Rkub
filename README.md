@@ -30,7 +30,7 @@ Add-on from my part:
 
 * An Ansible Controler, can be the same host for ansible and for building package, at your convenience...
 
-* A minimum of 2 hosts RHEL-like for the cluster RKE2 with 80G at least on target directory.
+* A minimum of 3 hosts RHEL-like for the cluster RKE2 with 80G at least on target directory.
 
 ## Getting started
 
