@@ -72,7 +72,7 @@ ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not
 -e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -e datapath="/opt/longhorn"                        # Longhorn Path for PVC, by default equal "{{ dir_target }}/longhorn". 
-						                                       # The best is to have a dedicated LVM filesystem for this one. 
+                                                   # The best is to have a dedicated LVM filesystem for this one. 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 

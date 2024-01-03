@@ -23,4 +23,3 @@ controller_firewalld_rules:
     - {port: 9345, protocol: tcp}
     - {port: 10250, protocol: tcp}
     - {port: 8472, protocol: udp}
-    erase: true

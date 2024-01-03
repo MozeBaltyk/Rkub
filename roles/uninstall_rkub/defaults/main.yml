@@ -3,6 +3,7 @@
 admin_user: "{{ global_install_user }}"
 export_nfs_path: "{{ global_directory_package_target }}/rancher"
 nfs_mount_path: "{{ global_directory_mount }}"
+longhorn_datapath: "{{ global_longhorn_datapath }}"
 
 firewalld_rules_to_remove: 
   inbound:

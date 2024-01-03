@@ -16,3 +16,31 @@
   - name: Uninstall RKE2
     ansible.builtin.shell: /usr/local/bin/rke2-uninstall.sh
     failed_when: false
+
+# Longhorn removal
+- block:
+  - name: 'collect longhorn files'
+    find:
+      paths: "{{ longhorn_datapath }}"
+      hidden: True
+      recurse: True
+      # file_type: any  # Added in ansible 2.3
+    register: collected_files
+
+  - name: 'collect longhorn directories'
+    find:
+      paths: "{{ longhorn_datapath }}"
+      hidden: True
+      recurse: True
+      file_type: directory
+    register: collected_directories
+
+  - name: remove collected files and directories
+    file:
+      path: "{{ item['path'] }}"
+      state: absent
+    with_items: >
+      {{
+        collected_files.files
+        + collected_directories.files
+      }}

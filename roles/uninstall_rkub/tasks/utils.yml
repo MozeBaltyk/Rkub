@@ -6,7 +6,7 @@
 
 - name: Remove Nerdctl
   ansible.builtin.file:
-    path: /usr/local/bin/nerdctl
+    path: "{{ item }}"
     state: absent
   failed_when: false
   loop:

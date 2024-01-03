@@ -19,4 +19,4 @@ worker_firewalld_rules:
     ports:
     - {port: 10250, protocol: tcp}
     - {port: 8472, protocol: udp}
-    erase: true
+    
