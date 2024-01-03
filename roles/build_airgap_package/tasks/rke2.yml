@@ -1,17 +1,17 @@
 
 - name: Download rke2-images.linux-amd64.tar.zst
   get_url:
-    url: "https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/rke2-images.linux-amd64.tar.zst"
+    url: "https://github.com/rancher/rke2/releases/download/{{ rke2_common_repo_version }}/rke2-images.linux-amd64.tar.zst"
     dest: "{{ directory_package }}/rke2_{{ rke2_version }}/rke2-images.linux-amd64.tar.zst"
 
 - name: Download rke2.linux-amd64.tar.gz
   get_url:
-    url: "https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/rke2.linux-amd64.tar.gz"
+    url: "https://github.com/rancher/rke2/releases/download/{{ rke2_common_repo_version }}/rke2.linux-amd64.tar.gz"
     dest: "{{ directory_package }}/rke2_{{ rke2_version }}/rke2.linux-amd64.tar.gz"
 
 - name: Download sha256sum-amd64.txt
   get_url:
-    url: "https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/sha256sum-amd64.txt"
+    url: "https://github.com/rancher/rke2/releases/download/{{ rke2_common_repo_version }}/sha256sum-amd64.txt"
     dest: "{{ directory_package }}/rke2_{{ rke2_version }}/sha256sum-amd64.txt"
 
 - name: Download repo GPG key
@@ -28,7 +28,7 @@
 - block:
     - name: Download rke2-common RPM
       get_url:
-        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
+        url: "https://github.com/rancher/rke2-packaging/releases/download/{{ rke2_common_repo_version }}.stable.0/{{ rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
 
     - name: Download rke2-selinux RPM
@@ -42,7 +42,7 @@
 - block:
     - name: Download rke2-common RPM
       get_url:
-        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ rke2_common_rpm_version }}.el8.x86_64.rpm"
+        url: "https://github.com/rancher/rke2-packaging/releases/download/{{ rke2_common_repo_version }}.stable.0/{{ rke2_common_rpm_version }}.el8.x86_64.rpm"
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_common_rpm_version }}.el8.x86_64.rpm"
 
     - name: Download rke2-selinux RPM

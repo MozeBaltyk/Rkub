@@ -37,6 +37,8 @@
     - jq
     - helm
     - just
+    - kubectl
+    - k9s
 
   - name: Update .bashrc
     ansible.builtin.blockinfile:
