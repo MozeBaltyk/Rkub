@@ -7,7 +7,7 @@ global_LONGHORN_VERSION: "1.5.3"
 global_NEU_VERSION: "2.6.6"     
 
 # extras RPM
-global_rke2_common_repo_version: "v{{ rke2_version }}%2Brke2r1"  #.stable.0
+global_rke2_common_repo_version: "v{{ rke2_version }}%2Brke2r1"           #.stable.0
 global_rke2_common_rpm_version: "rke2-common-{{ rke2_version }}.rke2r1-0" #.el{{ ansible_distribution_major_version }}.x86_64.rpm
 global_rke2_selinux_repo_version: "v0.17.stable.1"
 global_rke2_selinux_rpm_version: "rke2-selinux-0.17-1"                    #.el{{ ansible_distribution_major_version }}.noarch.rpm

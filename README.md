@@ -51,7 +51,7 @@ Count 30G of free space in your build directory (17G for download + 7G for the z
 
 3. Push your package to first controler:  
 ```sh
-ansible-playbook playbooks/tasks/download.yml      # All arguments below are not mandatory
+ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not mandatory
 -e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
 -e dir_target=/opt                                 # Directory where to sync and unarchive (by default /opt, count 50G available) 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)   
