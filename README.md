@@ -8,7 +8,7 @@ Ansible Collection to deploy a rancher RKE2 cluster in airgap mode.
 ## Description
 
 This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh). 
-I tried it and the idea pleased me but I had small frustrations about the Shell scripting limitations. So I decided to rewrite it in Ansible.  
+I tried it and like the idea but I was frustrated with Shell scripting limitations. So I decided to rewrite it in Ansible.  
 
 With Ansible:
 - Idempotency: can be relaunch multiple time. 
@@ -16,7 +16,7 @@ With Ansible:
 - OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)
 
 Add-on from my part:
-- Some part which were manual in Clemenko procedure are automated with Ansible (like the download)
+- Some part which were manual in Clemenko procedure are automated with Ansible (like the upload)
 - Some flexibility about path (possible to export or mount NFS in choosen place)
 - Arkade to install utilities binaries
 - Admin user (by default kuberoot) on first controler node with all necessary tools

@@ -37,6 +37,11 @@
   ansible.builtin.shell: |
     cat {{ directory_package }}/images/rancher/version_unsorted.txt | sort -u > {{ directory_package }}/images/rancher/images.txt
 
+- name: Rancher List - Due to version 2.8.0
+  ansible.builtin.shell: |
+    echo "rancher/mirrored-cluster-api-controller:v1.4.4" >> {{ directory_package }}/images/rancher/images.txt
+    echo "rancher/kubectl:v1.20.2" >> {{ directory_package }}/images/rancher/images.txt
+
 - name: Longhorn List - Download longhorn-images.txt
   ansible.builtin.get_url:
     url: "https://raw.githubusercontent.com/longhorn/longhorn/v{{ LONGHORN_VERSION }}/deploy/longhorn-images.txt"
