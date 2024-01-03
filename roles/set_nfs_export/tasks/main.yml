@@ -17,3 +17,6 @@
 
 - name: Tasks to install and setup NFS export
   import_tasks: install.yml
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

@@ -4,6 +4,9 @@
 - name: Push registry tar in RKE2 images
   ansible.builtin.import_tasks: push.yml
 
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+  
 - name: Kubernetes tasks
   ansible.builtin.import_tasks: deploy.yml
   when: caller_role_name == "controller"

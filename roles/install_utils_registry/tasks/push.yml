@@ -13,6 +13,3 @@
     remote_src: true
   notify: Restart rke2-agent
   when: caller_role_name == "worker"  
-
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
