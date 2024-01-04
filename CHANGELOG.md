@@ -2,8 +2,6 @@
 
 <!-- Release -->
 <!-- End Release -->
-<!-- Versions -->
-<!-- End Versions -->
 <!-- Features -->
 <!-- End Features -->
 
