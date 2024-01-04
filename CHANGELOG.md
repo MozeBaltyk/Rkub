@@ -11,7 +11,6 @@
 
 Version:
   - rke2 version: 1.26.11
-  - helm version: 3.11.3
   - cert-manager version: 1.13.3    
   - rancher version: 2.8.0 
   - longhorn version: 1.5.3
