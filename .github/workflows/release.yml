@@ -97,4 +97,4 @@ jobs:
         with:
           tag_name: ${{ steps.get_version.outputs.TAG_VERSION }}
           files: "*.tar.gz"
-          body_path: gh-release.md
+          body_path: CHANGELOG.md
