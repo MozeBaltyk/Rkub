@@ -23,7 +23,7 @@ Features:
   - Deploy longhorn with custom datapath
   - Deploy Rancher with custom password
   - Deploy Neuvector
-  - Github workflow to release
+  - Github Workflows to release
 <!-- End Features -->
 
 <!-- Fix -->
