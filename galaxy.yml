@@ -16,13 +16,12 @@ description: >
 license:
 - Apache-2.0
 
-license_file: 'LICENSE'
-
 tags: 
   - devops
   - kubernetes
   - rancher
-  - collection 
+  - longhorn
+  - neuvector 
   - ansible
 
 dependencies: {}
