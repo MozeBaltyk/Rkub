@@ -1,7 +1,7 @@
 # CHANGELOG.md
 
 <!-- Release -->
-## 1.0.4 (2024-01-05)
+## 1.0.0 (2024-01-05)
 
 Versions:
   - rke2 version: 1.26.11
