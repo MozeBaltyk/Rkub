@@ -5,7 +5,7 @@ on:
 jobs:
   readme:
     runs-on: ubuntu-latest
-    name: Update Rkub Readme
+    name: Update Versions
 
     if: github.repository == 'mozebaltyk/rkub'
     permissions:
@@ -16,11 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update Readme
+      - name: Update Readme and changelog
         uses: ./.github/actions/update-readme
 
   release:
     runs-on: ubuntu-latest
+    name: Release to Galaxy
     if: github.repository == 'mozebaltyk/rkub'
     permissions:
       actions: write
@@ -33,10 +34,10 @@ jobs:
       tag_version: ${{ steps.get_version.outputs.TAG_VERSION }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.TRIGGERING_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -92,7 +93,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git tag -a ${{ steps.get_version.outputs.TAG_VERSION }} -m "Release v${{ steps.get_version.outputs.TAG_VERSION }}" || true
+          git tag -a ${{ steps.get_version.outputs.TAG_VERSION }} -m "$(cat CHANGELOG.md)" || true
           git push origin --tags
 
       - name: Publish Release
