@@ -44,7 +44,7 @@ jobs:
         with:
           python-version: "3.10"
           cache: 'pip'
-      - run: pip install -r ./meta/ee-requirements.txt
+          cache-dependency-path: '**/ee-requirements.txt'
 
       - name: Get current version
         id: get_version
