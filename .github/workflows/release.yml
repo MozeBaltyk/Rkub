@@ -48,18 +48,23 @@ jobs:
 
       - name: Get current version
         id: get_version
-        run: echo "::set-output name=TAG_VERSION::$(grep version galaxy.yml | awk -F'"' '{ print $2 }')"
+        #run: echo "::set-output name=TAG_VERSION::$(grep version galaxy.yml | awk -F'"' '{ print $2 }')"
+        run: echo "TAG_VERSION=$(yq -r .version galaxy.yml)" >> $GITHUB_OUTPUT
 
       - name: Check if tag exists
         id: check_tag
-        run: echo "::set-output name=TAG_EXISTS::$(git tag | grep ${{ steps.get_version.outputs.TAG_VERSION }})"
+        #run: echo "::set-output name=TAG_EXISTS::$(git tag | grep ${{ steps.get_version.outputs.TAG_VERSION }})"
+        run: echo "TAG_EXISTS=$(git tag | grep ${{ steps.get_version.outputs.TAG_VERSION }})" >> $GITHUB_OUTPUT
 
       - name: Fail if tag exists
+        env:
+          tag_version: ${{ steps.get_version.outputs.TAG_VERSION }}
+          tag_exists: ${{ steps.check_tag.outputs.TAG_EXISTS }}
         if: ${{ steps.get_version.outputs.TAG_VERSION == steps.check_tag.outputs.TAG_EXISTS }}
         uses: actions/github-script@v3
         with:
           script: |
-              core.setFailed('Release tag already exists')
+              core.setFailed('Release tag already exists in git (tag_exists var: ${tag_exists} and tag_version: ${tag_version})')
 
       - name: Install dependencies
         run: |
