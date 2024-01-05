@@ -19,20 +19,20 @@ Ansible collection met to install in airgap environnement RKE2 (one controler an
 This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh). 
 I tried it and like the idea but I was frustrated with Shell scripting limitations. So I decided to rewrite it in Ansible.  
 
-With Ansible:
-- Idempotency: can be relaunch multiple time. 
-- User agnostic: can be launch by any user (with sudo rights). 
-- OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)
+With Ansible:   
+* Idempotency: can be relaunch multiple time.    
+* User agnostic: can be launch by any user (with sudo rights).   
+* OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)   
 
-Add-on from my part:
-- Some part which were manual in Clemenko procedure are automated with Ansible (like the upload)
-- Some flexibility about path (possible to export or mount NFS in choosen place)
-- Arkade to install utilities binaries
-- Admin user (by default kuberoot) on first controler node with all necessary tools
-- Nerdctl (as complement of containerd) 
-- Firewalld settings if firewalld running
-- Uninstall playbook to cleanup (and maybe reinstall if needed)
-- Collection Released, so possibilty to get back to older versions
+Add-on from my part:   
+* Some part which were manual in Clemenko procedure are automated with Ansible (like the upload)  
+* Some flexibility about path (possible to export or mount NFS in choosen place)  
+* Arkade to install utilities binaries  
+* Admin user (by default kuberoot) on first controler node with all necessary tools  
+* Nerdctl (as complement of containerd)   
+* Firewalld settings if firewalld running   
+* Uninstall playbook to cleanup (and maybe reinstall if needed)   
+* Collection Released, so possibilty to get back to older versions   
 
 ## Prerequisites
 
@@ -104,19 +104,21 @@ ansible-playbook playbooks/tasks/neuvector.yml     # All arguments below are not
 ```
 
 ## Roadmap
-milestones:
-- To deploy some stuff
-- More install customization and options
-- To add bootstrap with ArgoCD
-- HA masters with kubevip
-- Github Workflows / Release
+milestones:  
+* Improve collection to run as true collection
+* Ansible Execution-Env 
+* More install customization and options
+* To add bootstrap with ArgoCD
+* HA masters with kubevip 
 
 Improvment:
-- Add a option to chooce by url mode or airgap mode
+* Add a option to chooce by url mode or airgap mode
+
 
 # Special thanks to 📢
 
 * Clemenko, for the idea [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh).
+
 * Alex Ellis, for its [Arkade project](https://github.com/alexellis/arkade). I cannot live without anymore.
 
 ## Github sources 

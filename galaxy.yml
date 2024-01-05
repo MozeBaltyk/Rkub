@@ -19,10 +19,17 @@ license:
 tags: 
   - devops
   - kubernetes
+  - k8s
   - rancher
+  - rke2
   - longhorn
   - neuvector 
   - ansible
+  - airgap
+  - collection
+  - linux
+  - RHEL
+  - redhat
 
 dependencies: {}
 
