@@ -28,7 +28,6 @@ tags:
   - airgap
   - collection
   - linux
-  - RHEL
   - redhat
 
 dependencies: {}
