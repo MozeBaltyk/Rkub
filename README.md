@@ -22,7 +22,7 @@ I tried it and like the idea but I was frustrated with Shell scripting limitatio
 
 With Ansible:   
 
-* Idempotency: can be relaunch multiple time.    
+* Idempotency: can be relaunch multiple time.      
 
 * User agnostic: can be launch by any user (with sudo rights).  
 
@@ -59,11 +59,11 @@ Add-on from my part:
 
 1. Preparation steps:     
 
-* Clone this project on local machine which have an internet access.   
+    * Clone this project on local machine which have an internet access.    
 
-* Execute `make prerequis` to install all prerequisites.
+    * Execute `make prerequis` to install all prerequisites.   
 
-* Complete directory inside `./plugins/inventory/hosts.yml`. 
+    * Complete directory inside `./plugins/inventory/hosts.yml`.   
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
