@@ -5,6 +5,7 @@ Ansible Collection to deploy a rancher RKE2 cluster in airgap mode.
 [![Releases](https://img.shields.io/github/release/MozeBaltyk/rkub)](https://github.com/MozeBaltyk/rkub/releases)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0/)
 
+
 ## Description
 
 Ansible collection met to install in airgap environnement RKE2 (one controler and several workers, currently no HA):
@@ -20,34 +21,49 @@ This Project is mainly inspired from [Clemenko/rke_airgap_install](https://githu
 I tried it and like the idea but I was frustrated with Shell scripting limitations. So I decided to rewrite it in Ansible.  
 
 With Ansible:   
+
 * Idempotency: can be relaunch multiple time.    
-* User agnostic: can be launch by any user (with sudo rights).   
+
+* User agnostic: can be launch by any user (with sudo rights).  
+
 * OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)   
 
 Add-on from my part:   
 * Some part which were manual in Clemenko procedure are automated with Ansible (like the upload)  
+
 * Some flexibility about path (possible to export or mount NFS in choosen place)  
+
 * Arkade to install utilities binaries  
+
 * Admin user (by default kuberoot) on first controler node with all necessary tools  
+
 * Nerdctl (as complement of containerd)   
+
 * Firewalld settings if firewalld running   
+
 * Uninstall playbook to cleanup (and maybe reinstall if needed)   
+
 * Collection Released, so possibilty to get back to older versions   
+
 
 ## Prerequisites
 
-* Linux Host as a package builder (can be a VM or your WSL)
+* Linux Host as a package builder (can be a VM or your WSL). Count 30G of free space in the build directory of your package builder (17G for download + 7G for the zst package).
 
 * An Ansible Controler, can be the same host for ansible and for building package, at your convenience...
 
 * A minimum of 2 hosts RHEL-like for the cluster RKE2 with 80G at least on target directory.
 
+
 ## Getting started
 
 1. Preparation steps:     
-- Clone this project on local machine which have an internet access.   
-- Execute `make prerequis` to install all prerequisites.
-- Complete directory inside `./plugins/inventory/hosts.yml`. 
+
+* Clone this project on local machine which have an internet access.   
+
+* Execute `make prerequis` to install all prerequisites.
+
+* Complete directory inside `./plugins/inventory/hosts.yml`. 
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
@@ -56,8 +72,6 @@ ansible-playbook playbooks/tasks/build.yml         # All arguments below are not
 -e package_name="rke2_rancher_longhorn.zst"        # Name of the package, by default rke2_rancher_longhorn.zst
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
-
-Count 30G of free space in your build directory (17G for download + 7G for the zst package).
 
 3. Push your package to first controler:  
 ```sh
@@ -103,16 +117,26 @@ ansible-playbook playbooks/tasks/neuvector.yml     # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-## Roadmap
-milestones:  
-* Improve collection to run as true collection
-* Ansible Execution-Env 
-* More install customization and options
-* To add bootstrap with ArgoCD
-* HA masters with kubevip 
 
-Improvment:
+## Roadmap
+
+Milestones:  
+
+* More install customization and options
+
+* HA masters with kubevip
+
+* To add bootstrap with ArgoCD
+
 * Add a option to chooce by url mode or airgap mode
+
+Improvments:
+
+* Improve collection to run as true collection
+
+* Ansible Execution-Env 
+
+* Justfile
 
 
 # Special thanks to 📢
