@@ -4,8 +4,8 @@ set -eo pipefail
 ### podman-load.sh
 # This scripts have for purpose to upload images in you collections before to execute playbooks.
 #  
-# It have to methode to do it:
-#   - search for images in your helm charts: roles/*/files/helm/*.tgz
+# Two methodes to load images:
+#   - search for images in roles helm charts: roles/*/files/helm/*.tgz
 #   - list images in meta/ee-images.txt  
 ###
 
@@ -32,36 +32,40 @@ check_command(){
 }
 
 load_helm_images(){
-  # look in helm charts
-  for helm in $(ls ../../roles/*/files/helm/*.tgz); do
-    printf "\e[1;34m[INFO]\e[m Look for images in ${helm}...\n"
+  if ls ../../roles/*/files/helm/*.tgz 1> /dev/null 2>&1; then 
+    # look in helm charts
+    for helm in $(ls ../../roles/*/files/helm/*.tgz); do
+      printf "\e[1;34m[INFO]\e[m Look for images in ${helm}...\n"
 
-    images=$(helm template -g $helm |yq -N '..|.image? | select(.)'|sort|uniq|grep ":"|egrep -v '*:[[:blank:]]' || echo "")
-    product=$(basename -a $helm | awk -F '-' '{print $1}')
+      images=$(helm template -g $helm |yq -N '..|.image? | select(.)'|sort|uniq|grep ":"|egrep -v '*:[[:blank:]]' || echo "")
+      product=$(basename -a $helm | awk -F '-' '{print $1}')
 
-    if [ "$images" != "" ]; then
-      printf "\e[1;34m[INFO]\e[m Images found in the helm charts: ${images}\n"
-      printf "\e[1;34m[INFO]\e[m Create directory: ${dir}/images/${product} \n"
+      if [ "$images" != "" ]; then
+        printf "\e[1;34m[INFO]\e[m Images found in the helm charts: ${images}\n"
+        printf "\e[1;34m[INFO]\e[m Create directory: ${dir}/images/${product} \n"
 
-      mkdir -p ${dir}/images/${product}
+        mkdir -p ${dir}/images/${product}
 
-      while i= read -r image_name; do
-        archive_name=$(basename -a $(awk -F : '{print $1}'<<<${image_name}));
-        tag=$(awk -F : '{print $2}'<<<${image_name});
-        printf "\e[1;34m[INFO]\e[m Pulling image ${archive_name} with tag: ${tag} \n"
-        podman pull ${image_name};
-        printf "\e[1;34m[INFO]\e[m Push ${image_name} in ${dir}/images/${product}/${archive_name}-${tag}\n"
-        podman save ${image_name} --format ${format} -o ${dir}/images/${product}/${archive_name}-${tag};
-      done <<< ${images}
-    else
-      printf "\e[1;34m[INFO]\e[m No Images found in the helm charts: ${helm}\n"
-    fi
-  done
+        while i= read -r image_name; do
+          archive_name=$(basename -a $(awk -F : '{print $1}'<<<${image_name}));
+          tag=$(awk -F : '{print $2}'<<<${image_name});
+          printf "\e[1;34m[INFO]\e[m Pulling image ${archive_name} with tag: ${tag} \n"
+          podman pull ${image_name};
+          printf "\e[1;34m[INFO]\e[m Push ${image_name} in ${dir}/images/${product}/${archive_name}-${tag}\n"
+          podman save ${image_name} --format ${format} -o ${dir}/images/${product}/${archive_name}-${tag};
+        done <<< ${images}
+      else
+        printf "\e[1;34m[INFO]\e[m No Images found in the helm charts: ${helm}\n"
+      fi
+    done
+  else
+    printf "\e[1;34m[INFO]\e[m No helm charts found in roles/*/files/helm/*.tgz\n" || true
+  fi
 }
 
 load_images(){
   # look in meta/ee-images.txt
-  for line in $(cat  ../../meta/ee-images.txt); do
+  for line in $(cat  ../../meta/ee-images.txt | grep -v "^#" ); do
     echo "### Realize line: ${line} ###"
     image=$( echo "${line}" | awk  -F ";" '{print $1}' )
     tag=$( echo "${line}" | awk  -F ";" '{print $1}' | awk  -F ":" '{print $2}')

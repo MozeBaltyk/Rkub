@@ -28,11 +28,11 @@ install_arkade(){
       echo ""
   fi
 
-  if [[ ! -f /usr/local/bin/arkade ]]; then
+  if [[ ! -f $HOME/.arkade/bin/arkade ]]; then
       printf "\e[1;33m[CHANGE]\e[m arkade is not found. Installing...\n"
-      curl -LO "${DOWNLOAD_URL}"/"${LATEST_VERSION}"/arkade > /dev/null 2>&1
-      chmod +x arkade
-      cp arkade $HOME/.arkade/bin
+      curl -L "${DOWNLOAD_URL}"/"${LATEST_VERSION}"/arkade --output $HOME/.arkade/new_arkade > /dev/null 2>&1
+      mv $HOME/.arkade/new_arkade $HOME/.arkade/bin/arkade
+      chmod +x $HOME/.arkade/bin/arkade
       CURRENT_VERSION=$(arkade version | grep 'Version:' | awk '{ print $2 }')
       printf "\e[1;32m[OK]\e[m arkade $CURRENT_VERSION has been installed.\n"
   else
@@ -41,9 +41,9 @@ install_arkade(){
       printf "\e[1;34m[INFO]\e[m Checking for updates...\n"
       if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
           printf "\e[1;33m[CHANGE]\e[m New version of arkade found, current: $CURRENT_VERSION. Updating...\n"
-          curl -LO "${DOWNLOAD_URL}"/"${LATEST_VERSION}"/arkade > /dev/null 2>&1
-          chmod +x arkade
-          cp arkade $HOME/.arkade/bin
+          curl -L "${DOWNLOAD_URL}"/"${LATEST_VERSION}"/arkade --output $HOME/.arkade/new_arkade > /dev/null 2>&1:
+          mv $HOME/.arkade/new_arkade $HOME/.arkade/bin/arkade
+          chmod +x $HOME/.arkade/bin/arkade
           printf "\e[1;32m[OK]\e[m arkade has been updated to version $CURRENT_VERSION.\n"
       else
           CURRENT_VERSION=$(arkade version | grep 'Version:' | awk '{ print $2 }')
@@ -55,7 +55,9 @@ install_arkade(){
 #Install arkade packages
 install_pkg(){
   for line in $(cat ../../meta/ee-arkade.txt | egrep -v "#|^$" ); do
-    arkade get --progress=false ${line} > /dev/null
+    if [[ ${line} != "arkade" ]]; then
+      arkade get --progress=false ${line} > /dev/null || true
+    fi
   done
   printf "\e[1;34m[INFO]\e[m Following packages were installed in ~/.arkade/bin : \n"
   ls -l $HOME/.arkade/bin
