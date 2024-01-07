@@ -1,3 +1,6 @@
+export VERSION  ?= $(strip $(shell awk -F":" '/version/ {print $$2}' ../../galaxy.yml | tr -d "[:blank:]"))
+export REPO     ?= $(strip $(shell awk -F" " '/repository/ {print $$2}' ../../galaxy.yml | tr -d "[:blank:]"))
+
 ifneq ("$(wildcard /etc/redhat-release)","")
     PKG_MANAGER := yum
 else ifneq ("$(wildcard /etc/debian_version)","")
@@ -7,10 +10,6 @@ endif
 .PHONY: all
 ## all prerequisites (keep the phony order)
 all: pythons bindeps collections arkade images
-
-.PHONY: docker-builder
-## all prerequisites for a docker container (keep the phony order)
-docker-builder: pythons bindeps collections arkade
 
 .PHONY: images
 ## Load images in files directories of each roles (since too big, those are in the .gitignore)
@@ -27,11 +26,16 @@ arkade:
 collections:
 	@printf "\e[1;34m[INFO]\e[m ## Install Ansible Collections ##\n"
 	@ansible-galaxy install -r ../../meta/ee-requirements.yml
+	@printf "\e[1;34m[INFO]\e[m ## Install $(REPO) version $(VERSION) ##\n"       
+	@ansible-galaxy collection install git+$(REPO).git,$(VERSION)
 	@printf "\e[1;32m[OK]\e[m Ansible Collections installed.\n"
 
 .PHONY: pythons
 ## Install pythons packages defined in ./meta/ee-requirements.txt
 pythons:
+	@printf "\e[1;34m[INFO]\e[m ## Install Pip ##\n"
+	@curl --silent --show-error --retry 5 https://bootstrap.pypa.io/get-pip.py | python3
+	@printf "\e[1;32m[OK]\e[m Pip installed.\n"
 	@printf "\e[1;34m[INFO]\e[m ## Install Pip packages ##\n"
 	@python3 -m pip install -r ../../meta/ee-requirements.txt
 	@printf "\e[1;32m[OK]\e[m Pip packages installed.\n"

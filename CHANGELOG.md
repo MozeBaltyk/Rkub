@@ -18,12 +18,13 @@ Features:
     - Setup an admin on master node (kuberoot).
     - Deploy local registry and images loaded inside.
     - Setup firewalld rules if needed.
-    - Make "master_ip" and "domain" parametrable
+    - Make "master_ip" and "domain" parametrable.
   - Script to uninstall everything. 
-  - Deploy longhorn with custom datapath
-  - Deploy Rancher with custom password
-  - Deploy Neuvector
-  - Github Workflows to release
+  - Deploy longhorn with custom datapath.
+  - Deploy Rancher with custom password.
+  - Deploy Neuvector.
+  - Github Workflows to release.
+  - Script to containerize in an Execution-Env.
 <!-- End Features -->
 
 <!-- Fix -->
@@ -33,6 +34,8 @@ Fix:
 <!-- End Fix -->
 
 <!-- Bugfix -->
+Bugfix:
+  - Correct scripts for prerequisites.
 <!-- End Bugfix -->
 
 <!-- Security -->

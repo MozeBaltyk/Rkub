@@ -9,6 +9,9 @@ set -eo pipefail
 #   - list images in meta/ee-images.txt  
 ###
 
+# To be use when building container
+export PATH=$PATH:$HOME/.arkade/bin
+
 if [[ $# -eq 0 ]]; then 
   format="oci-archive"
   printf "\e[1;34mINFO\e[m: Format by default: $format \n"

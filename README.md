@@ -61,7 +61,12 @@ Add-on from my part:
 
     * Clone this project on local machine which have an internet access.    
 
-    * Execute `make prerequis` to install all prerequisites.   
+    * Execute `make prerequis` to install all prerequisites defined in meta directory. 
+    
+    or 
+
+    * if you prefer in container `make ee-container` then `make ee-exec`.   
+      NB: `make` alone display options and descriptions.  
 
     * Complete directory inside `./plugins/inventory/hosts.yml`.   
 
@@ -133,10 +138,6 @@ Milestones:
 Improvments:
 
 * Improve collection to run as true collection
-
-* Ansible Execution-Env 
-
-* Justfile
 
 
 # Special thanks to 📢

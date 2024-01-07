@@ -1,57 +1,51 @@
-# Example makefile with some dummy rules, imported by default during ansible_collection creation, 
+# Rkub Makefile 
 
 export INVENTORY     ?= ./plugins/inventory
-export ANSIBLE_USER  ?= localadmin
-export INSTALL_USER  ?= $(ANSIBLE_USER)
+export ANSIBLE_USER  ?= admin
 export EXTRA_VARS    := $(shell for n in $$INSTALL_VARS; do echo "-e $$n "; done )
 export OPT           ?=
-export ANSIBLE_ARGS   = -i $(INVENTORY) -u $(ANSIBLE_USER) -e install_user="$(INSTALL_USER)" $(EXTRA_VARS) $(OPT)
+export ANSIBLE_ARGS   = -i $(INVENTORY) -u $(ANSIBLE_USER) $(EXTRA_VARS) $(OPT)
 
+export REGISTRY      ?= localhost:5000
+export EE_IMAGE      ?= ee-rkub
+export EE_TAG        ?= $(strip $(shell awk -F":" '/version/ {print $$2}' galaxy.yml | tr -d "[:blank:]"))
 
 .PHONY: prerequis
 ## Install required Ansible Collections
 prerequis:
 	$(MAKE) -C ./scripts/prerequis all
 
-.PHONY: precheck
-## Check all prerequisites regarding the typ of install and the given arguments
-precheck:
-	ansible-playbook ./playbooks/tasks/precheck.yml $(ANSIBLE_ARGS)
+.PHONY: ee-container
+## Create an execution-env container with all dependencies inside
+ee-container:
+	podman build --platform linux/amd64 -f scripts/docker/Containerfile -t $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) .
+	podman save $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) --format oci-archive -o $$HOME/$(EE_IMAGE)-$(EE_TAG)
+
+.PHONY: ee-exec
+## Create a container with all dependencies inside.
+ee-exec:
+	podman load -i $$HOME/$(EE_IMAGE)-$(EE_TAG)
+	podman run -it $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) '/bin/bash'
+
+.PHONY: build
+## Run playbook to build rkub zst package on localhost.
+build:
+	ansible-playbook ./playbooks/tasks/build.yml $(ANSIBLE_ARGS)
+
+.PHONY: upload
+## Run playbook to upload rkub zst package.
+upload:
+	ansible-playbook ./playbooks/tasks/upload.yml $(ANSIBLE_ARGS)
 
 .PHONY: install
-## Run playbook to install k3s from a finish and installed collection.
+## Run playbook to install rkub.
 install:
 	ansible-playbook ./playbooks/tasks/install.yml $(ANSIBLE_ARGS)
 
 .PHONY: uninstall
-## Run playbook to uninstall k3s.
+## Run playbook to uninstall rkub.
 uninstall:
 	ansible-playbook ./playbooks/tasks/uninstall.yml $(ANSIBLE_ARGS)
-
-
-
-######## More details Help #############
-define HELP_MSG
-## Define and export variables which are common to all the make commands:
-export INSTALL_VARS='
-global_version=1.0.0
-global_install_dir=/opt
-'
-
-## Make commands and there options 
-make prerequis
-make precheck  [-e "ANSIBLE_USER=ansible"] [-e "INSTALL_USER=myself"] [-e "INVENTORY=../myInventoryPath"] [-e "OPT= -Kk"]
-make install   [-e "ANSIBLE_USER=ansible"] [-e "INSTALL_USER=myself"] [-e "INVENTORY=../myInventoryPath"] [-e "OPT= -Kk"]
-make uninstall [-e "ANSIBLE_USER=ansible"] [-e "INSTALL_USER=myself"] [-e "INVENTORY=../myInventoryPath"] [-e "OPT= -Kk"]
-make install   [-e "ANSIBLE_USER=ansible"] [-e "INSTALL_USER=myself"] [-e "INVENTORY=../myInventoryPath"] [-e "OPT= -Kk"]
-
-endef
-export HELP_MSG
-
-.PHONY: help
-## Show more details options about commands
-help:
-	@echo "\n$$HELP_MSG"
 
 
 # keep it at the end of your Makefile

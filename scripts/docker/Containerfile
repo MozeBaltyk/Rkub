@@ -1,0 +1,46 @@
+# Use a base image v4.11.3 with the desired prerequisites installed
+FROM registry.access.redhat.com/ubi8:8.8
+
+# Switch to root user
+USER root
+
+# Update the package lists and install the necessary prerequisites
+RUN dnf repolist all 
+RUN dnf update -y 
+RUN dnf install -y \
+--enablerepo=ubi-8-appstream-rpms \
+--enablerepo=ubi-8-baseos-rpms \
+make \
+sudo \
+wget \
+curl \
+gawk \
+tar \
+ca-certificates \
+python3.11 \
+git-core \
+sshpass \
+openssl \
+&& dnf clean all
+
+# Set the working directory inside the container
+WORKDIR /rkub
+
+# Copy the modified registries.conf file to the container
+COPY ./scripts/docker/registries.conf /etc/containers/registries.conf
+
+# k3s - Copy any necessary files or scripts into the container
+COPY ./Makefile .
+COPY ./meta/ ./meta/
+COPY ./scripts/ ./scripts/
+COPY ./ansible.cfg .
+COPY ./galaxy.yml .
+
+# k3s - Set the execute permission for the script
+RUN chmod +x ./Makefile 
+RUN chmod -R +x ./scripts/prerequis/
+RUN make -C ./scripts/prerequis all
+
+# Check version
+RUN python3 --version
+RUN ansible --version

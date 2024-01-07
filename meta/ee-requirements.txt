@@ -4,4 +4,4 @@ kubernetes>=26.0.0
 PyYAML>=5.4.1
 jsonpatch
 jmespath>=1.0.1
-ansible-core>=2.14.0
+ansible-core>=2.15.0
