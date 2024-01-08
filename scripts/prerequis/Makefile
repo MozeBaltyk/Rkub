@@ -24,7 +24,7 @@ arkade:
 .PHONY: collections
 ## Install ansible collection defined in ./meta/ee-requirements.yml
 collections:
-	@printf "\e[1;34m[INFO]\e[m ## Install Ansible Collections ##\n"
+	@printf "\e[1;34m[INFO]\e[m ## Install Ansible Collections dependencies ##\n"
 	@ansible-galaxy install -r ../../meta/ee-requirements.yml
 	@printf "\e[1;34m[INFO]\e[m ## Install $(REPO) version $(VERSION) ##\n"       
 	@ansible-galaxy collection install git+$(REPO).git,$(VERSION)

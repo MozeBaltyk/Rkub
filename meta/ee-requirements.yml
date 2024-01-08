@@ -6,6 +6,3 @@ collections:
   - name: ansible.utils
   # Kubernetes context
   - name: kubernetes.core
-
-  - source: https://github.com/mozebaltyk/rkub.git
-    type: git
