@@ -1,0 +1,22 @@
+name: Release on Ansible Galaxy
+on:
+  workflow_dispatch:
+  push:
+    branches: ["develop"]
+
+jobs:
+  readme:
+    runs-on: ubuntu-latest
+    name: Update Versions
+
+    if: github.repository == 'mozebaltyk/rkub'
+    permissions:
+      actions: write
+      checks: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update Readme and changelog
+        uses: ./.github/actions/update-readme

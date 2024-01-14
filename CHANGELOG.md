@@ -23,7 +23,6 @@ Features ✨
   - Deploy longhorn with custom datapath.
   - Deploy Rancher with custom password.
   - Deploy Neuvector.
-  - Github Workflows to release.
   - Script to containerize in an Execution-Env.
 <!-- End Features -->
 
@@ -41,4 +40,5 @@ Bugfix 🐞
 <!-- Security -->
 Security 🔒️
   - Branch protect
+  - Github Workflows to release.
 <!-- End Security -->
