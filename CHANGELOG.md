@@ -1,7 +1,7 @@
 # CHANGELOG.md
 
 <!-- Release -->
-## 1.0.1 (2024-01-07)
+## 1.0.2 (2024-01-14)
 
 Versions:
   - rke2 version: 1.26.11
@@ -23,7 +23,6 @@ Features ✨
   - Deploy longhorn with custom datapath.
   - Deploy Rancher with custom password.
   - Deploy Neuvector.
-  - Github Workflows to release.
   - Script to containerize in an Execution-Env.
 <!-- End Features -->
 
@@ -41,4 +40,5 @@ Bugfix 🐞
 <!-- Security -->
 Security 🔒️
   - Branch protect
+  - Github Workflows to release.
 <!-- End Security -->
