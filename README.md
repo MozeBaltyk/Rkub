@@ -134,9 +134,9 @@ ANSIBLE_USER=admin                                 # equal to '-u admin'
 
 1. This is a custom script which imitate Execution-Environement:
 
-    * `make ee-container` will load an UBI8 image and execute inside `make prerequis` 
+    * `make ee-container` will load an UBI-8 image and execute inside `make prerequis` 
     
-    * `make ee-exec`   
+    * `make ee-exec` Run image with collection and package zst mounted inside. Launch playbook or make command as described above.
 
 
 ## Roadmap
