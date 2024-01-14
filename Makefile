@@ -1,31 +1,22 @@
 # Rkub Makefile 
 
-export INVENTORY     ?= ./plugins/inventory
-export ANSIBLE_USER  ?= admin
-export EXTRA_VARS    := $(shell for n in $$INSTALL_VARS; do echo "-e $$n "; done )
-export OPT           ?=
-export ANSIBLE_ARGS   = -i $(INVENTORY) -u $(ANSIBLE_USER) $(EXTRA_VARS) $(OPT)
+export INVENTORY       ?= ./plugins/inventory
+export ANSIBLE_USER    ?= admin
+export EXTRA_VARS      := $(shell for n in $$INSTALL_VARS; do echo "-e $$n "; done )
+export OPT             ?=
+export ANSIBLE_ARGS     = -i $(INVENTORY) -u $(ANSIBLE_USER) $(EXTRA_VARS) $(OPT)
 
-export REGISTRY      ?= localhost:5000
-export EE_IMAGE      ?= ee-rkub
-export EE_TAG        ?= $(strip $(shell awk -F":" '/version/ {print $$2}' galaxy.yml | tr -d "[:blank:]"))
+export REGISTRY        ?= localhost:5000
+export EE_IMAGE        ?= ee-rkub
+export EE_TAG          ?= $(strip $(shell awk -F":" '/version/ {print $$2}' galaxy.yml | tr -d "[:blank:]"))
+export EE_IMAGE_PATH   ?= $$HOME/$(EE_IMAGE)-$(EE_TAG)
+export EE_PACKAGE_NAME ?= rke2_rancher_longhorn.zst
+export EE_PACKAGE_PATH ?= $$HOME/$(EE_PACKAGE_NAME)
 
 .PHONY: prerequis
 ## Install required Ansible Collections
 prerequis:
 	$(MAKE) -C ./scripts/prerequis all
-
-.PHONY: ee-container
-## Create an execution-env container with all dependencies inside
-ee-container:
-	podman build --platform linux/amd64 -f scripts/docker/Containerfile -t $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) .
-	podman save $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) --format oci-archive -o $$HOME/$(EE_IMAGE)-$(EE_TAG)
-
-.PHONY: ee-exec
-## Create a container with all dependencies inside.
-ee-exec:
-	podman load -i $$HOME/$(EE_IMAGE)-$(EE_TAG)
-	podman run -it $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) '/bin/bash'
 
 .PHONY: build
 ## Run playbook to build rkub zst package on localhost.
@@ -46,6 +37,28 @@ install:
 ## Run playbook to uninstall rkub.
 uninstall:
 	ansible-playbook ./playbooks/tasks/uninstall.yml $(ANSIBLE_ARGS)
+
+
+##################
+## EE Container ##
+##################
+
+.PHONY: ee-container
+## Create an execution-env container with all dependencies inside
+ee-container:
+	@printf "\e[1;34m[INFO]\e[m ## Build image $(EE_IMAGE_PATH) ##\n"
+	podman build --platform linux/amd64 -f scripts/docker/Containerfile -t $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) .
+	podman save $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) --format oci-archive -o $(EE_IMAGE_PATH)
+	@printf "\e[1;32m[OK]\e[m Image $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) builded and saved in $(EE_IMAGE_PATH).\n"
+
+.PHONY: ee-exec
+## Create a container with all dependencies inside.
+ee-exec:
+	@printf "\e[1;34m[INFO]\e[m ## Load image $(EE_IMAGE_PATH) ##\n"
+	podman load -i $(EE_IMAGE_PATH)
+	@printf "\e[1;32m[OK]\e[m Loaded.\n"
+	@printf "\e[1;34m[INFO]\e[m ## Launch container - $(EE_IMAGE):$(EE_TAG) ##\n"
+	podman run -it -v .:/rkub -v $(EE_PACKAGE_PATH):/root/$(EE_PACKAGE_NAME) $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) '/bin/bash'
 
 
 # keep it at the end of your Makefile

@@ -29,7 +29,7 @@ With Ansible:
 * OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)   
 
 Add-on from my part:   
-* Some part which were manual in Clemenko procedure are automated with Ansible (like the upload)  
+* Some part which were manual in Clemenko procedure are automated with Ansible (like the upload or NFS mount)  
 
 * Some flexibility about path (possible to export or mount NFS in choosen place)  
 
@@ -62,13 +62,10 @@ Add-on from my part:
     * Clone this project on local machine which have an internet access.    
 
     * Execute `make prerequis` to install all prerequisites defined in meta directory. 
-    
-    or 
-
-    * if you prefer in container `make ee-container` then `make ee-exec`.   
-      NB: `make` alone display options and descriptions.  
-
+     
     * Complete directory inside `./plugins/inventory/hosts.yml`.   
+
+NB: `make` alone display options and descriptions. 
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
@@ -83,13 +80,13 @@ ansible-playbook playbooks/tasks/build.yml         # All arguments below are not
 ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not mandatory
 -e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
 -e dir_target=/opt                                 # Directory where to sync and unarchive (by default /opt, count 50G available) 
--u admin -Kk                                       # Other Ansible Arguments (like -vvv)   
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)  
 ```
 
 4. Start installation: 
 ```sh
 ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
--e dir_target=/opt                                 # Dir on first master which is going to be export (by default /opt, count 50G available) 
+-e dir_target=/opt                                 # Dir on first master where to find package unarchive by previous task (by default /opt, count 50G available) 
 -e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
 -e domain="example.com"                            # By default take the host domain from master server 
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
@@ -121,6 +118,25 @@ ansible-playbook playbooks/tasks/neuvector.yml     # All arguments below are not
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
+
+8. Bonus: 
+
+With make command, all playbooks above are in the makefile. `make` alone display options and small descriptions. 
+
+```bash
+# Example with make
+make install                                       # All arguments below are not mandatory
+ANSIBLE_USER=admin                                 # equal to '-u admin' 
+"OPT=-e domain=example.com -Kk"                    # redefine vars or add options to ansible-playbook command
+```
+
+## Container methode
+
+1. This is a custom script which imitate Execution-Environement:
+
+    * `make ee-container` will load an UBI8 image and execute inside `make prerequis` 
+    
+    * `make ee-exec`   
 
 
 ## Roadmap

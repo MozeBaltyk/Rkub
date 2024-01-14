@@ -12,7 +12,7 @@ Versions:
 <!-- End Release -->
 
 <!-- Features -->
-Features:
+Features ✨
   - Install RKE2 one controler and several workers (currently no HA):
     - Add nerdctl.
     - Setup an admin on master node (kuberoot).
@@ -28,15 +28,17 @@ Features:
 <!-- End Features -->
 
 <!-- Fix -->
-Fix:    
+Fix 🩹    
   - Firewalld conditions to apply only when running.
   - Correct names and tasks order.
 <!-- End Fix -->
 
 <!-- Bugfix -->
-Bugfix:
+Bugfix 🐞
   - Correct scripts for prerequisites.
 <!-- End Bugfix -->
 
 <!-- Security -->
+Security 🔒️
+  - Branch protect
 <!-- End Security -->
