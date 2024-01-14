@@ -28,8 +28,10 @@ With Ansible:
 
 * OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)   
 
-Add-on from my part:   
-* Some part which were manual in Clemenko procedure are automated with Ansible (like the upload or NFS mount)  
+
+Add-on from my part, some part which were manual in Clemenko procedure are automated with Ansible like:
+
+* the upload or NFS mount  
 
 * Some flexibility about path (possible to export or mount NFS in choosen place)  
 
@@ -64,8 +66,6 @@ Add-on from my part:
     * Execute `make prerequis` to install all prerequisites defined in meta directory. 
      
     * Complete directory inside `./plugins/inventory/hosts.yml`.   
-
-NB: `make` alone display options and descriptions. 
 
 2. Build your package by running (works on Debian-like and Redhat-like):  
 ```sh 
