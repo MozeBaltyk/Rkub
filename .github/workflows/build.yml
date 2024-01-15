@@ -1,0 +1,47 @@
+name: Build
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Which branch?
+        shell: bash
+        run: |
+          echo "${{ github.head_ref || github.ref_name }}"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@main
+
+  update:
+    runs-on: ubuntu-latest
+    name: Update Versions
+
+    if: github.repository == 'mozebaltyk/rkub'
+    permissions:
+      actions: write
+      checks: write
+      contents: write
+
+    steps:
+      # Checkout on branch where pull request
+      - name: Which branch?
+        shell: bash
+        run: |
+          echo "${{ github.head_ref || github.ref_name }}"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Update Readme and changelog
+        uses: ./.github/actions/update-readme
