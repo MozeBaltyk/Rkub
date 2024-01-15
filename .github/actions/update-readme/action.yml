@@ -48,10 +48,12 @@ runs:
 
     # Git push 
     - name: Set env.BRANCH
+      shell: bash
       run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
 
     - name: Is develop branch?
       if: env.BRANCH == 'develop'
+      shell: bash
       run: echo "This is 'develop' branch"
 
     - shell: bash
