@@ -52,9 +52,11 @@ runs:
       run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
 
     - name: Is develop branch?
-      if: env.BRANCH == 'develop'
       shell: bash
-      run: echo "This is 'develop' branch"
+      run: |
+        echo "${{ github.head_ref || github.ref_name }}"
+        echo "$GITHUB_REF"
+        echo "${{ env.BRANCH }}"
 
     - shell: bash
       run: |
@@ -62,4 +64,4 @@ runs:
         git config user.email github-actions@github.com
         git add README.md CHANGELOG.md
         [[ -z $(git status -uno --porcelain) ]] && echo "No need to commit..." || git commit -m "⚡ Update README & CHANGELOG"
-        git push origin HEAD:$(echo $GITHUB_REF | cut -d'/' -f 3)
+        git push origin HEAD:${{ github.head_ref || github.ref_name }}
