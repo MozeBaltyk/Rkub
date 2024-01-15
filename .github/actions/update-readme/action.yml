@@ -47,19 +47,14 @@ runs:
         sed -i -n -e "1,/<\!-- Release -->/ p" -e"/<\!-- End Release -->/,$ p" -e "/<\!-- Release -->/ r version.txt" CHANGELOG.md
 
     # Git push 
-    - name: Set env.BRANCH
-      shell: bash
-      run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
-
-    - name: Is develop branch?
+    - name: Which branch?
       shell: bash
       run: |
         echo "${{ github.head_ref || github.ref_name }}"
-        echo "$GITHUB_REF"
-        echo "${{ env.BRANCH }}"
 
     - shell: bash
       run: |
+        git pull
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add README.md CHANGELOG.md
