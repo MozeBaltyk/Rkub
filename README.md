@@ -3,6 +3,7 @@
 Ansible Collection to deploy a rancher RKE2 cluster in airgap mode.
 
 [![Releases](https://img.shields.io/github/release/MozeBaltyk/rkub)](https://github.com/MozeBaltyk/rkub/releases)
+![Ansible Lint](https://github.com/MozeBaltyk/rkub/workflows/build/badge.svg)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0/)
 
 

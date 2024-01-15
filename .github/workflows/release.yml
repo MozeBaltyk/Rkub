@@ -1,3 +1,4 @@
+---
 name: Release to Ansible Galaxy
 on:
   workflow_dispatch:

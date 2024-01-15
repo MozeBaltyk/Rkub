@@ -5,7 +5,7 @@ description: Update Readme and Changelog
 runs:
   using: composite
   steps:
-    # Update Readme 
+    # Update Readme
     - shell: bash
       run: |
         rke2_version=$(yq -r .global_rke2_version playbooks/vars/main.yml)
@@ -38,15 +38,15 @@ runs:
 
         Versions:
           - rke2 version: ${rke2_version}
-          - cert-manager version: ${cert_version}    
-          - rancher version: ${rancher_version} 
+          - cert-manager version: ${cert_version}
+          - rancher version: ${rancher_version}
           - longhorn version: ${longhorn_version}
           - neuvector version: ${neuvector_version}
         EOF
 
         sed -i -n -e "1,/<\!-- Release -->/ p" -e"/<\!-- End Release -->/,$ p" -e "/<\!-- Release -->/ r version.txt" CHANGELOG.md
 
-    # Git push 
+    # Git push
     - shell: bash
       run: |
         git config user.name github-actions
