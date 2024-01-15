@@ -16,14 +16,14 @@ description: >
 license:
 - Apache-2.0
 
-tags: 
+tags:
   - devops
   - kubernetes
   - k8s
   - rancher
   - rke2
   - longhorn
-  - neuvector 
+  - neuvector
   - ansible
   - airgap
   - collection
@@ -39,8 +39,8 @@ issues: https://github.com/MozeBaltyk/rkub/issues
 
 build_ignore:
   - .gitignore
-  - '.*.swp' 
-  - .govmomi 
+  - '.*.swp'
+  - .govmomi
   - '.terraform*'
   - 'terraform.tfstate*'
   - .DS_Store

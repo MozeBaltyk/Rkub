@@ -53,3 +53,5 @@ jobs:
 
       - name: Update Readme and changelog
         uses: ./.github/actions/update-readme
+        targets: "./"
+        args: "-c .ansible-lint"
