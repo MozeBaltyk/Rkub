@@ -1,4 +1,4 @@
-name: Release on Ansible Galaxy
+name: Update README
 on:
   workflow_dispatch:
   #push:
