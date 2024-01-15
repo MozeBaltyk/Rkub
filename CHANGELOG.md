@@ -19,11 +19,11 @@ Features ✨
     - Deploy local registry and images loaded inside.
     - Setup firewalld rules if needed.
     - Make "master_ip" and "domain" parametrable.
-  - Script to uninstall everything. 
   - Deploy longhorn with custom datapath.
   - Deploy Rancher with custom password.
   - Deploy Neuvector.
   - Script to containerize in an Execution-Env.
+  - Script to uninstall everything
 <!-- End Features -->
 
 <!-- Fix -->
@@ -40,5 +40,5 @@ Bugfix 🐞
 <!-- Security -->
 Security 🔒️
   - Branch protect
-  - Github Workflows to release.
+  - Github Workflows to release and lint.
 <!-- End Security -->
