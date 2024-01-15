@@ -28,6 +28,9 @@ jobs:
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
+        with:
+          targets: "./"
+          args: "-c .ansible-lint"
 
   update:
     name: Update Versions
@@ -53,5 +56,3 @@ jobs:
 
       - name: Update Readme and changelog
         uses: ./.github/actions/update-readme
-        targets: "./"
-        args: "-c .ansible-lint"
