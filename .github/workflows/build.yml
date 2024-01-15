@@ -20,6 +20,12 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
 
       # step to install prerequis
+      - name: Install prerequis
+        shell: bash
+        run: |
+          pwd
+          ls
+          make prerequis
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main

@@ -1,4 +1,4 @@
-name: Release on Ansible Galaxy
+name: Release to Ansible Galaxy
 on:
   workflow_dispatch:
   # Not needed anymore, since branch protection
