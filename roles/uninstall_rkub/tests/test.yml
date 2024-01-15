@@ -2,4 +2,4 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - uninstall_rke2
+    - uninstall_rkub
