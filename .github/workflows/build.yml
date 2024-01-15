@@ -19,12 +19,15 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
 
+      # step to install prerequis
+
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
 
   update:
-    runs-on: ubuntu-latest
     name: Update Versions
+    needs: lint
+    runs-on: ubuntu-latest
 
     if: github.repository == 'mozebaltyk/rkub'
     permissions:
