@@ -53,4 +53,4 @@ runs:
         git config user.email github-actions@github.com
         git add README.md CHANGELOG.md
         [[ -z $(git status -uno --porcelain) ]] && echo "No need to commit..." || git commit -m "⚡ Update README & CHANGELOG"
-        git push origin
+        git push origin HEAD:${{ github.ref_name }}
