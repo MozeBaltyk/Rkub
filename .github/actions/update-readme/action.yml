@@ -5,16 +5,6 @@ description: Update Readme and Changelog
 runs:
   using: composite
   steps:
-    # Checkout on branch where pull request
-    - name: Which branch?
-      shell: bash
-      run: |
-        echo "${{ github.head_ref || github.ref_name }}"
-
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.head_ref || github.ref_name }}
-
     # Update Readme 
     - shell: bash
       run: |
