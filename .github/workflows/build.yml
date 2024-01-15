@@ -23,8 +23,6 @@ jobs:
       - name: Install prerequis
         shell: bash
         run: |
-          pwd
-          ls
           make prerequis
 
       - name: Run ansible-lint
