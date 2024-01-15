@@ -49,7 +49,6 @@ runs:
     # Git push 
     - shell: bash
       run: |
-        git pull remote ${{ github.head_ref || github.ref_name }}
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add README.md CHANGELOG.md
