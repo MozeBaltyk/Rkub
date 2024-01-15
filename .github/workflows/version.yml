@@ -1,7 +1,9 @@
 name: Release on Ansible Galaxy
 on:
   workflow_dispatch:
-  push:
+  #push:
+  #  branches: ["develop"]
+  pull_request:
     branches: ["develop"]
 
 jobs:
