@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  readme:
+  version:
     runs-on: ubuntu-latest
     name: Update Versions
 
@@ -18,7 +18,5 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Update Readme and changelog
         uses: ./.github/actions/update-readme

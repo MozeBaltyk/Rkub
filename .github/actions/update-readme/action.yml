@@ -5,6 +5,16 @@ description: Update Readme and Changelog
 runs:
   using: composite
   steps:
+    # Checkout on branch where pull request
+    - name: Which branch?
+      shell: bash
+      run: |
+        echo "${{ github.head_ref || github.ref_name }}"
+
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref || github.ref_name }}
+
     # Update Readme 
     - shell: bash
       run: |
@@ -47,15 +57,9 @@ runs:
         sed -i -n -e "1,/<\!-- Release -->/ p" -e"/<\!-- End Release -->/,$ p" -e "/<\!-- Release -->/ r version.txt" CHANGELOG.md
 
     # Git push 
-    - name: Which branch?
-      shell: bash
-      run: |
-        echo "${{ github.head_ref || github.ref_name }}"
-
     - shell: bash
       run: |
-        git checkout ${{ github.head_ref || github.ref_name }}
-        git pull remove ${{ github.head_ref || github.ref_name }}
+        git pull remote ${{ github.head_ref || github.ref_name }}
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add README.md CHANGELOG.md
