@@ -25,7 +25,6 @@ jobs:
         shell: bash
         run: |
           make prerequis
-          pwd && ls
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
