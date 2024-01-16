@@ -1,28 +1,28 @@
 ---
 # tasks file for build_airgap_package
 - name: Gather facts
-  setup:
+  ansible.builtin.setup:
     gather_subset:
       - "distribution"
       - "distribution_major_version"
       - "!min"
   when: >
     ansible_os_family is not defined
-    
+
 - name: Prerequisites
-  import_tasks: prerequis.yml
+  ansible.builtin.import_tasks: prerequis.yml
 
 - name: Import utils binaries
-  import_tasks: utils.yml
+  ansible.builtin.import_tasks: utils.yml
 
 - name: Import RKE2
-  import_tasks: rke2.yml
+  ansible.builtin.import_tasks: rke2.yml
 
 - name: Import helm charts
-  import_tasks: helm.yml
+  ansible.builtin.import_tasks: helm.yml
 
 - name: Import images
-  import_tasks: images.yml
+  ansible.builtin.import_tasks: images.yml
 
 - name: Compress the all thing 
-  import_tasks: compress.yml
+  ansible.builtin.import_tasks: compress.yml

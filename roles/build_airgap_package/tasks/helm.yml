@@ -39,7 +39,7 @@
     repo_url: "https://neuvector.github.io/neuvector-helm/"
     force_update: true
 
-# Pull charts 
+# Pull charts
 - name: Download chart using chart url
   kubernetes.core.helm_pull:
     chart_ref: jetstack/cert-manager
