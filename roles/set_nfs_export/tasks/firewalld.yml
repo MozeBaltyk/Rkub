@@ -4,8 +4,8 @@
   when:
     - ansible_facts['services']['firewalld.service'] is defined
     - ansible_facts['services']['firewalld.service']['state'] == "running"
-  block: 
-    - name: firewalld NFS port enabled 
+  block:
+    - name: firewalld NFS port enabled
       ansible.posix.firewalld:
         service: "{{ item }}"
         permanent: true

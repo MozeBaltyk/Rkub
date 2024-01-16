@@ -7,12 +7,13 @@
     group: root
     mode: "0644"
     force: true
-  notify: restart firewalld
+  notify: Restart firewalld
 
-- ansible.builtin.meta: flush_handlers
+- name: Flush handlers now
+  ansible.builtin.meta: flush_handlers
 
 - name: Manage firewalld service {{ rule['name'] }}
-  ansible.builtin.firewalld:
+  ansible.posix.firewalld:
     service: "{{ rule['name'] }}"
     permanent: true
     immediate: true

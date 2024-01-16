@@ -23,3 +23,4 @@
 
     - name: Restorecon
       ansible.builtin.command: "restorecon -v {{ export_nfs_registry_path }}"
+      changed_when: false

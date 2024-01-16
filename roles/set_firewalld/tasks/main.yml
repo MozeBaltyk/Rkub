@@ -3,7 +3,7 @@
 
 - name: Manage firewalld zone files
   ansible.builtin.include_tasks: manage_firewalld_zone.yml
-  loop: "{{ firewalld_zones  | default([]) }}"
+  loop: "{{ firewalld_zones | default([]) }}"
   loop_control:
     loop_var: zone
 
