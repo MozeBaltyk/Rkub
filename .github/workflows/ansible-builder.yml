@@ -15,8 +15,8 @@ on:
       - 'meta/ee-requirements.txt'
 
 env:
-  NAMESPACE: community
-  COLLECTION_NAME: hashi_vault
+  NAMESPACE: mozebaltyk
+  COLLECTION_NAME: rkub
 
 jobs:
   builder:
