@@ -3,7 +3,7 @@
   run_once: true
   become: true
   become_user: "{{ admin_user }}"
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_flags: "-i"
   block:
     - name: Deploy helm charts

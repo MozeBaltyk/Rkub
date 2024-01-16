@@ -84,7 +84,7 @@
       become: true
       when:
         - ansible_os_family == "RedHat"
-        - ansible_distribution_major_version | int >= 8 
+        - ansible_distribution_major_version | int >= 8
 
     - name: Import a key from a file
       ansible.builtin.rpm_key:
@@ -120,7 +120,7 @@
       ansible.builtin.systemd:
         name: rke2-server.service
         state: started
-        enabled: yes
+        enabled: true
       notify: "Service (re)started"
 
     - name: Wait for k8s apiserver
@@ -140,7 +140,7 @@
       ansible.builtin.blockinfile:
         path: ~/.bashrc
         block: |
-            export KUBECONFIG=/etc/rancher/rke2/rke2.yaml 
-            export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml 
+            export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
+            export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml
             PATH=$PATH:/var/lib/rancher/rke2/bin
         marker: "# {mark} ANSIBLE install_rke2_controler"

@@ -4,3 +4,4 @@
     "tar -I zstd -vcf {{ tar_zst_name }} -C {{ directory_package }} ."
   args:
     chdir: "{{ directory_package }}/.."
+  changed_when: false

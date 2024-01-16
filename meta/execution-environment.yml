@@ -1,5 +1,5 @@
 ---
-version: 4
+version: 3
 
 dependencies:
   python: meta/ee-requirements.txt

@@ -15,7 +15,7 @@
       ansible.builtin.systemd:
         name: iscsid
         state: started
-        enabled: yes
+        enabled: true
 
 - name: Ensure longhorn directory exist
   ansible.builtin.file:

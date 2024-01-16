@@ -13,6 +13,7 @@
     rm -rf linux-amd64 > /dev/null 2>&1
   args:
     chdir: "{{ directory_package }}/helm/"
+  changed_when: false
 
 # Add charts repository
 - name: Add jetstack chart repo
