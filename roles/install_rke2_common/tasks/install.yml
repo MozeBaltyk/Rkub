@@ -1,3 +1,4 @@
+---
 - name: Ensure admin_user exist
   ansible.builtin.user:
     name: "{{ admin_user }}"
@@ -24,4 +25,5 @@
   ansible.builtin.template:
     src: rke2.conf
     dest: /etc/sysctl.d/rke2.conf
+    mode: '0600'
   notify: Restart systemd-sysctl

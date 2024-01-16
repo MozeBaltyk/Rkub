@@ -1,5 +1,5 @@
 ---
-- name: Manage firewalld file zone definition {{ zone['name'] }} 
+- name: Manage firewalld file zone definition {{ zone['name'] }}
   ansible.builtin.template:
     src: zone.xml.j2
     dest: "{{ firewalld_path }}/zones/{{ zone['name'] }}.xml"
@@ -12,7 +12,7 @@
 - name: Flush handlers now
   ansible.builtin.meta: flush_handlers
 
-- name: Manage firewalld zone definition {{ zone['name'] }} 
+- name: Manage firewalld zone definition {{ zone['name'] }}
   ansible.posix.firewalld:
     zone: "{{ zone['name'] }}"
     permanent: true

@@ -1,16 +1,18 @@
+---
 ## Get Token if one exist
 - name: Check if token already exist
   ansible.builtin.stat:
     path: "{{ mount_path }}/token"
   register: token
 
-- block: 
-  - name: Read node-token from NFS share
-    ansible.builtin.slurp:
-      src: "{{ mount_path }}/token"
-    register: node_token
-
-  - name: Store Master node-token
-    ansible.builtin.set_fact:
-      rke2_config_token: "{{ node_token['content'] | b64decode | regex_replace('\n', '') }}"
+- name: Read token if exist
   when: token['stat'].exists
+  block: 
+    - name: Read node-token from NFS share
+      ansible.builtin.slurp:
+        src: "{{ mount_path }}/token"
+      register: node_token
+
+    - name: Store Master node-token
+      ansible.builtin.set_fact:
+        rke2_config_token: "{{ node_token['content'] | b64decode | regex_replace('\n', '') }}"

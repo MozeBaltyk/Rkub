@@ -71,4 +71,3 @@
 - name: Display Output
   debug:
     var: docker['stdout_lines']
-    

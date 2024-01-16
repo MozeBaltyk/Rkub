@@ -1,20 +1,21 @@
-# Install and start iscsid 
-- block:
-  - name: Ensure iscsi-initiator-utils package is installed on Redhat based OS
-    ansible.builtin.dnf:
-      name:  iscsi-initiator-utils
-      state: present
-
-  - name: Start and enable iscsid
-    ansible.builtin.systemd:
-      name: iscsid
-      state: started
-      enabled: yes
-
+---
+# Install and start iscsid on RHEL 8
+- name: Install and start iscsid on RHEL 8
   become: true
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int >= 8
+  block:
+    - name: Ensure iscsi-initiator-utils package is installed on Redhat based OS
+      ansible.builtin.dnf:
+        name:  iscsi-initiator-utils
+        state: present
+
+    - name: Start and enable iscsid
+      ansible.builtin.systemd:
+        name: iscsid
+        state: started
+        enabled: yes
 
 - name: Ensure longhorn directory exist
   ansible.builtin.file:

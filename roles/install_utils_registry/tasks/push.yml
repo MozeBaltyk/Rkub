@@ -15,4 +15,4 @@
     remote_src: true
     mode: "0750"
   notify: Restart rke2-agent
-  when: caller_role_name == "worker"  
+  when: caller_role_name == "worker"

@@ -1,14 +1,19 @@
 # For RHEL >= 8 as root
-- block:
+- name: Specific actions to be done on RHEL 8
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+  block:
     - name: Display message
-      debug:
+      ansible.builtin.debug:
         msg: "Specific actions regarding servers in RHEL 8/9"
 
     # Desactivate Cloud services
     - name: Disable service nm-cloud-setup
       ansible.builtin.systemd:
         name: nm-cloud-setup.service
-        enabled: no
+        enabled: false
         state: stopped
       when: ansible_facts['services']['nm-cloud-setup.service'] is defined
 
@@ -26,6 +31,7 @@
           [keyfile]
           unmanaged-devices=interface-name:cali*;interface-name:flannel*
         dest: /etc/NetworkManager/conf.d/rke2-canal.conf
+        mode: '0600'
       when: ansible_facts['services']['NetworkManager.service'] is defined
 
     - name: Set rke2-canal.conf file permissions
@@ -44,18 +50,13 @@
         - ansible_facts['services']['NetworkManager.service'] is defined
         - ansible_facts['services']['NetworkManager.service']['state'] == "running"
 
-  become: true
-  when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version | int >= 8
-
 # For RHEL 7 as root
-- block:
-    - name: Display message
-      debug:
-        msg: "Specific actions regarding servers in RHEL 7"
-
+- name: Specific actions to be done on RHEL 7
   become: true
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int == 7
+  block:
+    - name: Display message
+      debug:
+        msg: "Specific actions regarding servers in RHEL 7"

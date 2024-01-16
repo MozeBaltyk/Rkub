@@ -1,3 +1,4 @@
+---
 - name: "Deploy Rancher"
   run_once: true
   become: true
@@ -5,22 +6,21 @@
   become_method: sudo
   become_flags: "-i"
   block:
-
-  - name: Deploy helm charts
-    kubernetes.core.helm:
-      atomic: true
-      name: "rancher"
-      chart_ref: "{{ mount_helm_path }}/{{ rancher_charts }}"
-      release_namespace: "cattle-system"
-      create_namespace: true
-      values:
-        useBundledSystemChart: true
-        bootstrapPassword: "{{ rancher_password }}"
-        replicas: 1
-        systemDefaultRegistry: localhost:5000
-        rancherImage: localhost:5000/rancher/rancher
-        hostname: "{{ rancher_url }}"
-        auditLog:
-          level: 2 
-          destination: hostPath
-      kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+    - name: Deploy helm charts
+      kubernetes.core.helm:
+        atomic: true
+        name: "rancher"
+        chart_ref: "{{ mount_helm_path }}/{{ rancher_charts }}"
+        release_namespace: "cattle-system"
+        create_namespace: true
+        values:
+          useBundledSystemChart: true
+          bootstrapPassword: "{{ rancher_password }}"
+          replicas: 1
+          systemDefaultRegistry: localhost:5000
+          rancherImage: localhost:5000/rancher/rancher
+          hostname: "{{ rancher_url }}"
+          auditLog:
+            level: 2 
+            destination: hostPath
+        kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"

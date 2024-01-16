@@ -1,3 +1,4 @@
+---
 # As root
 - name: Ensure that admin user can access
   ansible.builtin.file:
@@ -15,37 +16,37 @@
   become: true
 
 # As Admin User
-- block:
-  - name: Ensure Arkade directory exist
-    ansible.builtin.file:
-      path: "$HOME/.arkade/bin"
-      state: directory
-      recurse: true
-      owner: "{{ admin_user }}"
-      group: "{{ admin_user }}"
-      mode: '0700'
-
-  - name: Copy utils into .arkade/bin
-    ansible.builtin.copy:
-      src: "{{ mount_utils_path }}/{{ item }}"
-      dest: "$HOME/.arkade/bin/{{ item }}"
-      force: true
-      remote_src: true
-      mode: '0700'
-    loop:
-    - yq
-    - jq
-    - helm
-    - just
-    - kubectl
-    - k9s
-
-  - name: Update .bashrc
-    ansible.builtin.blockinfile:
-      path: "$HOME/.bashrc"
-      block: |
-        export PATH=$PATH:$HOME/.arkade/bin
-      marker: "# {mark} ANSIBLE install arkade utils"
-
+- name: Import arkade packages
   become: true
-  become_user: "{{ admin_user }}"
+  become_user: "{{ admin_user }}"  
+  block:
+    - name: Ensure Arkade directory exist
+      ansible.builtin.file:
+        path: "$HOME/.arkade/bin"
+        state: directory
+        recurse: true
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0700'
+
+    - name: Copy utils into .arkade/bin
+      ansible.builtin.copy:
+        src: "{{ mount_utils_path }}/{{ item }}"
+        dest: "$HOME/.arkade/bin/{{ item }}"
+        force: true
+        remote_src: true
+        mode: '0700'
+      loop:
+      - yq
+      - jq
+      - helm
+      - just
+      - kubectl
+      - k9s
+
+    - name: Update .bashrc
+      ansible.builtin.blockinfile:
+        path: "$HOME/.bashrc"
+        block: |
+          export PATH=$PATH:$HOME/.arkade/bin
+        marker: "# {mark} ANSIBLE install arkade utils"

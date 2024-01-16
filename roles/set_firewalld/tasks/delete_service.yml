@@ -13,7 +13,7 @@
   ansible.builtin.file:
     path: "{{ firewalld_path }}/services/{{ service['name'] }}.xml"
     state: absent
-  when:  service['erase'] == true
+  when:  service['erase']
   notify: Restart firewalld
 
 - name: Flush handlers now
