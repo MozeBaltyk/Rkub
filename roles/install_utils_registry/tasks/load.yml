@@ -59,13 +59,15 @@
 
 # Result
 - name: List docker registry
-  ansible.builtin.shell: |
-    set -o pipefail &&
-    for i in $(curl -sk localhost:5000/v2/_catalog | jq -r '.repositories[]'); do
-      for tag in $(curl -sk localhost:5000/v2/${i}/tags/list | jq -r '.tags[]'); do
-        echo ${i}:${tag};
-      done;
-    done
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail &&
+      for i in $(curl -sk localhost:5000/v2/_catalog | jq -r '.repositories[]'); do
+        for tag in $(curl -sk localhost:5000/v2/${i}/tags/list | jq -r '.tags[]'); do
+          echo ${i}:${tag};
+        done;
+      done
+    executable: /bin/bash
   register: docker
   changed_when: false
 

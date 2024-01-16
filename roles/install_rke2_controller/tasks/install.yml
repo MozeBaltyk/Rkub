@@ -63,8 +63,10 @@
 
     - name: Install RKE2 server node
       ansible.builtin.shell:
-        cmd: "set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ mount_rke2_path }} INSTALL_RKE2_TYPE=server sh {{ mount_rke2_path }}/install.sh"
+        cmd: |
+          set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ mount_rke2_path }} INSTALL_RKE2_TYPE=server sh {{ mount_rke2_path }}/install.sh
         chdir: "{{ mount_rke2_path }}"
+        executable: /bin/bash
       register: install_server_output
       failed_when: false
       changed_when: false

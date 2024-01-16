@@ -38,11 +38,6 @@ install:
 uninstall:
 	ansible-playbook ./playbooks/tasks/uninstall.yml $(ANSIBLE_ARGS)
 
-
-##################
-## EE Container ##
-##################
-
 .PHONY: ee-container
 ## Create an execution-env container with all dependencies inside
 ee-container:

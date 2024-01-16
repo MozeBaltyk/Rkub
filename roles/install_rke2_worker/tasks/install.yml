@@ -19,7 +19,9 @@
 
     - name: Install RKE2 worker nodes
       ansible.builtin.shell:
-        cmd: "set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ mount_rke2_path }} INSTALL_RKE2_TYPE=agent sh {{ mount_rke2_path }}/install.sh"
+        cmd: |
+          set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ mount_rke2_path }} INSTALL_RKE2_TYPE=agent sh {{ mount_rke2_path }}/install.sh
+        executable: /bin/bash
         chdir: "{{ mount_rke2_path }}"
       register: install_worker_output
       failed_when: false
