@@ -1,3 +1,4 @@
+---
 - name: Get Latest version of arkade
   ansible.builtin.get_url:
     url: "{{ lookup('url', 'https://api.github.com/repos/alexellis/arkade/releases/latest', split_lines=false) | regex_search('browser_download_url.*(https://github.com/alexellis/arkade/releases/download(.*?)/arkade)', '\\1') | first }}"

@@ -1,4 +1,5 @@
-## List images 
+---
+## List images
 - name: Rancher List - Download rancher-images.txt
   ansible.builtin.get_url:
     url: "https://github.com/rancher/rancher/releases/download/v{{ RANCHER_VERSION }}/rancher-images.txt"

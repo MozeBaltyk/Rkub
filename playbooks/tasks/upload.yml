@@ -1,3 +1,4 @@
+---
 - name: Dowload Rkub package on first controler
   hosts: RKE2_CONTROLLERS[0]
   gather_facts: false
@@ -5,4 +6,4 @@
     - ../vars/main.yml
   tags: controler
   roles:
-    - {role: upload_package_zst, tags: upload,}
+    - {role: upload_package_zst, tags: upload}

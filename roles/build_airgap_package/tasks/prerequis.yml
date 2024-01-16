@@ -1,3 +1,4 @@
+---
 # for RHEL-like
 - name: Install zstd and skopeo
   ansible.builtin.dnf:

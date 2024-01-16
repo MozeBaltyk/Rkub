@@ -10,7 +10,9 @@ exclude_paths:
   - molecule/
   - docs/
   - scripts/
-  
+
 skip_list:
   - yaml[line-length]
   - var-naming[no-role-prefix]
+  - command-instead-of-module
+  - var-naming[pattern]

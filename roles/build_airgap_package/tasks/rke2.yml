@@ -1,4 +1,4 @@
-
+---
 - name: Download rke2-images.linux-amd64.tar.zst
   get_url:
     url: "https://github.com/rancher/rke2/releases/download/{{ rke2_common_repo_version }}/rke2-images.linux-amd64.tar.zst"

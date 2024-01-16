@@ -6,7 +6,7 @@
   vars_files: ../vars/main.yml
   tags: controller
   roles:
-    - {role: install_rke2_controller, tags: rke2,}
+    - {role: install_rke2_controller, tags: rke2}
 
 - name: Install RKE2 Workers
   hosts: RKE2_WORKERS
@@ -15,4 +15,4 @@
   vars_files: ../vars/main.yml
   tags: worker
   roles:
-    - {role: install_rke2_worker, tags: rke2,}
+    - {role: install_rke2_worker, tags: rke2}

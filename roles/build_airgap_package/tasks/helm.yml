@@ -1,8 +1,10 @@
-# Download/Install helm on build server 
+---
+# Download/Install helm on build server
 - name: Download Helm binary
   ansible.builtin.get_url:
     url: "https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz"
     dest: "{{ directory_package }}/helm/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+    mode: 0750
 
 - name: Install Helm binary
   ansible.builtin.shell: |
