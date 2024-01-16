@@ -15,8 +15,6 @@ jobs:
         shell: bash
         run: |
           echo "${{ github.head_ref || github.ref_name }}"
-          pwd
-          ls -la
 
       - uses: actions/checkout@v4
         with:

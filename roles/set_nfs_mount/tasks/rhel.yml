@@ -1,7 +1,7 @@
 # mount NFS directory
 - block:
   - name: Install NFS packages
-    dnf:
+    ansible.builtin.dnf:
       name: "{{ item }}"
       state: present
     with_items:

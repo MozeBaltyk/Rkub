@@ -1,12 +1,12 @@
 # Install and start iscsid 
 - block:
   - name: Ensure iscsi-initiator-utils package is installed on Redhat based OS
-    dnf:
+    ansible.builtin.dnf:
       name:  iscsi-initiator-utils
       state: present
 
   - name: Start and enable iscsid
-    systemd:
+    ansible.builtin.systemd:
       name: iscsid
       state: started
       enabled: yes

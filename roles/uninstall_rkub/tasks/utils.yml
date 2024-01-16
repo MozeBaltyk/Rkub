@@ -1,4 +1,5 @@
-- name: Remove Helm 
+---
+- name: Remove Helm
   ansible.builtin.file:
     path: /usr/local/bin/helm
     state: absent
