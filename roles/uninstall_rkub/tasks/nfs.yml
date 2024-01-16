@@ -34,18 +34,18 @@
         - ansible_os_family == "RedHat"
         - ansible_distribution_major_version | int >= 8
 
-# Remove NFS firewalld 
+# Remove NFS firewalld
 - name: Remove NFS Firewalld
   become: true
   when:
     - ansible_facts['services']['firewalld.service'] is defined
     - ansible_facts['services']['firewalld.service']['state'] == "running"
-  block: 
+  block:
     - name: Firewalld NFS port enabled
       ansible.posix.firewalld:
         service: "{{ item }}"
         permanent: true
-        state: disabled 
+        state: disabled
       loop:
         - nfs
         - mountd

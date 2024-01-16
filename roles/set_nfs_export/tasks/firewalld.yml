@@ -1,21 +1,21 @@
-- block: 
-
-  - name: firewalld NFS port enabled 
-    ansible.posix.firewalld:
-      service: "{{ item }}"
-      permanent: true
-      state: enabled
-    loop:
-      - nfs
-      - rpc-bind
-      - mountd
-
-  - name: Always reload firewalld
-    ansible.builtin.service:
-      name: firewalld
-      state: reloaded
-
+---
+- name: Firewalld setup
   become: true
   when:
     - ansible_facts['services']['firewalld.service'] is defined
     - ansible_facts['services']['firewalld.service']['state'] == "running"
+  block: 
+    - name: firewalld NFS port enabled 
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop:
+        - nfs
+        - rpc-bind
+        - mountd
+
+    - name: Always reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded

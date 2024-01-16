@@ -2,19 +2,19 @@
 # tasks file for firewalld
 
 - name: Manage firewalld zone files
-  include_tasks: manage_firewalld_zone.yml
+  ansible.builtin.include_tasks: manage_firewalld_zone.yml
   loop: "{{ firewalld_zones  | default([]) }}"
   loop_control:
     loop_var: zone
 
 - name: Manage inbound rules
-  include_tasks: manage_inbound_rule.yml
+  ansible.builtin.include_tasks: manage_inbound_rule.yml
   loop: "{{ firewalld_rules['inbound'] | default([]) }}"
   loop_control:
     loop_var: rule
 
 - name: Delete a Service Completely
-  include_tasks: delete_service.yml
+  ansible.builtin.include_tasks: delete_service.yml
   loop: "{{ firewalld_remove['inbound'] | default([]) }}"
   loop_control:
     loop_var: service

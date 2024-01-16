@@ -1,3 +1,4 @@
+---
 - name: Create package directories
   ansible.builtin.file:
     path: "{{ export_nfs_registry_path }}"
@@ -6,7 +7,8 @@
 
 - name: Test whether SELinux is enabled
   ansible.builtin.command: /usr/sbin/selinuxenabled
-  ignore_errors: yes
+  ignore_errors: true
+  changed_when: false
   register: selinux_status
 
 - name: SElinux config

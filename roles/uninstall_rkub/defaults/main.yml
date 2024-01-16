@@ -5,8 +5,8 @@ export_nfs_path: "{{ global_directory_package_target }}/rancher"
 nfs_mount_path: "{{ global_directory_mount }}"
 longhorn_datapath: "{{ global_longhorn_datapath }}"
 
-firewalld_rules_to_remove: 
+firewalld_rules_to_remove:
   inbound:
-  - name: rke2
-    zone: public
-    erase: true
+    - name: rke2
+      zone: public
+      erase: true
