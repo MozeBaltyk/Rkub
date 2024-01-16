@@ -54,7 +54,7 @@ jobs:
           tag_version: ${{ steps.get_version.outputs.TAG_VERSION }}
           tag_exists: ${{ steps.check_tag.outputs.TAG_EXISTS }}
         if: ${{ steps.get_version.outputs.TAG_VERSION == steps.check_tag.outputs.TAG_EXISTS }}
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           script: |
               core.setFailed('Release tag already exists in git (tag_exists var: ${tag_exists} and tag_version: ${tag_version})')
