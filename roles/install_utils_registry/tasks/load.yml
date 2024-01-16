@@ -1,4 +1,5 @@
-- name: Flush handlers
+---
+- name: Flush handlers now
   ansible.builtin.meta: flush_handlers
 
 - name: Wait for k8s apiserver
@@ -16,7 +17,8 @@
   register: found_images
 
 - name: Copy longhorn images with skopeo
-  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/longhornio/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_',':') }} --dest-tls-verify=false"
+  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/longhornio/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_', ':') }} --dest-tls-verify=false"
+  changed_when: false
   with_items: "{{ found_images['files'] }}"
 
 # Cert
@@ -27,7 +29,8 @@
   register: found_images
 
 - name: Copy Cert-manager images with skopeo
-  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/cert/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_',':') }} --dest-tls-verify=false"
+  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/cert/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_', ':') }} --dest-tls-verify=false"
+  changed_when: false
   with_items: "{{ found_images['files'] }}"
 
 # Neuvector
@@ -38,7 +41,8 @@
   register: found_images
 
 - name: Copy Neuvector images with skopeo
-  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/neuvector/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_',':') }} --dest-tls-verify=false"
+  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/neuvector/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_', ':') }} --dest-tls-verify=false"
+  changed_when: false
   with_items: "{{ found_images['files'] }}"
 
 # Rancher
@@ -49,16 +53,18 @@
   register: found_images
 
 - name: Copy Rancher images with skopeo
-  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/rancher/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_',':') }} --dest-tls-verify=false"
+  ansible.builtin.command: "skopeo copy docker-archive:{{ item.path }} docker://localhost:5000/rancher/{{ item.path | basename  | regex_replace('.tar', '') | regex_replace('_', ':') }} --dest-tls-verify=false"
+  changed_when: false
   with_items: "{{ found_images['files'] }}"
 
 # Result
 - name: List docker registry
   ansible.builtin.shell: |
-    for i in $(curl -sk localhost:5000/v2/_catalog | jq -r '.repositories[]'); do 
-      for tag in $(curl -sk localhost:5000/v2/${i}/tags/list | jq -r '.tags[]'); do 
-        echo ${i}:${tag}; 
-      done; 
+    set -o pipefail &&
+    for i in $(curl -sk localhost:5000/v2/_catalog | jq -r '.repositories[]'); do
+      for tag in $(curl -sk localhost:5000/v2/${i}/tags/list | jq -r '.tags[]'); do
+        echo ${i}:${tag};
+      done;
     done
   register: docker
 

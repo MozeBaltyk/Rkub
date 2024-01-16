@@ -1,8 +1,10 @@
+---
 - name: Pre-load registry image
   ansible.builtin.copy:
     src: "{{ mount_registry_tar }}"
     dest: "{{ rke2_images_path }}"
     remote_src: true
+    mode: "0750"
   notify: Restart rke2-server
   when:  caller_role_name == "controller"
 
@@ -11,5 +13,6 @@
     src: "{{ mount_registry_tar }}"
     dest: "{{ rke2_images_path }}"
     remote_src: true
+    mode: "0750"
   notify: Restart rke2-agent
   when: caller_role_name == "worker"  

@@ -4,18 +4,17 @@
   run_once: true
   become: false
   block:
+    - name: Create Namespace
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ registry_namespace }}"
 
-  - name: Create Namespace
-    kubernetes.core.k8s:
-      state: present
-      definition:
-        apiVersion: v1
-        kind: Namespace
-        metadata:
-          name: "{{ registry_namespace }}"
-
-  - name: Deploy registry manifest
-    kubernetes.core.k8s:
-      state: present
-      template: "registry.yaml.j2"
-      kubeconfig: "~/.kube/{{ inventory_hostname }}.yaml"
+    - name: Deploy registry manifest
+      kubernetes.core.k8s:
+        state: present
+        template: "registry.yaml.j2"
+        kubeconfig: "~/.kube/{{ inventory_hostname }}.yaml"
