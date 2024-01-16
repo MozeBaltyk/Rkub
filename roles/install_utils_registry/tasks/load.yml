@@ -67,7 +67,8 @@
       done;
     done
   register: docker
+  changed_when: false
 
 - name: Display Output
-  debug:
+  ansible.builtin.debug:
     var: docker['stdout_lines']

@@ -21,6 +21,6 @@
           rancherImage: localhost:5000/rancher/rancher
           hostname: "{{ rancher_url }}"
           auditLog:
-            level: 2 
+            level: 2
             destination: hostPath
         kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"

@@ -19,7 +19,7 @@
     - cryptsetup
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version | int >= 8 
+    - ansible_distribution_major_version | int >= 8
 
 - name: Create sysctl.conf from template
   ansible.builtin.template:

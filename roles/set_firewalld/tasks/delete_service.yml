@@ -1,11 +1,11 @@
 ---
 # Remove service from zone
 - name: Delete firewalld service {{ service['name'] }}
-  ansible.builtin.firewalld:
+  ansible.posix.firewalld:
     service: "{{ service['name'] }}"
     permanent: true
     immediate: true
-    zone: "{{ service['zone'] | default( firewalld_default_zone ) }}"
+    zone: "{{ service['zone'] | default(firewalld_default_zone) }}"
     state: disabled
 
 # Completely delete service

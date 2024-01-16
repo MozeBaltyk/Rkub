@@ -18,7 +18,7 @@
 # As Admin User
 - name: Import arkade packages
   become: true
-  become_user: "{{ admin_user }}"  
+  become_user: "{{ admin_user }}"
   block:
     - name: Ensure Arkade directory exist
       ansible.builtin.file:
@@ -37,12 +37,12 @@
         remote_src: true
         mode: '0700'
       loop:
-      - yq
-      - jq
-      - helm
-      - just
-      - kubectl
-      - k9s
+        - yq
+        - jq
+        - helm
+        - just
+        - kubectl
+        - k9s
 
     - name: Update .bashrc
       ansible.builtin.blockinfile:

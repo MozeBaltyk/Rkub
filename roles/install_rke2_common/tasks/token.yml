@@ -7,7 +7,7 @@
 
 - name: Read token if exist
   when: token['stat'].exists
-  block: 
+  block:
     - name: Read node-token from NFS share
       ansible.builtin.slurp:
         src: "{{ mount_path }}/token"

@@ -5,7 +5,7 @@
   become_user: "{{ admin_user }}"
   become_method: sudo
   become_flags: "-i"
-  block: 
+  block:
     - name: Deploy helm charts
       kubernetes.core.helm:
         atomic: true

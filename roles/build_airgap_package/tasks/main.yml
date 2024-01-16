@@ -24,5 +24,5 @@
 - name: Import images
   ansible.builtin.import_tasks: images.yml
 
-- name: Compress the all thing 
+- name: Compress the all thing
   ansible.builtin.import_tasks: compress.yml

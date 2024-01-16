@@ -13,7 +13,7 @@
         path: "$HOME/.kube"
         state: directory
         mode: 0700
-        recurse: yes
+        recurse: true
       become_user: "{{ admin_user }}"
 
     - name: Copy kubeconfig in Admin home dir

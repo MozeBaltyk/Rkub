@@ -12,7 +12,7 @@ mount_rke2_common_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_common_rpm_ver
 mount_rke2_selinux_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
 
 # Firewall rules
-controller_firewalld_rules: 
+controller_firewalld_rules:
   inbound:
     - name: rke2
       zone: public

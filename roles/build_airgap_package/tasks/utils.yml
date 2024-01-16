@@ -8,7 +8,8 @@
 - name: Arkade get packages
   ansible.builtin.shell:
     "{{ directory_package }}/utils/arkade get --progress=false --path {{ directory_package }}/utils/ {{ item }} > /dev/null"
-  loop: 
+  changed_when: false
+  loop:
     - yq
     - jq
     - helm

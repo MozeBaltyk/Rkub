@@ -12,39 +12,39 @@
 - name: Check if kubecm is installed on localhost
   delegate_to: localhost
   become: false
-  block: 
-    - name: Check kubecm is installed (part of prerequisites) 
-      ansible.builtin.shell: type kubecm
+  block:
+    - name: Check kubecm is installed (part of prerequisites)
+      ansible.builtin.command: type kubecm
       register: is_installed
       changed_when: false
 
     - name: Add kubeconfig to kubecm
       block:
         - name: Test if default context already exist in your kubeconfig.
-          ansible.builtin.shell: "kubecm list default > /dev/null  2>&1"
+          ansible.builtin.command: "kubecm list default > /dev/null  2>&1"
           changed_when: false
 
         - name: Message to you
-          ansible.builtin.debug: 
-            msg: "Kubeconfig was added to your kubecm." 
+          ansible.builtin.debug:
+            msg: "Kubeconfig was added to your kubecm."
 
       rescue:
-        - name: Add to kubecm 
-          ansible.builtin.shell: "kubecm add -c -f ~/.kube/{{ inventory_hostname }}.yaml"
+        - name: Add to kubecm
+          ansible.builtin.command: "kubecm add -c -f ~/.kube/{{ inventory_hostname }}.yaml"
           changed_when: false
 
         - name: Switch to default
-          ansible.builtin.shell: "kubecm switch default"
+          ansible.builtin.command: "kubecm switch default"
           changed_when: false
 
   rescue:
     - name: No Kubecm
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "Kubecm is not installed on your localhost! Not a big problem, but I did not add it to your local kubeconfig."
 
-  always: 
+  always:
     - name: Message to you
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "Kubeconfig of this cluster was imported in your localhost in ~/.kube/{{ inventory_hostname }}.yaml"
 
 # Check Flux to Kube API
@@ -52,7 +52,7 @@
   delegate_to: localhost
   become: false
   block:
-    - name: Check kube api 
+    - name: Check kube api
       ansible.builtin.uri:
         url: "https://{{ master }}:6443"
         validate_certs: false
