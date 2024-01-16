@@ -8,12 +8,16 @@ on:
       - '.github/workflows/ansible-builder.yml'
       - 'meta/execution-environment.yml'
       - 'meta/ee-requirements.txt'
+      - 'meta/ee-requirements.yml'
+      - 'meta/ee-bindeps.txt'
   pull_request:
     paths:
       - '.github/workflows/ansible-builder.yml'
       - 'meta/execution-environment.yml'
       - 'meta/ee-requirements.txt'
-
+      - 'meta/ee-requirements.yml'
+      - 'meta/ee-bindeps.txt'
+      
 env:
   NAMESPACE: mozebaltyk
   COLLECTION_NAME: rkub
