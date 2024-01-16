@@ -1,5 +1,5 @@
 ---
-- name: test
+- name: Test
   hosts: localhost
   remote_user: root
   roles:
