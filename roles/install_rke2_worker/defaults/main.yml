@@ -14,9 +14,8 @@ mount_rke2_selinux_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_selinux_rpm_v
 # Firewall rules
 worker_firewalld_rules:
   inbound:
-  - name: rke2
-    zone: public
-    ports:
-    - {port: 10250, protocol: tcp}
-    - {port: 8472, protocol: udp}
-    
+    - name: rke2
+      zone: public
+      ports:
+        - {port: 10250, protocol: tcp}
+        - {port: 8472, protocol: udp}

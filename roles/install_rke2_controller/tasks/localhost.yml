@@ -1,6 +1,7 @@
+---
 # All tasks to do realize on ansible controler
 - name: Fetch RKE2 kubeconfig to localhost
-  fetch:
+  ansible.builtin.fetch:
     src: "$HOME/.kube/{{ inventory_hostname }}.yaml"
     dest: "~/.kube/{{ inventory_hostname }}.yaml"
     flat: true
@@ -8,52 +9,57 @@
   become_user: "{{ admin_user }}"
 
 # check kubecm is installed on your localhost
-- block: 
-  - name: Check kubecm is installed (part of prerequisites) 
-    shell: type kubecm
-    register: is_installed
-
-  - block:
-    - name: Test if default context already exist in your kubeconfig.
-      shell: "kubecm list default > /dev/null  2>&1"
-    
-    - name: Message to you
-      debug: 
-        msg: "Kubeconfig was added to your kubecm." 
-
-    rescue:
-    - name: Add to kubecm 
-      shell: "kubecm add -c -f ~/.kube/{{ inventory_hostname }}.yaml"
-      
-    - name: Switch to default
-      shell: "kubecm switch default"
-
-  rescue:
-  - name: No Kubecm
-    debug: 
-      msg: "Kubecm is not installed on your localhost! Not a big problem, but I did not add it to your local kubeconfig."
-
-  always: 
-  - name: Message to you
-    debug: 
-      msg: "Kubeconfig of this cluster was imported in your localhost in ~/.kube/{{ inventory_hostname }}.yaml"
-
+- name: Check if kubecm is installed on localhost
   delegate_to: localhost
   become: false
+  block: 
+    - name: Check kubecm is installed (part of prerequisites) 
+      ansible.builtin.shell: type kubecm
+      register: is_installed
+      changed_when: false
 
+    - name: Add kubeconfig to kubecm
+      block:
+        - name: Test if default context already exist in your kubeconfig.
+          ansible.builtin.shell: "kubecm list default > /dev/null  2>&1"
+          changed_when: false
+
+        - name: Message to you
+          ansible.builtin.debug: 
+            msg: "Kubeconfig was added to your kubecm." 
+
+      rescue:
+        - name: Add to kubecm 
+          ansible.builtin.shell: "kubecm add -c -f ~/.kube/{{ inventory_hostname }}.yaml"
+          changed_when: false
+
+        - name: Switch to default
+          ansible.builtin.shell: "kubecm switch default"
+          changed_when: false
+
+  rescue:
+    - name: No Kubecm
+      ansible.builtin.debug: 
+        msg: "Kubecm is not installed on your localhost! Not a big problem, but I did not add it to your local kubeconfig."
+
+  always: 
+    - name: Message to you
+      ansible.builtin.debug: 
+        msg: "Kubeconfig of this cluster was imported in your localhost in ~/.kube/{{ inventory_hostname }}.yaml"
 
 # Check Flux to Kube API
 - name: Check if flux 6443 is open between localhost and master
   delegate_to: localhost
   become: false
-  block: 
-    - name: "Check"
-      uri:
+  block:
+    - name: Check kube api 
+      ansible.builtin.uri:
         url: "https://{{ master }}:6443"
         validate_certs: false
         status_code: 401
 
   rescue:
-  - fail:
-      msg: >
-        "Something wrong in your network since localhost does not reach master on 6443"
+    - name: Send fail message
+      ansible.builtin.fail:
+        msg: >
+          "Something wrong in your network since localhost does not reach master on 6443"
