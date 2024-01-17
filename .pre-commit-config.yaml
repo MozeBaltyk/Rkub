@@ -3,6 +3,17 @@
 # See https://pre-commit.com/hooks.html for more hooks
 
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    # Latest release from https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-symlinks
+
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.33.0
     hooks:
@@ -15,14 +26,3 @@ repos:
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    # Latest release from https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: check-merge-conflict
-      - id: detect-private-key
-      - id: check-symlinks
