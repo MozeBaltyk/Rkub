@@ -173,8 +173,8 @@ Improvments:
 [rancher/RKE2](https://github.com/rancher/rke2)
 
 
-## Authors
-morze.baltyk@proton.me
+## Repo Activity
+![Alt](https://repobeats.axiom.co/api/embed/2664e49768529526895630ae70e2a366a70de78f.svg "Repobeats analytics image")
 
 
 ## Project status
