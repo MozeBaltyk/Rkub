@@ -124,6 +124,9 @@
         state: started
         enabled: true
       notify: "Service (re)started"
+      register: rke2_service
+      until: rke2_service is succeeded
+      retries: 5
 
     - name: Wait for k8s apiserver
       ansible.builtin.wait_for:
@@ -142,7 +145,7 @@
       ansible.builtin.blockinfile:
         path: ~/.bashrc
         block: |
-            export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
+            export KUBECONFIG={{ rke2_kubeconfig_file }}
             export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml
             PATH=$PATH:/var/lib/rancher/rke2/bin
         marker: "# {mark} ANSIBLE install_rke2_controler"
