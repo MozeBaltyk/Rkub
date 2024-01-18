@@ -16,15 +16,23 @@
         mode: 0700
         recurse: true
 
+    - name: Get Kubernetes config file
+      run_once: true
+      ansible.builtin.slurp:
+        src: "{{ rke2_kubeconfig_file }}"
+      register: kubeconfig_base64
+      become: false
+
     - name: Copy kubeconfig in Admin home dir
       ansible.builtin.copy:
-        src: "/etc/rancher/rke2/rke2.yaml"
+        content: "{{ kubeconfig_base64.content | b64decode | replace('127.0.0.1', control_plane_endpoint) }}"
         dest: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         force: true
         remote_src: true
         mode: '0600'
+      run_once: true
       become: false
 
     - name: Change localhost with master ip in kubeconfig
