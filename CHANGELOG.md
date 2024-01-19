@@ -3,7 +3,7 @@
 <!-- Release -->
 ## 1.0.3 (2024-01-17)
 
-Versions:
+### Versions:
   - rke2 version: 1.26.11
   - cert-manager version: 1.13.3
   - rancher version: 2.8.0
@@ -12,33 +12,36 @@ Versions:
 <!-- End Release -->
 
 <!-- Features -->
-Features ✨
-  - Install RKE2 one controler and several workers (currently no HA):
-    - Add nerdctl.
-    - Setup an admin on master node (kuberoot).
-    - Deploy local registry and images loaded inside.
-    - Setup firewalld rules if needed.
-    - Make "master_ip" and "domain" parametrable.
-  - Deploy longhorn with custom datapath.
-  - Deploy Rancher with custom password.
-  - Deploy Neuvector.
-  - Script to containerize in an Execution-Env.
-  - Script to uninstall everything
+### Features ✨
+  - [x] Install RKE2 one controler and several workers (currently no HA):
+    - [x] Add nerdctl.
+    - [x] Setup an admin on master node (kuberoot).
+    - [x] Deploy local registry and images loaded inside.
+    - [x] Setup firewalld rules if needed.
+    - [x] Make "master_ip" and "domain" parametrable.
+  - [x] Deploy longhorn with custom datapath.
+  - [x] Deploy Rancher with custom password.
+  - [x] Deploy Neuvector.
+  - [x] Script to containerize in an Execution-Env.
+  - [x] Script to uninstall everything
+  - [ ] More install customization and options 🚧
+  - [ ] Improve collection to run as true collection 🚧
+  - [ ] CI 🚧
 <!-- End Features -->
 
 <!-- Fix -->
-Fix 🩹    
+### Fix 🩹
   - Firewalld conditions to apply only when running.
   - Correct names and tasks order.
 <!-- End Fix -->
 
 <!-- Bugfix -->
-Bugfix 🐞
+### Bugfix 🐞
   - Correct scripts for prerequisites.
 <!-- End Bugfix -->
 
 <!-- Security -->
-Security 🔒️
+### Security 🔒️
   - Branch protect
   - Github Workflows to release and lint.
 <!-- End Security -->
