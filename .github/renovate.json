@@ -10,24 +10,16 @@
     "customManagers": [
       {
         "customType": "regex",
-        "fileMatch": ["playbooks/vars/.*y[a]?ml$"],
-        "matchStrings": ["global_rke2_version: (?<currentValue>.*)\\n"],
-        "depNameTemplate": "rke2",
-        "versioningTemplate": "semver-coerced",
-        "datasourceTemplate": "custom.rke2"
-      },
-      {
-        "customType": "regex",
-        "fileMatch": ["CHANGELOG.md"],
-        "matchStrings": ["  - rke2 version: (?<currentValue>.*)\\n"],
-        "depNameTemplate": "rke2",
-        "versioningTemplate": "semver-coerced",
-        "datasourceTemplate": "custom.rke2"
-      },
-      {
-        "customType": "regex",
-        "fileMatch": ["README.md"],
-        "matchStrings": ["  - [RKE2 (?<currentValue>.*)](https://docs.rke2.io) - Security focused Kubernetes\\n"],
+        "fileMatch": [
+          "playbooks/vars/.*y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_rke2_version: (?<currentValue>.*)\\n",
+          "  - rke2 version: (?<currentValue>.*)\\n",
+          "  - [RKE2 (?<currentValue>.*)](https://docs.rke2.io) - Security focused Kubernetes\\n"
+        ],
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
         "datasourceTemplate": "custom.rke2"
@@ -42,5 +34,3 @@
       }
     }
 }
-
-
