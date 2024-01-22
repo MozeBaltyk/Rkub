@@ -5,7 +5,7 @@
       {
         "customType": "regex",
         "fileMatch": [".*y[a]?ml$"],
-        "matchStrings": ["global_rke2_version=(?<currentValue>.*?)\\n"],
+        "matchStrings": ["global_rke2_version:?(?<currentValue>.*?)\\n"],
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
         "datasourceTemplate": "custom.rke2"
