@@ -11,14 +11,14 @@
       {
         "customType": "regex",
         "fileMatch": [
-          "playbooks/vars/.*y[a]?ml$",
-          "CHANGELOG.md",
-          "README.md"
+          "./playbooks/vars/.*y[a]?ml$",
+          "./CHANGELOG.md",
+          "./README.md"
         ],
         "matchStrings": [
           "global_rke2_version: (?<currentValue>.*)\\n",
           "  - rke2 version: (?<currentValue>.*)\\n",
-          "  - [RKE2 (?<currentValue>.*)]\\(https://docs.rke2.io\\) - Security focused Kubernetes\\n"
+          "  - [RKE2 (?<currentValue>)]\\(https://docs.rke2.io\\) - Security focused Kubernetes\\n"
         ],
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
