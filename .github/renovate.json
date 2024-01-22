@@ -11,9 +11,9 @@
       {
         "customType": "regex",
         "fileMatch": [
-          "./playbooks/vars/.*y[a]?ml$",
-          "./CHANGELOG.md",
-          "./README.md"
+          "playbooks/vars/.*y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
         ],
         "matchStrings": [
           "global_rke2_version: (?<currentValue>.*)\\n",
