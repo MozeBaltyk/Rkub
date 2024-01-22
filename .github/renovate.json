@@ -13,7 +13,7 @@
     "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["playbooks/vars/main.yml$"],
+      "fileMatch": ["^main.yml$"],
       "matchStrings": ["global_rke2_version=(?<currentValue>.*?)\\n"],
       "depNameTemplate": "rke2",
       "versioningTemplate": "semver-coerced",
