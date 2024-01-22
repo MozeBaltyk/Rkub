@@ -1,9 +1,9 @@
 # CHANGELOG.md
 
 <!-- Release -->
-## 1.0.3 (2024-01-18)
+## 1.0.3 (2024-01-19)
 
-### Versions:
+Versions:
   - rke2 version: 1.26.11
   - cert-manager version: 1.13.3
   - rancher version: 2.8.0
