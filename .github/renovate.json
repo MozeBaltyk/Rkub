@@ -1,17 +1,22 @@
 {
     "labels": ["dependencies"],
-
+    "packageRules": [
+      {
+        "matchPackagePatterns": ["rke2"],
+        "labels": ["rke2"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      }
+    ],
     "customManagers": [
       {
         "customType": "regex",
         "fileMatch": [".*y[a]?ml$"],
-        "matchStrings": ["global_rke2_version:?(?<currentValue>.*?)\\n"],
+        "matchStrings": ["global_rke2_version: (?<currentValue>.*)\\n"],
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
         "datasourceTemplate": "custom.rke2"
       }
     ],
-    
     "customDatasources": {
       "rke2": {
         "defaultRegistryUrlTemplate": "https://update.rke2.io/v1-release/channels",
