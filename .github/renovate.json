@@ -1,20 +1,26 @@
 {
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:base"],
+    "prHeader": "Renovate PR",
+    "labels": ["dependencies"],
+
     "customManagers": [
-    {
-      "customType": "regex",
-      "fileMatch": ["^main.yml$"],
-      "matchStrings": ["global_rke2_version=(?<currentValue>.*?)\\n"],
-      "depNameTemplate": "rke2",
-      "versioningTemplate": "semver-coerced",
-      "datasourceTemplate": "custom.rke2"
-    }
+      {
+        "customType": "regex",
+        "fileMatch": [".*y[a]?ml$"],
+        "matchStrings": ["global_rke2_version=(?<currentValue>.*?)\\n"],
+        "depNameTemplate": "rke2",
+        "versioningTemplate": "semver-coerced",
+        "datasourceTemplate": "custom.rke2"
+      }
     ],
+    
     "customDatasources": {
-    "rke2": {
-      "defaultRegistryUrlTemplate": "https://update.rke2.io/v1-release/channels",
-      "transformTemplates": [
-        "{\"releases\":[{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\":\"https://github.com/rancher/rke2\",\"changelogUrl\":$join([\"https://github.com/rancher/rke2/releases/tag/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rke2\",\"homepage\": \"https://docs.rke2.io\"}"
-      ]
-    }
+      "rke2": {
+        "defaultRegistryUrlTemplate": "https://update.rke2.io/v1-release/channels",
+        "transformTemplates": [
+          "{\"releases\":[{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\":\"https://github.com/rancher/rke2\",\"changelogUrl\":$join([\"https://github.com/rancher/rke2/releases/tag/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rke2\",\"homepage\": \"https://docs.rke2.io\"}"
+        ]
+      }
     }
 }
