@@ -1,5 +1,5 @@
 # Use a base image v4.11.3 with the desired prerequisites installed
-FROM registry.access.redhat.com/ubi8:8.8
+FROM registry.access.redhat.com/ubi8:8.9-1107.1705420509
 
 # Switch to root user
 USER root
