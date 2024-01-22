@@ -18,7 +18,7 @@
         "matchStrings": [
           "global_rke2_version: (?<currentValue>.*)\\n",
           "  - rke2 version: (?<currentValue>.*)\\n",
-          "  - [RKE2 (?<currentValue>)]\\(https://docs.rke2.io\\) - Security focused Kubernetes\\n"
+          "  - \\[RKE2 (?<currentValue>)\\]\\(https://docs.rke2.io\\) - Security focused Kubernetes\\n"
         ],
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
