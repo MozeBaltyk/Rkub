@@ -1,15 +1,4 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": ["config:base"],
-    "prHeader": "Renovate PR",
-    "labels": ["dependencies"],
-    "packageRules": [
-      {
-        "matchPackagePatterns": ["docker"],
-        "labels": ["docker-images"],
-        "matchUpdateTypes": ["minor"]
-      }    
-    ],
     "customManagers": [
     {
       "customType": "regex",
