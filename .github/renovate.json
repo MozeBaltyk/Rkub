@@ -15,6 +15,14 @@
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
         "datasourceTemplate": "custom.rke2"
+      },
+      {
+        "customType": "regex",
+        "fileMatch": ["CHANGELOG.md"],
+        "matchStrings": ["  - rke2 version: (?<currentValue>.*)\\n"],
+        "depNameTemplate": "rke2",
+        "versioningTemplate": "semver-coerced",
+        "datasourceTemplate": "custom.rke2"
       }
     ],
     "customDatasources": {
@@ -26,3 +34,4 @@
       }
     }
 }
+
