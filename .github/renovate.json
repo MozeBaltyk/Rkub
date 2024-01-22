@@ -14,7 +14,7 @@
     {
       "customType": "regex",
       "fileMatch": ["playbooks/vars/main.yml$"],
-      "matchStrings": ["global_rke2_version=(?<currentValue>\\S+)\\n"],
+      "matchStrings": ["global_rke2_version=(?<currentValue>.*?)\\n"],
       "depNameTemplate": "rke2",
       "versioningTemplate": "semver-coerced",
       "datasourceTemplate": "custom.rke2"
