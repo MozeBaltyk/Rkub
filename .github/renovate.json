@@ -12,10 +12,16 @@
         "matchUpdateTypes": ["minor"]
       },
       {
-        "matchPackagePatterns": ["rke2"],
-        "labels": ["rke2"],
-        "matchUpdateTypes": ["minor"],
-        "matchSourceUrls": ["https://raw.githubusercontent.com/rancher/rke2/master/channels.yaml"]
-      }
+        "commitMessageTopic": "rke2 update version",
+        "baseBranches": ["master"],
+        "repository": "https://github.com/rancher/rke2/",
+        "packageFiles": ["channels.yaml"],
+        "versioning": "custom",
+        "rangeStrategy": "bump",
+        "bump": {
+          "fileMatch": ["channels.yaml"],
+          "contentMatch": "\\blatest:\\s*(\\S+)"
+        }
+      }    
     ]
   }
