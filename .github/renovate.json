@@ -3,7 +3,7 @@
     "packageRules": [
       {
         "matchPackagePatterns": ["rke2"],
-        "labels": ["rke2"],
+        "labels": ["dependencies", "rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       }
     ],
@@ -18,7 +18,7 @@
         "matchStrings": [
           "global_rke2_version: (?<currentValue>.*)\\n",
           "  - rke2 version: (?<currentValue>.*)\\n",
-          "  - [RKE2 (?<currentValue>.*)](https://docs.rke2.io) - Security focused Kubernetes\\n"
+          "  - [RKE2 (?<currentValue>.*)]\\(https://docs.rke2.io\\) - Security focused Kubernetes\\n"
         ],
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
