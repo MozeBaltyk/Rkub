@@ -36,7 +36,7 @@ runs:
         cat << EOF > version.txt
         ## ${rkub_collection} (${date})
 
-        Versions:
+        ### Versions:
           - rke2 version: ${rke2_version}
           - cert-manager version: ${cert_version}
           - rancher version: ${rancher_version}
