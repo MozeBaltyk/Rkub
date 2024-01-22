@@ -7,15 +7,15 @@
     "labels": ["dependencies"],
     "packageRules": [
       {
-        "matchPackagePatterns": [
-          "*"
-        ],
-        "matchUpdateTypes": [
-          "minor",
-          "patch"
-        ],
-        "groupName": "all non-major dependencies",
-        "groupSlug": "all-minor-patch"
+        "matchPackagePatterns": ["docker"],
+        "labels": ["docker-images"],
+        "matchUpdateTypes": ["minor"]
+      },
+      {
+        "matchPackagePatterns": ["rke2"],
+        "labels": ["rke2"],
+        "matchUpdateTypes": ["minor"],
+        "matchSourceUrls": ["https://raw.githubusercontent.com/rancher/rke2/master/channels.yaml"]
       }
     ]
   }
