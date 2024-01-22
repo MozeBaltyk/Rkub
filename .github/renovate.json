@@ -1,6 +1,12 @@
 {
     "labels": ["dependencies"],
-    
+    "packageRules": [
+      {
+        "matchPackagePatterns": ["rke2"],
+        "labels": ["rke2"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      }
+    ],
     "customManagers": [
       {
         "customType": "regex",
