@@ -1,8 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-      "config:base"
-    ],
+    "extends": ["config:base"],
     "prHeader": "Renovate PR",
     "labels": ["dependencies"],
     "packageRules": [
@@ -10,18 +8,6 @@
         "matchPackagePatterns": ["docker"],
         "labels": ["docker-images"],
         "matchUpdateTypes": ["minor"]
-      },
-      {
-        "commitMessageTopic": "rke2 update version",
-        "baseBranches": ["master"],
-        "repository": "https://github.com/rancher/rke2/",
-        "packageFiles": ["channels.yaml"],
-        "versioning": "custom",
-        "rangeStrategy": "bump",
-        "bump": {
-          "fileMatch": ["channels.yaml"],
-          "contentMatch": "\\blatest:\\s*(\\S+)"
-        }
       }    
     ]
   }
