@@ -23,6 +23,14 @@
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
         "datasourceTemplate": "custom.rke2"
+      },
+      {
+        "customType": "regex",
+        "fileMatch": ["README.md"],
+        "matchStrings": ["  - [RKE2 (?<currentValue>.*)](https://docs.rke2.io) - Security focused Kubernetes\\n"],
+        "depNameTemplate": "rke2",
+        "versioningTemplate": "semver-coerced",
+        "datasourceTemplate": "custom.rke2"
       }
     ],
     "customDatasources": {
@@ -34,4 +42,5 @@
       }
     }
 }
+
 
