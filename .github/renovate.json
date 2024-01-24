@@ -15,7 +15,9 @@
         "regexManagers": [
           {
             "fileMatch": ["playbooks/vars/.*y[a]?ml$"],
-            "matchStrings": ["global_rke2_version: \"(?<currentValue>.*?)\"\\n"]
+            "matchStrings": ["global_rke2_version: \"(?<currentValue>.*?)\"\\n"],
+            "datasourceTemplate": "github-releases",
+            "depNameTemplate": "helm/helm"
           }
         ]
       }
