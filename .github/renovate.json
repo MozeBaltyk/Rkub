@@ -161,7 +161,7 @@
       "rancher": {
         "defaultRegistryUrlTemplate": "https://update.rancher.io/v1-release/channels",
         "transformTemplates": [
-          "{\"releases\":[{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\":\"https://github.com/rancher/rancher\",\"changelogUrl\":$join([\"https://github.com/rancher/rancher/releases/tag/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rancher\",\"homepage\": \"https://ranchermanager.docs.rancher.com\"}"
+          "{\"releases\":[{\"version\": $$.(data[id = 'latest'].latest),\"sourceUrl\":\"https://github.com/rancher/rancher\",\"changelogUrl\":$join([\"https://github.com/rancher/rancher/releases/tag/\",data[id = 'latest'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rancher\",\"homepage\": \"https://ranchermanager.docs.rancher.com\"}"
         ]
       }
     }
