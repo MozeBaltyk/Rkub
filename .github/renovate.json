@@ -6,20 +6,6 @@
         "matchPackagePatterns": ["rke2"],
         "labels": ["dependencies", "rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
-      },
-      {
-        "matchDatasources": ["github-releases"],
-        "matchManagers": ["regex"],
-        "matchPackageNames": ["helm/helm"],
-        "versioning": "semver",
-        "regexManagers": [
-          {
-            "fileMatch": ["playbooks/vars/.*y[a]?ml$"],
-            "matchStrings": ["global_rke2_version: \"(?<currentValue>.*?)\"\\n"],
-            "datasourceTemplate": "github-releases",
-            "depNameTemplate": "helm/helm"
-          }
-        ]
       }
     ],
     "customManagers": [
