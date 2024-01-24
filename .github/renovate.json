@@ -2,7 +2,7 @@
     "labels": ["dependencies"],
     "packageRules": [
       {
-        "matchManagers": ["Containerfile"],
+        "matchManagers": ["dockerfile"],
         "matchPackagePatterns": ["ubi8"],
         "matchUpdateTypes": ["minor"],
         "automerge": true,
