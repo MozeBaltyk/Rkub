@@ -21,32 +21,32 @@
       },
       {
         "matchPackagePatterns": ["rke2"],
-        "labels": ["rke2"],
+        "labels": ["dependencies","rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["helm"],
-        "labels": ["helm"],
+        "labels": ["dependencies","helm"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["cert-manager"],
-        "labels": ["cert-manager"],
+        "labels": ["dependencies","cert-manager"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["rancher"],
-        "labels": ["rancher"],
+        "labels": ["dependencies","rancher"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["longhorn"],
-        "labels": ["longhorn"],
+        "labels": ["dependencies","longhorn"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["neuvector"],
-        "labels": ["neuvector"],
+        "labels": ["dependencies","neuvector"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       }
     ],
@@ -126,7 +126,7 @@
           "  - longhorn version: (?<currentValue>.*)\\n",
           "  - \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
         ],
-        "datasourceTemplate": "git-refs",
+        "datasourceTemplate": "github-release",
         "depNameTemplate": "longhorn",
         "packageNameTemplate": "https://github.com/longhorn/longhorn",
         "versioningTemplate": "semver-coerced"
