@@ -27,6 +27,7 @@
     ],
     "customManagers": [
       {
+        "_comment": "Update RKE2",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
@@ -43,12 +44,85 @@
         "datasourceTemplate": "custom.rke2"
       },
       {
+        "_comment": "Update helm binary only for ansible",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$"
         ],
         "matchStrings": [
           "global_helm_version: \"(?<currentValue>.*?)\"\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "helm",
+        "packageNameTemplate": "https://github.com/helm/helm",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "_comment": "Update Cert-manager",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_CERT_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "  - cert-manager version: (?<currentValue>.*)\\n",
+          "  - \\[Cert-manager (?<currentValue>[^\\]]+)\\]\\(https://cert-manager.io/docs/\\) - Certificate manager\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "cert-manager",
+        "packageNameTemplate": "https://github.com/cert-manager/cert-manager",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "_comment": "Update Rancher",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_RANCHER_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "  - rancher version: (?<currentValue>.*)\\n",
+          "  - \\[Rancher (?<currentValue>[^\\]]+)\\]\\(https://www.suse.com/products/suse-rancher/\\) - Multi-Cluster Kubernetes Management\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "rancher",
+        "packageNameTemplate": "https://github.com/rancher/rancher",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "_comment": "Update Longhorn",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_LONGHORN_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "  - longhorn version: (?<currentValue>.*)\\n",
+          "  - \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "longhorn",
+        "packageNameTemplate": "https://github.com/longhorn/longhorn",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "_comment": "Update NeuVector",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_NEU_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "  - neuvector version: (?<currentValue>.*)\\n",
+          "  - \\[Neuvector (?<currentValue>[^\\]]+)\\]\\(https://neuvector.com/\\) - Kubernetes Security Platform\\n"
         ],
         "datasourceTemplate": "git-refs",
         "depNameTemplate": "helm",
