@@ -1,6 +1,7 @@
 {
     "labels": ["dependencies"],
     "ansible-galaxy": { "fileMatch": ["(^|/)(galaxy|requirements|ee-requirements)(\\.ansible)?\\.ya?ml$"] },
+    "pre-commit": { "enabled": true },
     "packageRules": [
       {
         "matchManagers": ["dockerfile"],
@@ -25,7 +26,7 @@
       {
         "customType": "regex",
         "fileMatch": [
-          "playbooks/vars/.*y[a]?ml$",
+          "playbooks/vars/main\\.y[a]?ml$",
           "CHANGELOG.md",
           "README.md"
         ],
@@ -37,6 +38,16 @@
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
         "datasourceTemplate": "custom.rke2"
+      },
+      {
+        "regexManagers": [
+          {
+            "fileMatch": ["^playbooks/vars/main\\.yaml$"],
+            "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
+            "datasourceTemplate": "github-releases",
+            "depNameTemplate": "helm/helm"
+          }
+        ]
       }
     ],
     "customDatasources": {
