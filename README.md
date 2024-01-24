@@ -16,7 +16,7 @@ Ansible collection met to install in airgap environnement RKE2 (one controler an
   - [Cert-manager 1.13.3](https://cert-manager.io/docs/) - Certificate manager
   - [Rancher 2.8.0](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
   - [Longhorn 1.5.1](https://longhorn.io) - Unified storage layer
-  - [Neuvector 2.6.5](https://neuvector.com/) - Kubernetes Security Platform
+  - [Neuvector 5.0.0](https://neuvector.com/) - Kubernetes Security Platform
 <!-- END -->
 
 This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh).
