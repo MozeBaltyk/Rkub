@@ -95,7 +95,7 @@
           "  - cert-manager version: (?<currentValue>.*)\\n",
           "  - \\[Cert-manager (?<currentValue>[^\\]]+)\\]\\(https://cert-manager.io/docs/\\) - Certificate manager\\n"
         ],
-        "datasourceTemplate": "git-refs",
+        "datasourceTemplate": "github-refs",
         "depNameTemplate": "cert-manager",
         "packageNameTemplate": "https://github.com/cert-manager/cert-manager",
         "versioningTemplate": "semver-coerced"
@@ -166,9 +166,6 @@
         "transformTemplates": [
           "{\"releases\":[{\"version\": $$.(data[id = 'latest'].latest),\"sourceUrl\":\"https://github.com/rancher/rancher\",\"changelogUrl\":$join([\"https://github.com/rancher/rancher/releases/\",data[id = 'latest'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rancher\",\"homepage\": \"https://ranchermanager.docs.rancher.com\"}"
         ]
-      },
-      "neuvector": {
-        "defaultRegistryUrlTemplate": "https://github.com/neuvector/neuvector-helm/releases/latest"
       }
     }
 }
