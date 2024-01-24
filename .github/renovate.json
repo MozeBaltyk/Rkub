@@ -45,9 +45,7 @@
       {
         "customType": "regex",
         "fileMatch": [
-          "playbooks/vars/main\\.yaml$",
-          "CHANGELOG.md",
-          "README.md"
+          "playbooks/vars/main\\.y[a]?ml$"
         ],
         "matchStrings": [
           "global_helm_version: \"(?<currentValue>.*?)\"\\n"
