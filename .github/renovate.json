@@ -52,6 +52,7 @@
     ],
     "customManagers": [
       {
+        "description": "Update RKE2 helm charts version with customDatasource",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
@@ -68,6 +69,7 @@
         "datasourceTemplate": "custom.rke2"
       },
       {
+        "description": "Update helm binary version based on github repo",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$"
@@ -81,6 +83,7 @@
         "versioningTemplate": "semver-coerced"
       },
       {
+        "description": "Update cert-manager helm charts version based on github repo",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
@@ -155,14 +158,17 @@
       "rke2": {
         "defaultRegistryUrlTemplate": "https://update.rke2.io/v1-release/channels",
         "transformTemplates": [
-          "{\"releases\":[{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\":\"https://github.com/rancher/rke2\",\"changelogUrl\":$join([\"https://github.com/rancher/rke2/releases/tag/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rke2\",\"homepage\": \"https://docs.rke2.io\"}"
+          "{\"releases\":[{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\":\"https://github.com/rancher/rke2\",\"changelogUrl\":$join([\"https://github.com/rancher/rke2/releases/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rke2\",\"homepage\": \"https://docs.rke2.io\"}"
         ]
       },
       "rancher": {
         "defaultRegistryUrlTemplate": "https://update.rancher.io/v1-release/channels",
         "transformTemplates": [
-          "{\"releases\":[{\"version\": $$.(data[id = 'latest'].latest),\"sourceUrl\":\"https://github.com/rancher/rancher\",\"changelogUrl\":$join([\"https://github.com/rancher/rancher/releases/tag/\",data[id = 'latest'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rancher\",\"homepage\": \"https://ranchermanager.docs.rancher.com\"}"
+          "{\"releases\":[{\"version\": $$.(data[id = 'latest'].latest),\"sourceUrl\":\"https://github.com/rancher/rancher\",\"changelogUrl\":$join([\"https://github.com/rancher/rancher/releases/\",data[id = 'latest'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rancher\",\"homepage\": \"https://ranchermanager.docs.rancher.com\"}"
         ]
+      },
+      "neuvector": {
+        "defaultRegistryUrlTemplate": "https://github.com/neuvector/neuvector-helm/releases/latest"
       }
     }
 }
