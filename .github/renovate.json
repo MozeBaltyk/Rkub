@@ -44,12 +44,18 @@
       },
       {
         "customType": "regex",
-        "fileMatch": ["^playbooks/vars/main\\.yaml$"],
-        "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
-        "datasourceTemplate": "github-releases",
-        "depNameTemplate": "helm/helm",
+        "fileMatch": [
+          "playbooks/vars/main\\.yaml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_helm_version: \"(?<currentValue>.*?)\"\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "helm",
         "packageNameTemplate": "https://github.com/helm/helm",
-        "versioningTemplate": "semver"
+        "versioningTemplate": "semver-coerced"
       }
     ],
     "customDatasources": {

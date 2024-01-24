@@ -15,6 +15,7 @@ runs:
         neuvector_version=$(yq -r .global_NEU_VERSION playbooks/vars/main.yml)
         cat << EOF > version.txt
           - [RKE2 ${rke2_version}](https://docs.rke2.io) - Security focused Kubernetes
+          - [Cert-manager ${cert_version}](https://cert-manager.io/docs/) - Certificate manager
           - [Rancher ${rancher_version}](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
           - [Longhorn ${longhorn_version}](https://longhorn.io) - Unified storage layer
           - [Neuvector ${neuvector_version}](https://neuvector.com/) - Kubernetes Security Platform
