@@ -127,7 +127,6 @@
           "  - \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
         ],
         "datasourceTemplate": "git-refs",
-        "currentValueTemplate": "master",
         "depNameTemplate": "longhorn",
         "packageNameTemplate": "https://github.com/longhorn/longhorn/releases/latest",
         "versioningTemplate": "semver-coerced"
@@ -146,7 +145,7 @@
         ],
         "datasourceTemplate": "git-refs",
         "depNameTemplate": "neuvector",
-        "packageNameTemplate": "https://github.com/neuvector/neuvector",
+        "packageNameTemplate": "https://github.com/neuvector/neuvector-helm",
         "versioningTemplate": "semver-coerced"
       }
     ],
