@@ -110,7 +110,11 @@
     - "{{ directory_package }}/images/neuvector"
 
 - name: Upload registry image
-  ansible.builtin.get_url:
-    url: "https://github.com/clemenko/rke_airgap_install/raw/main/registry.tar"
-    dest: "{{ directory_package }}/images/registry/registry.tar"
-    mode: "0750"
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      if ( ! ls {{ directory_package }}/images/registry/registry.tar > /dev/null); then
+      skopeo copy --additional-tag registry:latest docker://registry:latest docker-archive:{{ directory_package }}/images/registry/registry.tar
+      fi;
+    executable: /bin/bash
+  changed_when: false
