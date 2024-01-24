@@ -40,14 +40,11 @@
         "datasourceTemplate": "custom.rke2"
       },
       {
-        "regexManagers": [
-          {
-            "fileMatch": ["^playbooks/vars/main\\.yaml$"],
-            "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
-            "datasourceTemplate": "github-releases",
-            "depNameTemplate": "helm/helm"
-          }
-        ]
+        "customType": "regex",
+        "fileMatch": ["^playbooks/vars/main\\.yaml$"],
+        "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
+        "datasourceTemplate": "github-releases",
+        "depNameTemplate": "helm/helm"
       }
     ],
     "customDatasources": {
