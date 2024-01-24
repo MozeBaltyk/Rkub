@@ -3,20 +3,9 @@
     "ansible-galaxy": { "fileMatch": ["(^|/)(galaxy|requirements|ee-requirements)(\\.ansible)?\\.ya?ml$"] },
     "pre-commit": {
       "enabled": true,
-      "labels": ["pre-commit"]
+      "addLabels": ["pre-commit"]
     },
     "packageRules": [
-      {
-        "matchPackagePatterns": [
-          "*"
-        ],
-        "matchUpdateTypes": [
-          "minor",
-          "patch"
-        ],
-        "groupName": "all non-major dependencies",
-        "groupSlug": "all-minor-patch"
-      },
       {
         "matchManagers": ["dockerfile"],
         "matchPackagePatterns": ["ubi8"],
@@ -32,32 +21,32 @@
       },
       {
         "matchPackagePatterns": ["rke2"],
-        "labels": ["dependencies","rke2"],
+        "addLabels": ["rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["helm"],
-        "labels": ["dependencies","helm"],
+        "addLabels": ["helm"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["cert-manager"],
-        "labels": ["dependencies","cert-manager"],
+        "addLabels": ["cert-manager"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["rancher"],
-        "labels": ["dependencies","rancher"],
+        "addLabels": ["rancher"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["longhorn"],
-        "labels": ["dependencies","longhorn"],
+        "addLabels": ["longhorn"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["neuvector"],
-        "labels": ["dependencies","neuvector"],
+        "addLabels": ["neuvector"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       }
     ],
@@ -138,8 +127,9 @@
           "  - \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
         ],
         "datasourceTemplate": "git-refs",
+        "currentValueTemplate": "master",
         "depNameTemplate": "longhorn",
-        "packageNameTemplate": "https://github.com/longhorn/longhorn",
+        "packageNameTemplate": "https://github.com/longhorn/longhorn/releases/latest",
         "versioningTemplate": "semver-coerced"
       },
       {
