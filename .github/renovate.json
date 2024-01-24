@@ -1,6 +1,6 @@
 {
     "labels": ["dependencies"],
-    "schedule": ["after 9pm on sunday"],
+    "schedule": ["after 7am on saturday"],
     "ansible-galaxy": { "fileMatch": ["(^|/)(galaxy|requirements|ee-requirements)(\\.ansible)?\\.ya?ml$"] },
     "pre-commit": {
       "enabled": true,
@@ -11,14 +11,12 @@
         "matchManagers": ["dockerfile"],
         "matchPackagePatterns": ["ubi8"],
         "matchUpdateTypes": ["minor"],
-        "automerge": true,
-        "schedule": ["every weekend after 7am"]
+        "automerge": true
       },
       {
         "matchManagers": ["github-actions"],
         "matchUpdateTypes": ["minor"],
-        "automerge": true,
-        "schedule": ["every weekend after 7am"]
+        "automerge": true
       },
       {
         "matchPackagePatterns": ["rke2"],
