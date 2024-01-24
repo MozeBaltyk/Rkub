@@ -1,5 +1,6 @@
 {
     "labels": ["dependencies"],
+    "schedule": ["after 9pm on sunday"],
     "ansible-galaxy": { "fileMatch": ["(^|/)(galaxy|requirements|ee-requirements)(\\.ansible)?\\.ya?ml$"] },
     "pre-commit": {
       "enabled": true,
