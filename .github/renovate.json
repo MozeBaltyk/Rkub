@@ -1,7 +1,10 @@
 {
     "labels": ["dependencies"],
     "ansible-galaxy": { "fileMatch": ["(^|/)(galaxy|requirements|ee-requirements)(\\.ansible)?\\.ya?ml$"] },
-    "pre-commit": { "enabled": true },
+    "pre-commit": {
+      "enabled": true,
+      "labels": ["pre-commit"]
+    },
     "packageRules": [
       {
         "matchManagers": ["dockerfile"],
