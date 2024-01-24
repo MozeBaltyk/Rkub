@@ -44,7 +44,8 @@
         "fileMatch": ["^playbooks/vars/main\\.yaml$"],
         "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
         "datasourceTemplate": "github-releases",
-        "depNameTemplate": "helm/helm"
+        "depNameTemplate": "helm/helm",
+        "versioningTemplate": "semver"
       }
     ],
     "customDatasources": {
