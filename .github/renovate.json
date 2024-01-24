@@ -130,7 +130,7 @@
           "  - longhorn version: (?<currentValue>.*)\\n",
           "  - \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
         ],
-        "datasourceTemplate": "github-tags",
+        "datasourceTemplate": "git-tags",
         "currentValueTemplate": "v1.5.x",
         "depNameTemplate": "longhorn",
         "packageNameTemplate": "https://github.com/longhorn/charts",
@@ -149,7 +149,7 @@
           "  - neuvector version: (?<currentValue>.*)\\n",
           "  - \\[Neuvector (?<currentValue>[^\\]]+)\\]\\(https://neuvector.com/\\) - Kubernetes Security Platform\\n"
         ],
-        "datasourceTemplate": "github-tags",
+        "datasourceTemplate": "git-tags",
         "currentValueTemplate": "master",
         "depNameTemplate": "neuvector",
         "packageNameTemplate": "https://github.com/neuvector/neuvector-helm",
