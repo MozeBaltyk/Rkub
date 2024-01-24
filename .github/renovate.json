@@ -42,12 +42,12 @@
       {
         "matchPackagePatterns": ["longhorn"],
         "addLabels": ["longhorn"],
-        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+        "extractVersion": "^longhorn-(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
         "matchPackagePatterns": ["neuvector"],
         "addLabels": ["neuvector"],
-        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+        "extractVersion": "(?<version>\\d+\\.\\d+.\\d+)"
       }
     ],
     "customManagers": [
@@ -109,10 +109,12 @@
           "  - rancher version: (?<currentValue>.*)\\n",
           "  - \\[Rancher (?<currentValue>[^\\]]+)\\]\\(https://www.suse.com/products/suse-rancher/\\) - Multi-Cluster Kubernetes Management\\n"
         ],
-        "datasourceTemplate": "git-refs",
         "depNameTemplate": "rancher",
-        "packageNameTemplate": "https://github.com/rancher/rancher",
-        "versioningTemplate": "semver-coerced"
+        "datasourceTemplate": "helm",
+        "versioningTemplate": "semver-coerced",
+        "registryAliases": {
+          "stable": "https://releases.rancher.com/server-charts/stable"
+        }
       },
       {
         "customType": "regex",
@@ -128,7 +130,7 @@
         ],
         "datasourceTemplate": "git-refs",
         "depNameTemplate": "longhorn",
-        "packageNameTemplate": "https://github.com/longhorn/longhorn/releases/latest",
+        "packageNameTemplate": "https://github.com/longhorn/charts",
         "versioningTemplate": "semver-coerced"
       },
       {
