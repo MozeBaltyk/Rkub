@@ -98,7 +98,7 @@
         "datasourceTemplate": "github-refs",
         "depNameTemplate": "cert-manager",
         "packageNameTemplate": "https://github.com/cert-manager/cert-manager",
-        "versioningTemplate": "semver-coerced"
+        "versioningTemplate": "semver"
       },
       {
         "description": "Update Rancher helm charts version with customDatasource",
