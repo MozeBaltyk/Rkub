@@ -110,11 +110,9 @@
           "  - \\[Rancher (?<currentValue>[^\\]]+)\\]\\(https://www.suse.com/products/suse-rancher/\\) - Multi-Cluster Kubernetes Management\\n"
         ],
         "depNameTemplate": "rancher",
-        "datasourceTemplate": "helm",
         "versioningTemplate": "semver-coerced",
-        "registryAliases": {
-          "stable": "https://releases.rancher.com/server-charts/stable"
-        }
+        "datasourceTemplate": "git-refs",
+        "packageNameTemplate": "https://github.com/rancher/rancher"
       },
       {
         "customType": "regex",
