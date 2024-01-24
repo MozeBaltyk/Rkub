@@ -2,22 +2,22 @@
     "labels": ["dependencies"],
     "packageRules": [
       {
+        "matchManagers": ["Containerfile"],
+        "matchPackagePatterns": ["ubi8"],
+        "matchUpdateTypes": ["minor"],
+        "automerge": true,
+        "schedule": ["every weekend after 7am"]
+      },
+      {
+        "matchManagers": ["github-actions"],
+        "matchUpdateTypes": ["minor"],
+        "automerge": true,
+        "schedule": ["every weekend after 7am"]
+      },
+      {
         "matchPackagePatterns": ["rke2"],
         "labels": ["rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
-      },
-      {
-        "matchDatasources": ["github-releases"],
-        "matchManagers": ["regex"],
-        "versioning": "semver",
-        "regexManagers": [
-          {
-            "fileMatch": ["^playbooks/vars/.*y[a]?ml$"],
-            "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
-            "datasourceTemplate": "github-releases",
-            "depNameTemplate": "helm/helm"
-          }
-        ]
       }
     ],
     "customManagers": [
