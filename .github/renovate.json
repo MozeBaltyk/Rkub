@@ -3,8 +3,21 @@
     "packageRules": [
       {
         "matchPackagePatterns": ["rke2"],
-        "labels": ["dependencies", "rke2"],
+        "labels": ["rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchDatasources": ["github-releases"],
+        "matchManagers": ["regex"],
+        "versioning": "semver",
+        "regexManagers": [
+          {
+            "fileMatch": ["^path/to/your/yaml/file\\.yaml$"],
+            "matchStrings": ["version: \"(?<currentValue>.*?)\"\\n"],
+            "datasourceTemplate": "github-releases",
+            "depNameTemplate": "helm/helm"
+          }
+        ]
       }
     ],
     "customManagers": [
