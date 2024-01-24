@@ -48,6 +48,7 @@
         "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
         "datasourceTemplate": "github-releases",
         "depNameTemplate": "helm/helm",
+        "packageNameTemplate": "https://github.com/helm/helm",
         "versioningTemplate": "semver"
       }
     ],
