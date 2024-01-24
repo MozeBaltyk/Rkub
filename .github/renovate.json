@@ -6,6 +6,12 @@
         "matchPackagePatterns": ["rke2"],
         "labels": ["dependencies", "rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchDatasources": ["github"],
+        "matchManagers": ["helm"],
+        "matchPackageNames": ["helm/helm"],
+        "versioning": "semver"
       }
     ],
     "customManagers": [
