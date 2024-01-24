@@ -8,10 +8,16 @@
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
-        "matchDatasources": ["github"],
-        "matchManagers": ["helm"],
+        "matchDatasources": ["github-releases"],
+        "matchManagers": ["regex"],
         "matchPackageNames": ["helm/helm"],
-        "versioning": "semver"
+        "versioning": "semver",
+        "regexManagers": [
+          {
+            "fileMatch": ["playbooks/vars/.*y[a]?ml$"],
+            "matchStrings": ["global_rke2_version: \"(?<currentValue>.*?)\"\\n"]
+          }
+        ]
       }
     ],
     "customManagers": [
@@ -23,7 +29,7 @@
           "README.md"
         ],
         "matchStrings": [
-          "global_rke2_version: (?<currentValue>.*)\\n",
+          "global_rke2_version: \"(?<currentValue>.*)\"\\n",
           "  - rke2 version: (?<currentValue>.*)\\n",
           "  - \\[RKE2 (?<currentValue>[^\\]]+)\\]\\(https://docs.rke2.io\\) - Security focused Kubernetes\\n"
         ],
