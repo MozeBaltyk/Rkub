@@ -12,8 +12,8 @@
         "versioning": "semver",
         "regexManagers": [
           {
-            "fileMatch": ["^path/to/your/yaml/file\\.yaml$"],
-            "matchStrings": ["version: \"(?<currentValue>.*?)\"\\n"],
+            "fileMatch": ["^playbooks/vars/.*y[a]?ml$"],
+            "matchStrings": ["global_helm_version: \"(?<currentValue>.*?)\"\\n"],
             "datasourceTemplate": "github-releases",
             "depNameTemplate": "helm/helm"
           }
