@@ -23,6 +23,11 @@
         "matchPackagePatterns": ["rke2"],
         "labels": ["rke2"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["helm"],
+        "labels": ["helm"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       }
     ],
     "customManagers": [
@@ -119,8 +124,8 @@
           "  - \\[Neuvector (?<currentValue>[^\\]]+)\\]\\(https://neuvector.com/\\) - Kubernetes Security Platform\\n"
         ],
         "datasourceTemplate": "git-refs",
-        "depNameTemplate": "helm",
-        "packageNameTemplate": "https://github.com/helm/helm",
+        "depNameTemplate": "neuvector",
+        "packageNameTemplate": "https://github.com/neuvector/neuvector",
         "versioningTemplate": "semver-coerced"
       }
     ],
