@@ -7,6 +7,17 @@
     },
     "packageRules": [
       {
+        "matchPackagePatterns": [
+          "*"
+        ],
+        "matchUpdateTypes": [
+          "minor",
+          "patch"
+        ],
+        "groupName": "all non-major dependencies",
+        "groupSlug": "all-minor-patch"
+      },
+      {
         "matchManagers": ["dockerfile"],
         "matchPackagePatterns": ["ubi8"],
         "matchUpdateTypes": ["minor"],
@@ -126,7 +137,7 @@
           "  - longhorn version: (?<currentValue>.*)\\n",
           "  - \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
         ],
-        "datasourceTemplate": "github-release",
+        "datasourceTemplate": "git-refs",
         "depNameTemplate": "longhorn",
         "packageNameTemplate": "https://github.com/longhorn/longhorn",
         "versioningTemplate": "semver-coerced"
