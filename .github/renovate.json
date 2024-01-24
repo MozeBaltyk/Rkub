@@ -95,7 +95,7 @@
           "  - cert-manager version: (?<currentValue>.*)\\n",
           "  - \\[Cert-manager (?<currentValue>[^\\]]+)\\]\\(https://cert-manager.io/docs/\\) - Certificate manager\\n"
         ],
-        "datasourceTemplate": "github-refs",
+        "datasourceTemplate": "git-tags",
         "depNameTemplate": "cert-manager",
         "packageNameTemplate": "https://github.com/cert-manager/cert-manager",
         "versioningTemplate": "semver"
