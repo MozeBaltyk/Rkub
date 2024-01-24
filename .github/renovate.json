@@ -28,6 +28,26 @@
         "matchPackagePatterns": ["helm"],
         "labels": ["helm"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["cert-manager"],
+        "labels": ["cert-manager"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["rancher"],
+        "labels": ["rancher"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["longhorn"],
+        "labels": ["longhorn"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["neuvector"],
+        "labels": ["neuvector"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       }
     ],
     "customManagers": [
