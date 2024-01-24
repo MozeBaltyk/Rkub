@@ -28,28 +28,3 @@ jobs:
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
-
-  update:
-    name: Update Versions
-    needs: lint
-    runs-on: ubuntu-latest
-
-    if: github.repository == 'mozebaltyk/rkub'
-    permissions:
-      actions: write
-      checks: write
-      contents: write
-
-    steps:
-      # Checkout on branch where pull request
-      - name: Which branch?
-        shell: bash
-        run: |
-          echo "${{ github.head_ref || github.ref_name }}"
-
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
-
-      - name: Update Readme and changelog
-        uses: ./.github/actions/update-readme

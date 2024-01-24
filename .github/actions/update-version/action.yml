@@ -8,12 +8,14 @@ runs:
     # Update Readme
     - shell: bash
       run: |
+        rkub_collection=$(yq -r .version galaxy.yml)
         rke2_version=$(yq -r .global_rke2_version playbooks/vars/main.yml)
         cert_version=$(yq -r .global_CERT_VERSION playbooks/vars/main.yml)
         rancher_version=$(yq -r .global_RANCHER_VERSION playbooks/vars/main.yml)
         longhorn_version=$(yq -r .global_LONGHORN_VERSION playbooks/vars/main.yml)
         neuvector_version=$(yq -r .global_NEU_VERSION playbooks/vars/main.yml)
         cat << EOF > version.txt
+        **Ansible Collection Rkub ${rkub_collection} include:**
           - [RKE2 ${rke2_version}](https://docs.rke2.io) - Security focused Kubernetes
           - [Cert-manager ${cert_version}](https://cert-manager.io/docs/) - Certificate manager
           - [Rancher ${rancher_version}](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
