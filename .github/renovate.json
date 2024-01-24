@@ -148,7 +148,7 @@
           "  - neuvector version: (?<currentValue>.*)\\n",
           "  - \\[Neuvector (?<currentValue>[^\\]]+)\\]\\(https://neuvector.com/\\) - Kubernetes Security Platform\\n"
         ],
-        "datasourceTemplate": "git-refs",
+        "datasourceTemplate": "git-tags",
         "depNameTemplate": "neuvector",
         "packageNameTemplate": "https://github.com/neuvector/neuvector-helm",
         "versioningTemplate": "semver-coerced"
