@@ -27,7 +27,6 @@
     ],
     "customManagers": [
       {
-        "_comment": "Update RKE2",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
@@ -44,7 +43,6 @@
         "datasourceTemplate": "custom.rke2"
       },
       {
-        "_comment": "Update helm binary only for ansible",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$"
@@ -58,7 +56,6 @@
         "versioningTemplate": "semver-coerced"
       },
       {
-        "_comment": "Update Cert-manager",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
@@ -76,7 +73,6 @@
         "versioningTemplate": "semver-coerced"
       },
       {
-        "_comment": "Update Rancher",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
@@ -94,7 +90,6 @@
         "versioningTemplate": "semver-coerced"
       },
       {
-        "_comment": "Update Longhorn",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
@@ -112,7 +107,6 @@
         "versioningTemplate": "semver-coerced"
       },
       {
-        "_comment": "Update NeuVector",
         "customType": "regex",
         "fileMatch": [
           "playbooks/vars/main\\.y[a]?ml$",
