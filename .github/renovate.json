@@ -131,7 +131,6 @@
           "  - \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
         ],
         "datasourceTemplate": "git-refs",
-        "currentValueTemplate": "v1.5.x",
         "depNameTemplate": "longhorn",
         "packageNameTemplate": "https://github.com/longhorn/charts",
         "versioningTemplate": "semver"
