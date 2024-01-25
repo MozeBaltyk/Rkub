@@ -5,9 +5,14 @@ dependencies:
   python: meta/ee-requirements.txt
   galaxy: meta/ee-requirements.yml
   system: meta/ee-bindeps.txt
-  # custom
-  #arkade: meta/ee-arkade.txt
-  #images: meta/ee-images.txt
+
+# Custom Dependencies
+additional_build_steps:
+  prepend: |
+    RUN pip3 install --upgrade pip setuptools
+  append:
+    - RUN $(MAKE) -C ./scripts/prerequis arkade
+    - RUN $(MAKE) -C ./scripts/prerequis images
 
 images:
   base_image:
