@@ -6,6 +6,7 @@ terraform.tfstate*
 .venv/
 *kubeconfig.yaml
 Chart.lock
+.key
 # Workstation
 .DS_Store
 .vscode
