@@ -62,7 +62,8 @@ Add-on from my part, some part which were manual in Clemenko procedure are autom
 
 1. Preparation steps:
 
-    * Clone this project on local machine which have an internet access.
+    * Clone the main branch of this project to a machine with an internet access:
+      `git clone -b main https://github.com/MozeBaltyk/Rkub.git`
 
     * Execute `make prerequis` to install all prerequisites defined in meta directory.
 
