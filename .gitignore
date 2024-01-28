@@ -12,6 +12,7 @@ Chart.lock
 # loaded images
 **/roles/**/files/images/*
 images
+context
 # Galaxy artifacts.
 *.tar.gz
 *.zip

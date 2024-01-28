@@ -55,9 +55,8 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
 
-      # This one is redondant with renovate
-      # but make sure that all versions
-      # are updated before to release!
+      # This one is redondant with renovate but make sure
+      # that all versions are updated before to release!
       - name: Update version in readme and changelog
         uses: ./.github/actions/update-version
 

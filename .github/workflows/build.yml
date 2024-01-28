@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ["main"]
 
+env:
+  NAMESPACE: mozebaltyk
+  COLLECTION_NAME: rkub
+
 jobs:
   lint:
     name: Ansible Lint
@@ -28,3 +32,46 @@ jobs:
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
+
+  builder:
+    name: ansible-builder requirements
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+          path: ansible_collections/${{ env.NAMESPACE }}/${{ env.COLLECTION_NAME }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install ansible-builder
+        run: pip install ansible-builder
+
+      # this is kind of a naive check, since we aren't comparing the output to anything to verify
+      # so the only we'll catch with this is an egregious error that causes builder to exit nonzero
+      - name: Verify Requirements
+        run: ansible-builder introspect --sanitize .
+
+      #- name: Build EE container
+      #  run: ansible-builder build --tag test --container-runtime docker -f meta/execution-environment.yml
+
+#  build:
+#    name:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout files
+#        uses: actions/checkout@v2
+#
+#      - name: Build and push Docker images
+#        uses: docker/build-push-action@v1
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+#          repository: mvkaran/openmct
+#          tag_with_ref: true
+#          tag_with_sha: true
