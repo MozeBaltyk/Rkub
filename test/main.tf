@@ -109,7 +109,7 @@ output "ip_address_workers" {
 ###
 
 resource "digitalocean_project" "rkub" {
-  name        = "Rkub"
+  name        = "Rkub-${var.GITHUB_RUN_ID}"
   description = "A CI project to test the Rkub development from github."
   purpose     = "Cluster k8s"
   environment = "Staging"

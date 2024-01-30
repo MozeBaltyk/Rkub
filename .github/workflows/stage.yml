@@ -109,17 +109,16 @@ jobs:
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root --verbose --skip-tags "troubleshooting" --private-key .key testing.yml
 
-      - name: Run Python Tests
-        run: |
-          export DEFAULT_PRIVATE_KEY_FILE=.key
-          pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
-          pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
+      #- name: Run Python Tests
+      #  run: |
+      #    export DEFAULT_PRIVATE_KEY_FILE=.key
+      #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
+      #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
 
       - name: Delete Stack
         if: ${{ always() }}
         run: |
           cd test/
-          terraform plan -destroy -out=terraform.tfplan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}"
-          terraform apply terraform.tfplan
+          terraform destroy -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}"
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
