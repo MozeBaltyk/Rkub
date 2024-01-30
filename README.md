@@ -1,6 +1,6 @@
 <h1 style="text-align: center;"><code> Ansible Collection - Rkub  </code></h1>
 
-Ansible Collection to deploy a rancher RKE2 cluster in airgap mode.
+Ansible Collection to deploy a RKE2 cluster in airgap mode with Rancher, Longhorn and Neuvector.
 
 [![Releases](https://img.shields.io/github/release/MozeBaltyk/rkub)](https://github.com/MozeBaltyk/rkub/releases)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0/)
@@ -70,6 +70,7 @@ Add-on from my part, some part which were manual in Clemenko procedure are autom
     * Complete directory inside `./plugins/inventory/hosts.yml`.
 
 2. Build your package by running (works on Debian-like and Redhat-like):
+
 ```sh
 ansible-playbook playbooks/tasks/build.yml         # All arguments below are not mandatory
 -e dir_build="$HOME/rkub"                          # Directory where to upload everything (count 30G)
@@ -78,6 +79,7 @@ ansible-playbook playbooks/tasks/build.yml         # All arguments below are not
 ```
 
 3. Push your package to first controler:
+
 ```sh
 ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not mandatory
 -e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
@@ -86,6 +88,7 @@ ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not
 ```
 
 4. Start installation:
+
 ```sh
 ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
 -e dir_target=/opt                                 # Dir on first master where to find package unarchive by previous task (by default /opt, count 50G available)
@@ -95,6 +98,7 @@ ansible-playbook playbooks/tasks/install.yml       # All arguments below are not
 ```
 
 5. Deploy Rancher:
+
 ```sh
 ansible-playbook playbooks/tasks/rancher.yml       # All arguments below are not mandatory
 -e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
@@ -104,6 +108,7 @@ ansible-playbook playbooks/tasks/rancher.yml       # All arguments below are not
 ```
 
 6. Deploy Longhorn:
+
 ```sh
 ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not mandatory
 -e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
@@ -114,6 +119,7 @@ ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not
 ```
 
 7. Deploy Neuvector
+
 ```sh
 ansible-playbook playbooks/tasks/neuvector.yml     # All arguments below are not mandatory
 -e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub

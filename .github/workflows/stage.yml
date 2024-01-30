@@ -123,6 +123,6 @@ jobs:
         if: ${{ always() }}
         run: |
           cd test/
-          terraform destroy -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}"
+          terraform destroy -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}" -auto-approve
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
