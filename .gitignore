@@ -1,7 +1,7 @@
 # tmp/state/secrets
 .*.swp
 .govmomi
-.terraform*
+*terraform*
 terraform.tfstate*
 .venv/
 *kubeconfig.yaml
