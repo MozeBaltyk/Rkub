@@ -21,7 +21,7 @@ data "digitalocean_ssh_key" "terraform" {
 ###
 ### VPC
 ###
-resource "digitalocean_vpc" "fra1-vpc-01" {
+resource "digitalocean_vpc" "rkub-project-network" {
   name     = "rkub-project-network"
   region   = "fra1"
   ip_range = "10.10.10.0/24"
@@ -41,7 +41,7 @@ resource "digitalocean_droplet" "controllers" {
     tags   = [
       "rke2_ansible_test_on_${var.do_system}_${var.GITHUB_RUN_ID}_controllers",
       ]
-    vpc_uuid = digitalocean_vpc.fra1-vpc-01.id
+    vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [
       data.digitalocean_ssh_key.terraform.id
     ]
@@ -78,7 +78,7 @@ resource "digitalocean_droplet" "workers" {
     tags   = [
       "rke2_ansible_test_on_${var.do_system}_${var.GITHUB_RUN_ID}_workers",
       ]
-    vpc_uuid = digitalocean_vpc.fra1-vpc-01.id
+    vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [
       data.digitalocean_ssh_key.terraform.id
     ]
