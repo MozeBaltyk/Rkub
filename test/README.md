@@ -1,3 +1,8 @@
+## Description
+
+This terraform and tests are part of CI with github-actions. But here a small procedure to use it manually.
+
+The puropse of this CI is to test the integration between RKE2, longhorn, rancher and neuvector.
 
 ## Prerequis
 

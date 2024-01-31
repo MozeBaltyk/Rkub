@@ -5,6 +5,30 @@ on:
   workflow_dispatch:
 
 jobs:
+  test1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v2
+
+      - name: Check GITHUB ID
+        id: plan
+        run: |
+          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+
+  test2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v2
+
+      - name: Check GITHUB ID
+        id: plan
+        run: |
+          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+
   deploy:
     runs-on: ubuntu-latest
 
@@ -103,11 +127,11 @@ jobs:
 
       #- name: Run playbook
       #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root -vv --private-key .key site.yml
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root -vv --private-key .key playbooks/tasks/install.yml
 
       #- name: Run playbook again for idempotency
       #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root -vv --private-key .key site.yml
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root -vv --private-key .key playbooks/tasks/rancher.yml
 
       #- name: Run Ansible Tests
       #  run: |
