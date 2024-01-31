@@ -13,14 +13,6 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v2
 
-      - name: Get tag name
-        uses: olegtarasov/get-tag@v2
-
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
       - name: Terraform Init
         id: init
         run: |
@@ -71,6 +63,14 @@ jobs:
     steps:
       - name: Checkout files
         uses: actions/checkout@v2
+
+      - name: Get tag name
+        uses: olegtarasov/get-tag@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Check GITHUB ID
         id: plan
