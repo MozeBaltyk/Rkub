@@ -5,30 +5,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  test1:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout files
-        uses: actions/checkout@v2
-
-      - name: Check GITHUB ID
-        id: plan
-        run: |
-          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
-
-  test2:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout files
-        uses: actions/checkout@v2
-
-      - name: Check GITHUB ID
-        id: plan
-        run: |
-          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
-
   deploy:
     runs-on: ubuntu-latest
 
@@ -86,6 +62,18 @@ jobs:
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+  reach:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v2
+
+      - name: Check GITHUB ID
+        id: plan
+        run: |
+          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
+
       - name: Set up Python
         id: setup_python
         uses: actions/setup-python@v2
@@ -142,6 +130,13 @@ jobs:
       #    export DEFAULT_PRIVATE_KEY_FILE=.key
       #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
       #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
+
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v2
 
       - name: Delete Stack
         if: ${{ always() }}
