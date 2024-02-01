@@ -163,6 +163,14 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
+      - name: Get key
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
       - name: Terraform Init
         id: init
         run: terraform init
