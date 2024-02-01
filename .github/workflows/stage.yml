@@ -38,9 +38,6 @@ jobs:
         env:
           SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
-      #- name: Terraform private key
-      #  run: cp .key test/.key
-
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
@@ -67,6 +64,11 @@ jobs:
     name: Reachable
     runs-on: ubuntu-latest
     needs: Deploy
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
 
     steps:
       - name: Checkout files
@@ -98,6 +100,14 @@ jobs:
 
       - name: Ansible Version check
         run: ansible --version
+
+      - name: Get key
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
       - name: Create inventory hosts.ini
         run: |
@@ -147,6 +157,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: Reachable
 
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
     steps:
       - name: Checkout files
         uses: actions/checkout@v4
@@ -154,7 +169,6 @@ jobs:
       - name: Delete Stack
         if: ${{ always() }}
         run: |
-          cd test/
           terraform destroy -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}" -auto-approve
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
