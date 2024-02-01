@@ -9,36 +9,45 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
     steps:
       - name: Checkout files
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
 
       - name: Terraform Init
         id: init
-        run: |
-          cd test/
-          terraform init
+        run: terraform init
 
-      - run: 'echo "$SSH_KEY" > .key'
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Get key
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
         shell: bash
         env:
           SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
-      - run: chmod 400 .key
-
-      - name: Terraform private key
-        run: cp .key test/.key
-
-      - name: Terraform Validate
-        id: validate
-        run: |
-          cd test/
-          terraform validate -no-color
+      #- name: Terraform private key
+      #  run: cp .key test/.key
 
       - name: Terraform Plan
         id: plan
         run: |
-          cd test/
           terraform plan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}" -no-color
         continue-on-error: true
         env:
@@ -50,7 +59,6 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          cd test/
           terraform apply -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}" -auto-approve
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
