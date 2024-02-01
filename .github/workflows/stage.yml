@@ -89,17 +89,15 @@ jobs:
 
       - name: Set up Python
         id: setup_python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip3 install ansible pytest-testinfra
-
-      - name: Ansible Version check
-        run: ansible --version
+          ansible --version
 
       - name: Get key
         run: |
@@ -118,8 +116,6 @@ jobs:
           doctl compute droplet list --no-header --tag-name rke2_ansible_test_on_rockylinux-8-x64_${GITHUB_RUN_ID}_workers --format "Public IPv4" --output text >> hosts.ini
           echo "[all:vars]" >> hosts.ini
           echo "kubernetes_api_server_host=$(echo " " | head -1)" >> hosts.ini
-          echo "" >> ansible.cfg
-          echo "" >> ansible.cfg
           echo "remote_user=root" >> ansible.cfg
           echo "private_key_file=.key" >> ansible.cfg
         env:
@@ -156,6 +152,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     needs: Reachable
+    if: always()
 
     defaults:
       run:
