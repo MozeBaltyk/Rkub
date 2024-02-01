@@ -91,7 +91,7 @@ jobs:
         id: setup_python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.10
+          python-version: 3.9
 
       - name: Install dependencies
         run: |
@@ -162,6 +162,10 @@ jobs:
     steps:
       - name: Checkout files
         uses: actions/checkout@v4
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
 
       - name: Delete Stack
         if: ${{ always() }}
