@@ -1,6 +1,6 @@
 ---
 # Version products
-global_rke2_version: "1.26.11"
+global_rke2_version: "1.27.10"
 global_helm_version: "3.14.0"
 global_CERT_VERSION: "1.14.1"
 global_RANCHER_VERSION: "2.8.1"
