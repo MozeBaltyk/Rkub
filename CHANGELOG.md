@@ -4,7 +4,7 @@
 ## 1.0.3 (2024-01-24)
 
 ### Versions:
-  - rke2 version: 1.26.11
+  - rke2 version: 1.27.10
   - cert-manager version: 1.14.1
   - rancher version: 2.8.1
   - longhorn version: 1.6.0
