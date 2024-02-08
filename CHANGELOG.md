@@ -8,7 +8,7 @@
   - cert-manager version: 1.13.3
   - rancher version: 2.8.0
   - longhorn version: 1.6.0
-  - neuvector version: 2.6.6
+  - neuvector version: 2.7.2
 <!-- End Release -->
 
 <!-- Features -->
