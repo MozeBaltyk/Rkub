@@ -14,7 +14,7 @@ Ansible collection met to install in airgap environnement RKE2 (one controler an
 **Ansible Collection Rkub 1.0.2 include:**
   - [RKE2 1.26.11](https://docs.rke2.io) - Security focused Kubernetes
   - [Cert-manager 1.14.1](https://cert-manager.io/docs/) - Certificate manager
-  - [Rancher 2.8.0](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
+  - [Rancher 2.8.1](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
   - [Longhorn 1.6.0](https://longhorn.io) - Unified storage layer
   - [Neuvector 2.7.2](https://neuvector.com/) - Kubernetes Security Platform
 <!-- END -->

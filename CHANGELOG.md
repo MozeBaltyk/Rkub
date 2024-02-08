@@ -6,7 +6,7 @@
 ### Versions:
   - rke2 version: 1.26.11
   - cert-manager version: 1.14.1
-  - rancher version: 2.8.0
+  - rancher version: 2.8.1
   - longhorn version: 1.6.0
   - neuvector version: 2.7.2
 <!-- End Release -->
