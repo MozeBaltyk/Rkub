@@ -22,4 +22,7 @@
             host: "{{ longhorn_url }}"
           defaultSettings:
             defaultDataPath: "{{ longhorn_datapath }}"
+            nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+          persistence:
+            defaultClassReplicaCount: "{{ longhorn_replica }}"
         kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
