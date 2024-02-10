@@ -1,6 +1,7 @@
 ---
 # Version products
 global_rke2_version: "1.27.10"
+global_kubevip_version: "0.7.0"
 global_helm_version: "3.14.0"
 global_CERT_VERSION: "1.14.1"
 global_RANCHER_VERSION: "2.8.1"
@@ -25,18 +26,24 @@ global_path_to_package_zst: "{{ global_directory_package_build }}/../{{ global_p
 global_directory_package_target: "{{ dir_target | default('/opt') }}"
 global_directory_mount: "{{ dir_mount | default('/mnt/rkub') }}"
 
-# Options RKE2
+# Options General
 global_master_ip: "{{ master_ip | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address']) }}"
 global_domain:    "{{ domain | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_domain']) }}"
 
-# Options - Not used yet
-global_data_dir:  "/rke2"
-global_cluster_cidr: "10.42.0.0/16" #Default Value
-global_service_cidr: "10.43.0.0/16" #Default Value
+# Options RKE2 - Not used yet
+global_rke2_data_dir: "{{ data_dir | default('/var/lib/rancher/rke2') }}"
+global_rke2_ha_mode: true
+global_rke2_api_ip: "{{ vip | default(global_master_ip) }}"
+global_rke2_cluster_cidr: "10.42.0.0/16" #Default Value
+global_rke2_service_cidr: "10.43.0.0/16" #Default Value
+global_rke2_cni: "canal"
+global_rke2_profile_activated: "{{ profile_cis | default('false') }}"
+global_rke2_disable: "{{ disable | default(omit) }}" # Valid items to not deploy: rke2-canal, rke2-coredns, rke2-ingress-nginx, rke2-metrics-server
 
 # Longhorn
 default_longhorn_datapath: "{{ global_directory_package_target }}/longhorn"
 global_longhorn_datapath: "{{ datapath | default(default_longhorn_datapath) }}"
+global_longhorn_replica: 2
 
 # Rancher
 global_rancher_password: "{{ password | default('BootStrapAllTheThings') }}"

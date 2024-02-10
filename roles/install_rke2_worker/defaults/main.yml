@@ -11,6 +11,12 @@ mount_utils_path: "{{ mount_path }}/utils"
 mount_rke2_common_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
 mount_rke2_selinux_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
 
+# Worker options
+rke2_data_dir: "{{ global_rke2_data_dir }}"
+rke2_cluster_cidr: "{{ global_rke2_cluster_cidr }}"
+rke2_service_cidr: "{{ global_rke2_service_cidr }}"
+rke2_profile_activated: "{{ global_rke2_profile_activated }}"
+
 # Firewall rules
 worker_firewalld_rules:
   inbound:

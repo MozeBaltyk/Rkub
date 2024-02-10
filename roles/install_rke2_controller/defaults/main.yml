@@ -15,6 +15,14 @@ mount_rke2_selinux_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_selinux_rpm_v
 # RKE2 config
 rke2_kubeconfig_file: "/etc/rancher/rke2/rke2.yaml"
 
+# Controller options
+rke2_data_dir: "{{ global_rke2_data_dir }}"
+rke2_cluster_cidr: "{{ global_rke2_cluster_cidr }}"
+rke2_service_cidr: "{{ global_rke2_service_cidr }}"
+rke2_cni: "{{ global_rke2_cni }}"
+rke2_profile_activated: "{{ global_rke2_profile_activated }}"
+rke2_api_ip: "{{ global_rke2_api_ip }}"
+
 # Firewall rules
 controller_firewalld_rules:
   inbound:
