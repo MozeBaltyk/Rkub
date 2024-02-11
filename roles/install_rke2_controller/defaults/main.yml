@@ -3,7 +3,7 @@
 rke2_version: "{{ global_rke2_version }}"
 admin_user: "{{ global_install_user }}"
 master: "{{ global_master_ip }}"
-control_plane_endpoint: "{{ master }}"
+control_plane_endpoint: "{{ global_rke2_api_ip }}"
 
 # Mount share
 mount_path: "{{ global_directory_mount }}"
@@ -21,7 +21,6 @@ rke2_cluster_cidr: "{{ global_rke2_cluster_cidr }}"
 rke2_service_cidr: "{{ global_rke2_service_cidr }}"
 rke2_cni: "{{ global_rke2_cni }}"
 rke2_profile_activated: "{{ global_rke2_profile_activated }}"
-rke2_api_ip: "{{ global_rke2_api_ip }}"
 
 # Firewall rules
 controller_firewalld_rules:

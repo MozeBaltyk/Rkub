@@ -25,7 +25,7 @@ cni: {{ rke2_cni }}
 {% endif %}
 tls-san:
   - cluster.local
-  - {{ rke2_api_ip }}
+  - {{ control_plane_endpoint }}
 {% if rke2_disable %}
 disable: {{ rke2_disable }}
 {% endif %}
