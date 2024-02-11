@@ -7,6 +7,18 @@ variable "do_instance_size" {
     default = "s-1vcpu-1gb"
 }
 
+variable "do_controller_count" {
+  type    = number
+  description = "number of controllers"
+  default = "1"
+}
+
+variable "do_worker_count" {
+  type    = number
+  description = "number of workers"
+  default = "2"
+}
+
 variable "do_user" {
   type    = string
   description = "user created on droplet"

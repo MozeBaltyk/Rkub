@@ -33,7 +33,7 @@ resource "digitalocean_vpc" "rkub-project-network" {
 
 # Droplet Instance for RKE2 Cluster - Manager
 resource "digitalocean_droplet" "controllers" {
-    count = 1
+    count = var.do_controller_count
     image = var.do_system
     name = "controller${count.index}"
     region = "fra1"
@@ -70,7 +70,7 @@ output "ip_address_controllers" {
 
 # Droplet Instance for RKE2 Cluster - Workers
 resource "digitalocean_droplet" "workers" {
-    count = 2
+    count = var.do_worker_count
     image = var.do_system
     name = "worker${count.index}"
     region = "fra1"

@@ -23,6 +23,17 @@ terraform apply terraform.tfplan
 # auto-approve
 terraform apply -var "GITHUB_RUN_ID=777" -var "do_token=${DO_PAT}" -auto-approve
 
+# More options
+terraform apply -var "GITHUB_RUN_ID=777" \
+-var "do_token=${DO_PAT}" \
+-var "do_worker_count=0" \
+-var "do_controller_count=3" \
+-var "do_instance_size=s-2vcpu-4gb" \
+-auto-approve
+
+# connect to a controller
+ssh root@$(terraform output -json ip_address_controllers | jq -r '.[0]') -i .key
+
 # connect to a worker
 ssh root@$(terraform output -json ip_address_workers | jq -r '.[0]') -i .key
 

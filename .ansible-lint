@@ -10,6 +10,7 @@ exclude_paths:
   - molecule/
   - docs/
   - scripts/
+  - test/
   - playbooks/tasks # Dir for testing locally
 
 skip_list:
