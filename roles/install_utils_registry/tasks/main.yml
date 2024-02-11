@@ -6,6 +6,10 @@
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 
+- name: Copy manifest
+  ansible.builtin.import_tasks: manifest.yml
+  when: caller_role_name == "controller"
+
 - name: Kubernetes tasks
   ansible.builtin.import_tasks: deploy.yml
   when: caller_role_name == "controller"

@@ -1,4 +1,4 @@
-# Rkub Makefile 
+# Rkub Makefile
 
 export INVENTORY       ?= ./plugins/inventory
 export ANSIBLE_USER    ?= admin
@@ -21,7 +21,7 @@ prerequis:
 .PHONY: build
 ## Run playbook to build rkub zst package on localhost.
 build:
-	ansible-playbook ./playbooks/tasks/build.yml $(ANSIBLE_ARGS)
+	ansible-playbook ./playbooks/tasks/build.yml
 
 .PHONY: upload
 ## Run playbook to upload rkub zst package.
@@ -98,4 +98,4 @@ show-help:
 		} \
 		printf "\n"; \
 	}' \
-	| cat 
+	| cat

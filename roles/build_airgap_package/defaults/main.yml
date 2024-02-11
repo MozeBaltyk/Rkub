@@ -1,6 +1,7 @@
 ---
 # defaults file for build_airgap
 rke2_version: "{{ global_rke2_version }}"
+kubevip_version: "{{ global_kubevip_version }}"
 helm_version: "{{ global_helm_version }}"
 CERT_VERSION: "{{ global_CERT_VERSION }}"
 RANCHER_VERSION: "{{ global_RANCHER_VERSION }}"
@@ -18,6 +19,7 @@ list_directory_package:
     - "{{ directory_package }}/images/longhorn"
     - "{{ directory_package }}/images/registry"
     - "{{ directory_package }}/images/neuvector"
+    - "{{ directory_package }}/images/kubevip"
 
 # extras RPM
 rke2_common_repo_version: "{{ global_rke2_common_repo_version }}"

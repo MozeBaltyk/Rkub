@@ -118,3 +118,13 @@
       fi;
     executable: /bin/bash
   changed_when: false
+
+- name: Upload kubevip image
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      if ( ! ls {{ directory_package }}/images/kubevip/kubevip_v{{ kubevip_version }}.tar > /dev/null); then
+      skopeo copy docker://ghcr.io/kube-vip/kube-vip:v{{ kubevip_version }} docker-archive:{{ directory_package }}/images/kubevip/kubevip_v{{ kubevip_version }}.tar
+      fi;
+    executable: /bin/bash
+  changed_when: false
