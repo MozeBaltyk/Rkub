@@ -6,7 +6,7 @@ global_helm_version: "3.14.0"
 global_CERT_VERSION: "1.14.1"
 global_RANCHER_VERSION: "2.8.1"
 global_LONGHORN_VERSION: "1.6.0"
-global_NEU_VERSION: "2.7.2"
+global_NEU_VERSION: "2.7.3"
 
 # extras RPM
 global_rke2_common_repo_version: "v{{ rke2_version }}%2Brke2r1"           #.stable.0
