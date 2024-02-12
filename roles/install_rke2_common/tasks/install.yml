@@ -49,31 +49,3 @@
     dest: /var/lib/rancher/rke2
     state: link
   when: rke2_data_dir != "/var/lib/rancher/rke2"
-
-# NetworkManager config
-- name: Specific config for NetworkManager
-  become: true
-  when:
-    - ansible_facts['services']['NetworkManager.service'] is defined
-  block:
-    - name: Configure NetworkManager for RKE2 and Canal
-      ansible.builtin.copy:
-        content: |
-          [keyfile]
-          unmanaged-devices=interface-name:cali*;interface-name:flannel*
-        dest: /etc/NetworkManager/conf.d/rke2-canal.conf
-        mode: '0600'
-
-    - name: Set rke2-canal.conf file permissions
-      ansible.builtin.file:
-        path: /etc/NetworkManager/conf.d/rke2-canal.conf
-        mode: '0600'
-        owner: root
-        group: root
-
-    - name: Reload NetworkManager
-      ansible.builtin.systemd:
-        name: NetworkManager
-        state: reloaded
-      when:
-        - ansible_facts['services']['NetworkManager.service']['state'] == "running"

@@ -8,6 +8,17 @@
       - "!min"
   when: >
     ansible_os_family is not defined
+  tags: [always]
+
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
+
+- name: Specific config for NetworkManager
+  ansible.builtin.import_tasks: networkmanager.yml
+  when:
+    - ansible_facts['services']['NetworkManager.service'] is defined
+  tags: networkmanager
 
 - name: Tasks common to Linux servers for RKE2 installation
   ansible.builtin.import_tasks: install.yml
@@ -18,4 +29,3 @@
 - name: RKE2 Install specific for RHEL-like OS
   ansible.builtin.import_tasks: rhel.yml
   when: ansible_os_family == "RedHat"
-  tags: rhel
