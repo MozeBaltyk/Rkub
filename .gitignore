@@ -1,12 +1,6 @@
-# tmp/state/secrets
+# tmp
 .*.swp
 .govmomi
-*terraform*
-terraform.tfstate*
-.venv/
-*kubeconfig.yaml
-Chart.lock
-.key
 # Workstation
 .DS_Store
 .vscode
@@ -21,3 +15,11 @@ context
 *.log
 *.png
 *.tgz
+# Staging
+*kubeconfig.yaml
+*terraform*
+terraform.tfstate*
+hosts.ini
+.key
+Chart.lock
+.venv/
