@@ -43,7 +43,7 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
-      - name: Terraform Plan
+      - name: Terraform plan
         id: plan
         run: |
           terraform plan -out=terraform.tfplan \
@@ -55,7 +55,6 @@ jobs:
         continue-on-error: true
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          AWS_PROFILE: "digitalocean"
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'

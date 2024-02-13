@@ -35,6 +35,8 @@ terraform init
 # auto-approve (default: size=s-1vcpu-1gb, 1 controller + 2 workers)
 terraform apply -var "GITHUB_RUN_ID=777" -var "do_token=${DO_PAT}" -auto-approve
 
+terraform apply -var "GITHUB_RUN_ID=777" -var "do_token=${DO_PAT}" --target aws_s3_bucket.terraform-backend-github
+
 # Deploy
 terraform plan -out=terraform.tfplan \
 -var "GITHUB_RUN_ID=777" \
