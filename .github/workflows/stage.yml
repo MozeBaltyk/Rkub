@@ -20,6 +20,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.3.9"
 
       - name: Terraform Init
         id: init
@@ -163,6 +165,11 @@ jobs:
     steps:
       - name: Checkout files
         uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.3.9"
 
       - name: Get key
         run: |
