@@ -9,12 +9,12 @@ terraform {
     }
   }
   backend "s3" {
+    skip_credentials_validation = true
+    skip_metadata_api_check = true
     bucket = "terraform-backend-github"
     endpoint = "https://fra1.digitaloceanspaces.com"
     region = "eu-west-1"
-    key = "state-store/terraform.tfstate"
-    skip_credentials_validation = true
-    skip_metadata_api_check = true
+    key = "state/terraform.tfstate"
   }
 }
 
