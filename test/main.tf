@@ -8,6 +8,16 @@ terraform {
       version = "~> 2.0"
     }
   }
+  backend "s3" {
+    bucket = "terraform-backend-github"
+    endpoint = "fra1.digitaloceanspaces.com"
+    region = "eu-west-1"
+    key = "state-store/terraform.tfstate"
+    skip_requesting_account_id = true
+    skip_credentials_validation = true
+    skip_get_ec2_platforms = true
+    skip_metadata_api_check = true
+  }
 }
 
 provider "digitalocean" {

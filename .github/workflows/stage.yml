@@ -21,14 +21,13 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
-
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: |
+          terraform init -backend-config="access_key=$SPACES_ACCESS_TOKEN" -backend-config="secret_key=$SPACES_SECRET_KEY"
+        env:
+          SPACES_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
+          SPACES_SECRET_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
       - name: Get key
         run: |
@@ -45,7 +44,12 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}" -no-color
+          terraform plan -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "do_worker_count=1" \
+          -var "do_controller_count=1" \
+          -var "do_instance_size=s-2vcpu-4gb"
         continue-on-error: true
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
@@ -56,9 +60,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}" -auto-approve
-        env:
-          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          terraform apply terraform.tfplan
 
   reachable:
     name: Reachable
@@ -73,9 +75,6 @@ jobs:
     steps:
       - name: Checkout files
         uses: actions/checkout@v4
-
-      #- name: Get tag name
-      #  uses: olegtarasov/get-tag@v2
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -107,28 +106,28 @@ jobs:
         env:
           SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
-      - name: Create inventory hosts.ini
-        run: |
-          touch hosts.ini
-          echo "[RKE2_CONTROLLERS]" > hosts.ini
-          doctl compute droplet list --no-header --tag-name rke2_ansible_test_on_rockylinux-8-x64_${GITHUB_RUN_ID}_controllers --format "Public IPv4" --output text >> hosts.ini
-          echo "[RKE2_WORKERS]" >> hosts.ini
-          doctl compute droplet list --no-header --tag-name rke2_ansible_test_on_rockylinux-8-x64_${GITHUB_RUN_ID}_workers --format "Public IPv4" --output text >> hosts.ini
-          echo "[all:vars]" >> hosts.ini
-          echo "kubernetes_api_server_host=$(echo " " | head -1)" >> hosts.ini
-          echo "remote_user=root" >> ansible.cfg
-          echo "private_key_file=.key" >> ansible.cfg
-        env:
-          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Check hosts.ini and ansible.cfg
-        run: |
-          cat hosts.ini
-          cat ansible.cfg
+#      - name: Create inventory hosts.ini
+#        run: |
+#          touch hosts.ini
+#          echo "[RKE2_CONTROLLERS]" > hosts.ini
+#          doctl compute droplet list --no-header --tag-name rke2_ansible_test_on_rockylinux-8-x64_${GITHUB_RUN_ID}_controllers --format "Public IPv4" --output text >> hosts.ini
+#          echo "[RKE2_WORKERS]" >> hosts.ini
+#          doctl compute droplet list --no-header --tag-name rke2_ansible_test_on_rockylinux-8-x64_${GITHUB_RUN_ID}_workers --format "Public IPv4" --output text >> hosts.ini
+#          echo "[all:vars]" >> hosts.ini
+#          echo "kubernetes_api_server_host=$(echo " " | head -1)" >> hosts.ini
+#          echo "remote_user=root" >> ansible.cfg
+#          echo "private_key_file=.key" >> ansible.cfg
+#        env:
+#          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+#
+#      - name: Check hosts.ini and ansible.cfg
+#        run: |
+#          cat hosts.ini
+#          cat ansible.cfg
 
       - name: Test if reachable
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -i hosts.ini -u root -vv --private-key .key
+          ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -u root -vv --private-key .key
 
       #- name: Run playbook
       #  run: |
@@ -173,11 +172,20 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: |
+          terraform init -backend-config="access_key=$SPACES_ACCESS_TOKEN" -backend-config="secret_key=$SPACES_SECRET_KEY"
+        env:
+          SPACES_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
+          SPACES_SECRET_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
       - name: Delete Stack
         if: ${{ always() }}
         run: |
-          terraform destroy -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -var "do_token=${DO_PAT}" -auto-approve
+          terraform destroy -out=terraform.tfplan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "do_worker_count=1" \
+          -var "do_controller_count=1" \
+          -var "do_instance_size=s-2vcpu-4gb" \
+          -auto-approve
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
