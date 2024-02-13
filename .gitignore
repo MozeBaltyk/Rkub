@@ -18,7 +18,7 @@ context
 # Staging
 *kubeconfig.yaml
 *terraform*
-terraform.tfstate*
+*.tfstate
 hosts.ini
 .key
 Chart.lock

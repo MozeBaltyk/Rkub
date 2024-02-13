@@ -15,9 +15,6 @@ Add inside ./test a file .key with the private ssh key generate by DO.
 
 ```bash
 export DO_PAT="dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-export SPACES_ACCESS_TOKEN="DOxxxxxxxxxxxxxxxxxxx"
-export SPACES_SECRET_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
 
 # init with backend config
 terraform init --backend-config=./backend_config.hcl
@@ -29,6 +26,11 @@ terraform init --backend-config=./backend_config.hcl
 terraform init \
 -backend-config="access_key=$SPACES_ACCESS_TOKEN" \
 -backend-config="secret_key=$SPACES_SECRET_KEY" \
+
+# recommended method
+export AWS_ACCESS_KEY_ID=DOxxxxxxxxxxxxxxxx
+export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxx
+terraform init
 
 # auto-approve (default: size=s-1vcpu-1gb, 1 controller + 2 workers)
 terraform apply -var "GITHUB_RUN_ID=777" -var "do_token=${DO_PAT}" -auto-approve
