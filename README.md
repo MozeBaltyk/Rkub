@@ -23,7 +23,7 @@ This Ansible collection will install in airgap environnement RKE2 (one controler
 
 - [Longhorn 1.6.0](https://longhorn.io) - Unified storage layer
 
-- [Neuvector 2.7.2](https://neuvector.com/) - Kubernetes Security Platform
+- [Neuvector 2.7.3](https://neuvector.com/) - Kubernetes Security Platform
 <!-- END -->
 
 This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh).
