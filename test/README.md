@@ -39,7 +39,7 @@ terraform plan -out=terraform.tfplan \
 -var "do_token=${DO_PAT}" \
 -var "do_worker_count=1" \
 -var "do_controller_count=3" \
--var "do_instance_size=s-2vcpu-4gb"
+-var "do_instance_size=s-1vcpu-1gb"
 # Apply
 terraform apply terraform.tfplan
 
@@ -54,7 +54,7 @@ terraform plan -destroy -out=terraform.tfplan -var "GITHUB_RUN_ID=777" \
 -var "do_token=${DO_PAT}" \
 -var "do_worker_count=1" \
 -var "do_controller_count=3" \
--var "do_instance_size=s-2vcpu-4gb"
+-var "do_instance_size=s-1vcpu-1gb"
 # Apply destroy
 terraform apply terraform.tfplan
 ```
