@@ -30,7 +30,6 @@ jobs:
         env:
           SPACES_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
           SPACES_SECRET_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
-          AWS_PROFILE: "digitalocean"
 
       - name: Get key
         run: |
