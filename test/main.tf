@@ -14,8 +14,7 @@ terraform {
     skip_metadata_api_check     = true
     skip_requesting_account_id  = true
     use_path_style              = true
-    endpoints = {
-      s3 = "https://fra1.digitaloceanspaces.com"
+    endpoints = { "fra1.digitaloceanspaces.com"
     }
     region                      = "fra1" // needed
     bucket                      = "terraform-backend-github"
