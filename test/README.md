@@ -9,11 +9,15 @@ The puropse of this CI is to test the integration between RKE2, longhorn, ranche
 On Digital Ocean account:
 - generate a PAT (private access token)
 - a set of SSH key
+- Create a Space with a key
 
 Add inside ./test a file .key with the private ssh key generate by DO.
 
 ```bash
 export DO_PAT="dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+export SPACES_ACCESS_TOKEN="DOxxxxxxxxxxxxxxxxxxx"
+export SPACES_SECRET_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
 
 # init with backend config
 terraform init --backend-config=./backend_config.hcl
