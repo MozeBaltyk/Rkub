@@ -177,8 +177,8 @@ jobs:
       - name: Terraform plan delete stack
         id: plan
         run: |
-
-          terraform plan -destroy -out=terraform.tfplan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          terraform plan -destroy -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
           -var "do_worker_count=1" \
           -var "do_controller_count=1" \
