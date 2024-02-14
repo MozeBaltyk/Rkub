@@ -12,7 +12,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./test
+        working-directory: ./test/DO
 
     steps:
       - name: Checkout files
@@ -28,6 +28,7 @@ jobs:
         run: |
           terraform init
         env:
+          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
@@ -164,7 +165,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./test
+        working-directory: ./test/DO
 
     steps:
       - name: Checkout files
@@ -188,6 +189,7 @@ jobs:
         run: |
           terraform init
         env:
+          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
@@ -202,3 +204,5 @@ jobs:
           -auto-approve
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}

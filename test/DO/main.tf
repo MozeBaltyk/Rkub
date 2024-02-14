@@ -64,7 +64,7 @@ resource "digitalocean_droplet" "controllers" {
     host = self.ipv4_address
     user = "root"
     type = "ssh"
-    private_key = file(pathexpand(".key"))
+    private_key = file(pathexpand("../.key"))
     timeout = "2m"
   }
 
@@ -129,13 +129,13 @@ resource "digitalocean_project" "rkub" {
 ### Generate the hosts.ini file
 ###
 resource "local_file" "ansible_inventory" {
-  content = templatefile("inventory/hosts.tpl",
+  content = templatefile("../inventory/hosts.tpl",
     {
      controller_ips = digitalocean_droplet.controllers[*].ipv4_address,
      worker_ips     = digitalocean_droplet.workers[*].ipv4_address
     }
   )
-  filename = "inventory/hosts.ini"
+  filename = "../inventory/hosts.ini"
 }
 
 ###
