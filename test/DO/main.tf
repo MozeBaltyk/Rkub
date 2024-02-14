@@ -64,7 +64,7 @@ resource "digitalocean_droplet" "controllers" {
     host = self.ipv4_address
     user = "root"
     type = "ssh"
-    private_key = file(pathexpand("../.key"))
+    private_key = file(pathexpand(".key"))
     timeout = "2m"
   }
 

@@ -115,25 +115,6 @@ jobs:
         env:
           SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
-#      - name: Create inventory hosts.ini
-#        run: |
-#          touch hosts.ini
-#          echo "[RKE2_CONTROLLERS]" > hosts.ini
-#          doctl compute droplet list --no-header --tag-name rke2_ansible_test_on_rockylinux-8-x64_${GITHUB_RUN_ID}_controllers --format "Public IPv4" --output text >> hosts.ini
-#          echo "[RKE2_WORKERS]" >> hosts.ini
-#          doctl compute droplet list --no-header --tag-name rke2_ansible_test_on_rockylinux-8-x64_${GITHUB_RUN_ID}_workers --format "Public IPv4" --output text >> hosts.ini
-#          echo "[all:vars]" >> hosts.ini
-#          echo "kubernetes_api_server_host=$(echo " " | head -1)" >> hosts.ini
-#          echo "remote_user=root" >> ansible.cfg
-#          echo "private_key_file=.key" >> ansible.cfg
-#        env:
-#          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-#
-#      - name: Check hosts.ini and ansible.cfg
-#        run: |
-#          cat hosts.ini
-#          cat ansible.cfg
-
       - name: Test if reachable
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -u root -vv --private-key .key
