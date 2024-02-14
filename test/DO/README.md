@@ -47,6 +47,15 @@ terraform plan -out=terraform.tfplan \
 # Apply
 terraform apply terraform.tfplan
 
+# Reconciliate
+terraform plan -refresh-only -out=terraform.tfplan \
+-var "GITHUB_RUN_ID=777" \
+-var "do_token=${DO_PAT}" \
+-var "do_worker_count=1" \
+-var "do_controller_count=3" \
+-var "do_instance_size=s-1vcpu-1gb"
+
+
 # connect to a controller
 ssh root@$(terraform output -json ip_address_controllers | jq -r '.[0]') -i .key
 

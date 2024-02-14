@@ -174,15 +174,28 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
-      - name: Delete Stack
-        if: ${{ always() }}
+      - name: Terraform plan delete stack
+        id: plan
         run: |
-          terraform destroy -out=terraform.tfplan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+
+          terraform plan -destroy -out=terraform.tfplan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
           -var "do_worker_count=1" \
           -var "do_controller_count=1" \
-          -var "do_instance_size=s-2vcpu-4gb" \
-          -auto-approve
+          -var "do_instance_size=s-2vcpu-4gb"
+        continue-on-error: true
+        env:
+          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
