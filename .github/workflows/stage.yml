@@ -55,6 +55,8 @@ jobs:
         continue-on-error: true
         env:
           DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
@@ -63,6 +65,10 @@ jobs:
       - name: Terraform Apply
         run: |
           terraform apply terraform.tfplan
+        env:
+          DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
   reachable:
     name: Reachable
