@@ -126,7 +126,7 @@ jobs:
 
       - name: Run playbook build
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/build.yml
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/build.yml
 
   upload:
     name: Upload
@@ -144,7 +144,7 @@ jobs:
 
       - name: Run playbook upload
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/upload.yml
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/upload.yml
 
   install:
     name: Install
@@ -162,7 +162,7 @@ jobs:
 
       - name: Run playbook install
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/install.yml
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/install.yml
 
       #- name: Run Python Tests
       #  run: |
