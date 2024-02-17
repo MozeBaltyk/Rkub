@@ -170,6 +170,10 @@ jobs:
         run: |
           terraform init
 
+      - name: Terraform cleanup workspace
+        run: |
+          terraform workspace select rkub-${GITHUB_RUN_ID}
+
       - name: Terraform plan delete stack
         id: plan
         run: |
