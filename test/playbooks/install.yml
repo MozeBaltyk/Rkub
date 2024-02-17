@@ -1,0 +1,18 @@
+---
+- name: Install RKE2 Controlers
+  hosts: RKE2_CONTROLLERS
+  gather_facts: true
+  become: true
+  vars_files: ../vars/main.yml
+  tags: controller
+  roles:
+    - {role: install_rke2_controller, tags: rke2}
+
+- name: Install RKE2 Workers
+  hosts: RKE2_WORKERS
+  gather_facts: true
+  become: true
+  vars_files: ../vars/main.yml
+  tags: worker
+  roles:
+    - {role: install_rke2_worker, tags: rke2}

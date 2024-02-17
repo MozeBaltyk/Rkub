@@ -70,7 +70,7 @@ jobs:
   reachable:
     name: Reachable
     runs-on: ubuntu-latest
-    needs: Deploy
+    needs: deploy
 
     defaults:
       run:
@@ -115,17 +115,50 @@ jobs:
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -u root -vv --private-key .key
 
-      #- name: Run playbook
-      #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root -vv --private-key .key playbooks/tasks/install.yml
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    needs: Reachable
 
-      #- name: Run playbook again for idempotency
-      #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root -vv --private-key .key playbooks/tasks/rancher.yml
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
 
-      #- name: Run Ansible Tests
-      #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini -u root --verbose --skip-tags "troubleshooting" --private-key .key testing.yml
+    steps:
+      - name: Run playbook build
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/build.yml
+
+  upload:
+    name: Upload
+    runs-on: ubuntu-latest
+    needs: [ Reachable, Package ]
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Run playbook upload
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/upload.yml
+
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    needs: [ Reachable, Upload ]
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Run playbook install
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/install.yml
 
       #- name: Run Python Tests
       #  run: |
