@@ -169,7 +169,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: Reachable
+    needs: Install
     if: always()
     env:
       DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
