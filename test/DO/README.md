@@ -36,6 +36,9 @@ terraform init
 export GITHUB_RUN_ID="777"
 terraform workspace new rkub-${GITHUB_RUN_ID}
 
+# Get back to a workspace
+terraform workspace select rkub-${GITHUB_RUN_ID}
+
 # auto-approve (default: size=s-1vcpu-1gb, 1 controller + 2 workers)
 terraform apply -var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" -var "do_token=${DO_PAT}" -auto-approve
 
