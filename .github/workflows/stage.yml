@@ -86,11 +86,6 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Check GITHUB ID
-        id: plan
-        run: |
-          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID"
-
       - name: Set up Python
         id: setup_python
         uses: actions/setup-python@v5
@@ -126,6 +121,9 @@ jobs:
         working-directory: ./test
 
     steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
       - name: Run playbook build
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/build.yml
@@ -141,6 +139,9 @@ jobs:
         working-directory: ./test
 
     steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
       - name: Run playbook upload
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/upload.yml
@@ -156,6 +157,9 @@ jobs:
         working-directory: ./test
 
     steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
       - name: Run playbook install
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/tasks/install.yml
