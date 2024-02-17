@@ -20,7 +20,7 @@ terraform {
     }
     region                      = "fra1" // needed
     bucket                      = "terraform-backend-github"
-    key                         = "state-store/terraform.tfstate"
+    key                         = "terraform.tfstate"
   }
 }
 
@@ -36,9 +36,8 @@ data "digitalocean_ssh_key" "terraform" {
 ### VPC
 ###
 resource "digitalocean_vpc" "rkub-project-network" {
-  name     = "rkub-project-network"
+  name     = "rkub-${var.GITHUB_RUN_ID}-network"
   region   = "fra1"
-  ip_range = "10.10.10.0/24"
 }
 
 ###
@@ -53,7 +52,9 @@ resource "digitalocean_droplet" "controllers" {
     region = "fra1"
     size = var.do_instance_size
     tags   = [
-      "rke2_ansible_test_on_${var.do_system}_${var.GITHUB_RUN_ID}_controllers",
+      "rkub-${var.GITHUB_RUN_ID}",
+      "controller",
+      "${var.do_system}_controllers",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [
@@ -90,7 +91,9 @@ resource "digitalocean_droplet" "workers" {
     region = "fra1"
     size = var.do_instance_size
     tags   = [
-      "rke2_ansible_test_on_${var.do_system}_${var.GITHUB_RUN_ID}_workers",
+      "rkub-${var.GITHUB_RUN_ID}",
+      "worker",
+      "${var.do_system}_workers",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [
@@ -118,7 +121,7 @@ resource "digitalocean_droplet" "workers" {
 ###
 
 resource "digitalocean_project" "rkub" {
-  name        = "Rkub-${var.GITHUB_RUN_ID}"
+  name        = "rkub-${var.GITHUB_RUN_ID}"
   description = "A CI project to test the Rkub development from github."
   purpose     = "Cluster k8s"
   environment = "Staging"

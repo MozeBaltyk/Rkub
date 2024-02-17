@@ -9,7 +9,7 @@ The puropse of this CI is to test the integration between RKE2, longhorn, ranche
 On Digital Ocean account:
 - generate a PAT (private access token)
 - a set of SSH key
-- Create a Space with a key
+- Create a Space with a an acces_key and a secret key
 
 Add inside ./test a file .key with the private ssh key generate by DO.
 
@@ -32,29 +32,31 @@ export AWS_ACCESS_KEY_ID=DOxxxxxxxxxxxxxxxx
 export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxx
 terraform init
 
-# auto-approve (default: size=s-1vcpu-1gb, 1 controller + 2 workers)
-terraform apply -var "GITHUB_RUN_ID=777" -var "do_token=${DO_PAT}" -auto-approve
+# Create a workspace
+export GITHUB_RUN_ID="777"
+terraform workspace new rkub-${GITHUB_RUN_ID}
 
-terraform apply -var "GITHUB_RUN_ID=777" -var "do_token=${DO_PAT}" --target aws_s3_bucket.terraform-backend-github
+# auto-approve (default: size=s-1vcpu-1gb, 1 controller + 2 workers)
+terraform apply -var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" -var "do_token=${DO_PAT}" -auto-approve
 
 # Deploy
 terraform plan -out=terraform.tfplan \
--var "GITHUB_RUN_ID=777" \
+-var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" \
 -var "do_token=${DO_PAT}" \
 -var "do_worker_count=1" \
 -var "do_controller_count=3" \
 -var "do_instance_size=s-1vcpu-1gb"
+
 # Apply
 terraform apply terraform.tfplan
 
 # Reconciliate
 terraform plan -refresh-only -out=terraform.tfplan \
--var "GITHUB_RUN_ID=777" \
+-var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" \
 -var "do_token=${DO_PAT}" \
 -var "do_worker_count=1" \
 -var "do_controller_count=3" \
 -var "do_instance_size=s-1vcpu-1gb"
-
 
 # connect to a controller
 ssh root@$(terraform output -json ip_address_controllers | jq -r '.[0]') -i .key
@@ -63,11 +65,16 @@ ssh root@$(terraform output -json ip_address_controllers | jq -r '.[0]') -i .key
 ssh root@$(terraform output -json ip_address_workers | jq -r '.[0]') -i .key
 
 # Destroy
-terraform plan -destroy -out=terraform.tfplan -var "GITHUB_RUN_ID=777" \
+terraform plan -destroy -out=terraform.tfplan \
+-var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" \
 -var "do_token=${DO_PAT}" \
 -var "do_worker_count=1" \
 -var "do_controller_count=3" \
 -var "do_instance_size=s-1vcpu-1gb"
 # Apply destroy
 terraform apply terraform.tfplan
+
+# Delete Workspace
+terraform workspace select default
+terraform workspace delete rkub-${GITHUB_RUN_ID}
 ```
