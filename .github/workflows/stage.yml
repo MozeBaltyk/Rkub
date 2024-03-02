@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
 
 env:
-  DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
+  DO_PAT: ${{secrets.DIGITALOCEAN_ACCESS_TOKEN}}
+  AWS_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
 jobs:
   backend:
@@ -130,7 +130,7 @@ jobs:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ DO_PAT }}
+          token: ${ DO_PAT }
 
       - name: Set up Python
         id: setup_python
