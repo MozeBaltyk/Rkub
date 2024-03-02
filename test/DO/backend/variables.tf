@@ -18,7 +18,7 @@ variable "GITHUB_RUN_ID" {
 
 variable "terraform_backend_bucket_name" {
   description = "Unique bucket name for storing terraform backend data"
-  default = "terraform-backend-github-${var.GITHUB_RUN_ID}"
+  default = "terraform-backend-github"
 }
 
 variable "region" {

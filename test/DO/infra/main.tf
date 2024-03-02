@@ -16,10 +16,10 @@ terraform {
     use_path_style              = true
     skip_s3_checksum            = true
     endpoints = {
-      s3 = "https://${var.region}.digitaloceanspaces.com"
+      s3 = "https://fra1.digitaloceanspaces.com"
     }
-    region                      = var.region // needed
-    bucket                      = var.terraform_backend_bucket_name
+    region                      = "fra1" // needed
+    bucket                      = "terraform-backend-github"
     key                         = "terraform.tfstate"
   }
 }
