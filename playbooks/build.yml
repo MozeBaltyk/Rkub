@@ -6,4 +6,4 @@
   vars_files: ../vars/main.yml
   tags: build
   roles:
-    - {role: build_airgap_package, tags: package}
+    - {role: mozebaltyk.rkub.build_airgap_package, tags: package}

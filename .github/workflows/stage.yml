@@ -4,19 +4,73 @@ name: Stage deployment
 on:
   workflow_dispatch:
 
+env:
+  DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
+
 jobs:
-  deploy:
-    name: Deploy
+  backend:
+    name: Backend
     runs-on: ubuntu-latest
-    env:
-      DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
     defaults:
       run:
         shell: bash
-        working-directory: ./test/DO
+        working-directory: ./test/DO/backend
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Config Terraform plugin cache
+        run: |
+          echo 'plugin_cache_dir="$HOME/.terraform.d/plugin-cache"' >~/.terraformrc
+          mkdir --parents ~/.terraform.d/plugin-cache
+
+      - name: Cache Terraform
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+      - name: Init Terraform configuration
+        run: |
+          terraform init
+
+      - name: Terraform plan
+        id: plan
+        run: |
+          terraform plan -out=terraform.tfplan \
+          -var "do_token=${DO_PAT}" \
+          -var "spaces_access_key_id=${AWS_ACCESS_KEY_ID}" \
+          -var "spaces_access_key_secret=${AWS_SECRET_ACCESS_KEY}"
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test/DO/infra
 
     steps:
       - name: Checkout files
@@ -31,14 +85,6 @@ jobs:
         id: init
         run: |
           terraform init
-
-      - name: Get key
-        run: |
-          echo "$SSH_KEY" > .key
-          chmod 400 .key
-        shell: bash
-        env:
-          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
       - name: Terraform Validate
         id: validate
@@ -84,7 +130,7 @@ jobs:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          token: ${{ DO_PAT }}
 
       - name: Set up Python
         id: setup_python

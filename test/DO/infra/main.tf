@@ -16,10 +16,10 @@ terraform {
     use_path_style              = true
     skip_s3_checksum            = true
     endpoints = {
-      s3 = "https://fra1.digitaloceanspaces.com"
+      s3 = "https://${var.region}.digitaloceanspaces.com"
     }
-    region                      = "fra1" // needed
-    bucket                      = "terraform-backend-github"
+    region                      = var.region // needed
+    bucket                      = var.terraform_backend_bucket_name
     key                         = "terraform.tfstate"
   }
 }
@@ -37,7 +37,7 @@ data "digitalocean_ssh_key" "terraform" {
 ###
 resource "digitalocean_vpc" "rkub-project-network" {
   name     = "rkub-${var.GITHUB_RUN_ID}-network"
-  region   = "fra1"
+  region   = var.region
 }
 
 ###
@@ -49,7 +49,7 @@ resource "digitalocean_droplet" "controllers" {
     count = var.do_controller_count
     image = var.do_system
     name = "controller${count.index}"
-    region = "fra1"
+    region = var.region
     size = var.do_instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
@@ -60,21 +60,19 @@ resource "digitalocean_droplet" "controllers" {
     ssh_keys = [
       data.digitalocean_ssh_key.terraform.id
     ]
-
-  connection {
-    host = self.ipv4_address
-    user = "root"
-    type = "ssh"
-    private_key = file(pathexpand(".key"))
-    timeout = "2m"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "export PATH=$PATH:/usr/bin",
-      "cat /etc/os-release",
-    ]
-  }
+#  connection {
+#    host = self.ipv4_address
+#    user = "root"
+#    type = "ssh"
+#    private_key = file(pathexpand(".key"))
+#    timeout = "2m"
+#  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "export PATH=$PATH:/usr/bin",
+#      "cat /etc/os-release",
+#    ]
+#  }
 }
 
 output "ip_address_controllers" {
@@ -82,13 +80,12 @@ output "ip_address_controllers" {
   description = "The public IP address of your rke2 controllers."
 }
 
-
 # Droplet Instance for RKE2 Cluster - Workers
 resource "digitalocean_droplet" "workers" {
     count = var.do_worker_count
     image = var.do_system
     name = "worker${count.index}"
-    region = "fra1"
+    region = var.region
     size = var.do_instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
@@ -99,27 +96,24 @@ resource "digitalocean_droplet" "workers" {
     ssh_keys = [
       data.digitalocean_ssh_key.terraform.id
     ]
-
-  connection {
-    host = self.ipv4_address
-    user = "root"
-    type = "ssh"
-    private_key = file(pathexpand(".key"))
-    timeout = "2m"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "export PATH=$PATH:/usr/bin",
-      "cat /etc/os-release",
-    ]
-  }
+#  connection {
+#    host = self.ipv4_address
+#    user = "root"
+#    type = "ssh"
+#    private_key = file(pathexpand(".key"))
+#    timeout = "2m"
+#  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "export PATH=$PATH:/usr/bin",
+#      "cat /etc/os-release",
+#    ]
+#  }
 }
 
 ###
 ### Project
 ###
-
 resource "digitalocean_project" "rkub" {
   name        = "rkub-${var.GITHUB_RUN_ID}"
   description = "A CI project to test the Rkub development from github."
@@ -132,13 +126,13 @@ resource "digitalocean_project" "rkub" {
 ### Generate the hosts.ini file
 ###
 resource "local_file" "ansible_inventory" {
-  content = templatefile("../inventory/hosts.tpl",
+  content = templatefile("../../inventory/hosts.tpl",
     {
      controller_ips = digitalocean_droplet.controllers[*].ipv4_address,
      worker_ips     = digitalocean_droplet.workers[*].ipv4_address
     }
   )
-  filename = "../inventory/hosts.ini"
+  filename = "../../inventory/hosts.ini"
 }
 
 ###

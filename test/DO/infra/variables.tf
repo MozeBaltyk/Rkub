@@ -1,10 +1,12 @@
-variable "do_token" {}
+variable "do_token" {
+  description = "Digital Ocean API Token"
+}
 
 ### s-2vcpu-4gb
 variable "do_instance_size" {
-    type = string
-    description = "VM size"
-    default = "s-1vcpu-1gb"
+  type = string
+  description = "VM size"
+  default = "s-1vcpu-1gb"
 }
 
 variable "do_controller_count" {
@@ -31,8 +33,18 @@ variable "do_system" {
   default = "rockylinux-8-x64"
 }
 
+variable "region" {
+  description = "Unique bucket name for storing terraform backend data"
+  default = "fra1"
+}
+
 variable "GITHUB_RUN_ID" {
   type    = string
   description = "github run id"
   default = "test"
+}
+
+variable "terraform_backend_bucket_name" {
+  description = "Unique bucket name for storing terraform backend data"
+  default = "terraform-backend-github-${var.GITHUB_RUN_ID}"
 }

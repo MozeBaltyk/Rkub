@@ -6,4 +6,4 @@
   vars_files: ../vars/main.yml
   tags: [ controller, worker ]
   roles:
-    - {role: deploy_rancher, tags: rancher}
+    - {role: mozebaltyk.rkub.deploy_rancher, tags: rancher}

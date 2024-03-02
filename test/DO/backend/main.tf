@@ -7,9 +7,16 @@ terraform {
   }
 }
 
+provider "digitalocean" {
+  token = var.do_token
+  spaces_access_id  = var.spaces_access_key_id
+  spaces_secret_key = var.spaces_access_key_secret
+}
+
 resource "digitalocean_spaces_bucket" "terraform_backend" {
   name   = var.terraform_backend_bucket_name
-  region = "fra1"
+  region = var.region
+  force_destroy = true
 }
 
 output "terraform_backend_bucket_domain_name" {

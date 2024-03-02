@@ -18,6 +18,8 @@ context
 # Staging
 *kubeconfig.yaml
 *terraform*
+node_modules
+package*.json
 *.tfstate
 hosts.ini
 .key

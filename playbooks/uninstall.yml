@@ -1,9 +1,9 @@
 ---
-- name: uninstall RKE2
+- name: Uninstall RKE2
   hosts: RKE2_CONTROLLERS:RKE2_WORKERS
   gather_facts: false
   become: true
   vars_files: ../vars/main.yml
   tags: controler, worker
   roles:
-    - {role: uninstall_rkub, tags: uninstall}
+    - {role: mozebaltyk.rkub.uninstall_rkub, tags: uninstall}
