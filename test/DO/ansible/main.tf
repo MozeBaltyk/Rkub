@@ -53,7 +53,8 @@ locals {
     }],
     runcmd = [
       "mkdir -p ${var.mount_point}",
-      "s3fs ${var.terraform_backend_bucket_name} ${var.mount_point} -o url=https://${var.region}.digitaloceanspaces.com"
+      "s3fs ${var.terraform_backend_bucket_name} ${var.mount_point} -o url=https://${var.region}.digitaloceanspaces.com",
+      "git clone https://github.com/MozeBaltyk/Rkub.git",
     ]
   })
 }
@@ -76,6 +77,18 @@ resource "digitalocean_droplet" "ansible" {
   size   = var.do_instance_size
   ssh_keys = [ data.digitalocean_ssh_key.terraform.id ]
   user_data = data.cloudinit_config.server_config.rendered
+#  connection {
+#    host = self.ipv4_address
+#    user = "root"
+#    type = "ssh"
+#    private_key = file(pathexpand(".key"))
+#    timeout = "2m"
+#  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key ../../playbooks/build.yml",
+#    ]
+#  }
 }
 
 output "ip_address_ansible" {

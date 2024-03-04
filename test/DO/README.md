@@ -14,11 +14,20 @@ On Digital Ocean account:
 
 Add inside ./test a file .key with the private ssh key generate by DO.
 
-## Create a bucket to store backend
+## Create/delete a bucket to store backend
 
 ```bash
 export DO_PAT="dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
+# info
+s3cmd ls
+s3cmd info s3://github-action-8147167750
+
+# create
+s3cmd mb s3://github-action-8147167750
+
+# delete
+s3cmd rb s3://github-action-8147167750 --recursive
 ```
 
 ## Create an infra

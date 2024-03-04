@@ -31,8 +31,68 @@ jobs:
           sleep 10
         continue-on-error: true
 
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    needs: Backend
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test/DO/ansible
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Get key
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Terraform Init
+        id: init
+        run: |
+          terraform init
+        continue-on-error: true
+
+      - name: Terraform plan
+        id: plan
+        run: |
+          terraform plan -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+          sleep 600
+
+      - name: Terraform plan delete stack
+        id: plan
+        run: |
+          terraform plan -destroy -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
+        continue-on-error: true
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+        continue-on-error: true
+
   deploy:
-    name: Deploy
+    name: Package
     runs-on: ubuntu-latest
     needs: Backend
 
@@ -116,54 +176,6 @@ jobs:
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -u root -vv --private-key .key
 
-  package:
-    name: Package
-    runs-on: ubuntu-latest
-    needs: Reachable
-
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./test/DO/ansible
-
-    steps:
-      - name: Checkout files
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.7.3"
-
-      - name: Get key
-        run: |
-          echo "$SSH_KEY" > .key
-          chmod 400 .key
-        shell: bash
-        env:
-          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-
-      - name: Terraform Init
-        id: init
-        run: |
-          terraform init -backend-config="bucket=github-action-${{ github.run_id }}"
-        continue-on-error: true
-
-      - name: Terraform plan
-        id: plan
-        run: |
-          terraform plan -out=terraform.tfplan \
-          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
-          -var "do_token=${DO_PAT}"
-
-      - name: Terraform Apply
-        run: |
-          terraform apply terraform.tfplan
-
-      - name: Run playbook build
-        run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/build.yml
-
   upload:
     name: Upload
     runs-on: ubuntu-latest
@@ -210,7 +222,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     needs: Install
-    #if: always()
+    if: always()
 
     defaults:
       run:
