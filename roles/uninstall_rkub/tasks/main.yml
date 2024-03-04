@@ -7,8 +7,8 @@
       - "distribution_major_version"
       - "default_ipv4"
       - "!all,!min"
-  when: >
-    ansible_os_family is not defined
+  when:
+    - ansible_os_family is not defined
   tags: [always]
 
 - name: Populate service facts

@@ -1,24 +1,26 @@
-## List images 
+---
+## List images
 - name: Rancher List - Download rancher-images.txt
   ansible.builtin.get_url:
     url: "https://github.com/rancher/rancher/releases/download/v{{ RANCHER_VERSION }}/rancher-images.txt"
     dest: "{{ directory_package }}/images/rancher/orig_rancher-images.txt"
+    mode: "0640"
 
 - name: Rancher List - Fix 1 Library tags
   ansible.builtin.lineinfile:
     path: "{{ directory_package }}/images/rancher/orig_rancher-images.txt"
     regexp: '^(.*)busybox(.*)$'
     line: '\1library\/busybox\2'
-    firstmatch: yes
-    backrefs: yes
+    firstmatch: true
+    backrefs: true
 
 - name: Rancher List - Fix 2 Library tags
   ansible.builtin.lineinfile:
     path: "{{ directory_package }}/images/rancher/orig_rancher-images.txt"
     regexp: '^(.*)registry(.*)$'
     line: '\1library\/registry\2'
-    firstmatch: yes
-    backrefs: yes
+    firstmatch: true
+    backrefs: true
 
 - name: Rancher List - Remove things that are not needed and overlapped
   ansible.builtin.lineinfile:
@@ -28,57 +30,101 @@
 
 # this one could be probably improved
 - name: Rancher List - Get latest version
-  ansible.builtin.shell: |
-    for i in $(cat {{ directory_package }}/images/rancher/orig_rancher-images.txt|awk -F: '{print $1}'); do
-    grep -w $i {{ directory_package }}/images/rancher/orig_rancher-images.txt | sort -Vr| head -1 >> {{ directory_package }}/images/rancher/version_unsorted.txt;
-    done
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      for i in $(cat {{ directory_package }}/images/rancher/orig_rancher-images.txt|awk -F: '{print $1}'); do
+      grep -w $i {{ directory_package }}/images/rancher/orig_rancher-images.txt | sort -Vr| head -1 >> {{ directory_package }}/images/rancher/version_unsorted.txt;
+      done
+    executable: /bin/bash
+  changed_when: false
 
 - name: Rancher List - Final Sort
-  ansible.builtin.shell: |
-    cat {{ directory_package }}/images/rancher/version_unsorted.txt | sort -u > {{ directory_package }}/images/rancher/images.txt
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      cat {{ directory_package }}/images/rancher/version_unsorted.txt | sort -u > {{ directory_package }}/images/rancher/images.txt
+    executable: /bin/bash
+  changed_when: false
 
 - name: Rancher List - Due to version 2.8.0
-  ansible.builtin.shell: |
-    echo "rancher/mirrored-cluster-api-controller:v1.4.4" >> {{ directory_package }}/images/rancher/images.txt
-    echo "rancher/kubectl:v1.20.2" >> {{ directory_package }}/images/rancher/images.txt
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      echo "rancher/mirrored-cluster-api-controller:v1.4.4" >> {{ directory_package }}/images/rancher/images.txt
+      echo "rancher/kubectl:v1.20.2" >> {{ directory_package }}/images/rancher/images.txt
+    executable: /bin/bash
+  changed_when: false
 
 - name: Longhorn List - Download longhorn-images.txt
   ansible.builtin.get_url:
     url: "https://raw.githubusercontent.com/longhorn/longhorn/v{{ LONGHORN_VERSION }}/deploy/longhorn-images.txt"
     dest: "{{ directory_package }}/images/longhorn/images.txt"
+    mode: "0640"
 
 - name: Cert-manager List - helm template
-  ansible.builtin.shell: |
-    helm template {{ directory_package }}/helm/cert-manager-v{{ CERT_VERSION }}.tgz | awk '$1 ~ /image:/ {print $2}' | sed s/\"//g > {{ directory_package }}/images/cert/images.txt
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      helm template {{ directory_package }}/helm/cert-manager-v{{ CERT_VERSION }}.tgz | awk '$1 ~ /image:/ {print $2}' | sed s/\"//g > {{ directory_package }}/images/cert/images.txt
+    executable: /bin/bash
+  changed_when: false
 
 - name: Neuvector List - helm template
-  ansible.builtin.shell: |
-    helm template {{ directory_package }}/helm/core-{{ NEU_VERSION }}.tgz | awk '$1 ~ /image:/ {print $2}' | sed -e 's/\"//g' > {{ directory_package }}/images/neuvector/images.txt
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      helm template {{ directory_package }}/helm/core-{{ NEU_VERSION }}.tgz | awk '$1 ~ /image:/ {print $2}' | sed -e 's/\"//g' > {{ directory_package }}/images/neuvector/images.txt
+    executable: /bin/bash
+  changed_when: false
 
-## Import images 
+## Import images
 - name: Upload images from list ($2)
-  ansible.builtin.shell: >
-    for i in $(cat {{ item }}/images.txt); do
-    if ( ! ls {{ item }}/$(echo $i| awk -F/ '{print $2}'|sed 's/:/_/g').tar > /dev/null); then
-    skopeo copy docker://$i docker-archive:{{ item }}/$(echo $i| awk -F/ '{print $2}'|sed 's/:/_/g').tar:$(echo $i| awk -F/ '{print $2}');
-    fi;
-    done
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      for i in $(cat {{ item }}/images.txt); do
+      if ( ! ls {{ item }}/$(echo $i| awk -F/ '{print $2}'|sed 's/:/_/g').tar > /dev/null); then
+      skopeo copy docker://$i docker-archive:{{ item }}/$(echo $i| awk -F/ '{print $2}'|sed 's/:/_/g').tar:$(echo $i| awk -F/ '{print $2}');
+      fi;
+      done
+    executable: /bin/bash
+  changed_when: false
   loop:
     - "{{ directory_package }}/images/rancher"
     - "{{ directory_package }}/images/longhorn"
 
 - name: Upload images from list ($3)
-  ansible.builtin.shell: >
-    for i in $(cat {{ item }}/images.txt); do
-    if ( ! ls {{ item }}/$(echo $i| awk -F/ '{print $3}'|sed 's/:/_/g').tar > /dev/null); then
-    skopeo copy docker://$i docker-archive:{{ item }}/$(echo $i| awk -F/ '{print $3}'|sed 's/:/_/g').tar:$(echo $i| awk -F/ '{print $3}');
-    fi;
-    done
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      for i in $(cat {{ item }}/images.txt); do
+      if ( ! ls {{ item }}/$(echo $i| awk -F/ '{print $3}'|sed 's/:/_/g').tar > /dev/null); then
+      skopeo copy docker://$i docker-archive:{{ item }}/$(echo $i| awk -F/ '{print $3}'|sed 's/:/_/g').tar:$(echo $i| awk -F/ '{print $3}');
+      fi;
+      done
+    executable: /bin/bash
+  changed_when: false
   loop:
     - "{{ directory_package }}/images/cert"
     - "{{ directory_package }}/images/neuvector"
 
 - name: Upload registry image
-  ansible.builtin.get_url:
-    url: "https://github.com/clemenko/rke_airgap_install/raw/main/registry.tar"
-    dest: "{{ directory_package }}/images/registry/registry.tar"
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      if ( ! ls {{ directory_package }}/images/registry/registry.tar > /dev/null); then
+      skopeo copy --additional-tag registry:latest docker://registry:latest docker-archive:{{ directory_package }}/images/registry/registry.tar
+      fi;
+    executable: /bin/bash
+  changed_when: false
+
+- name: Upload kubevip image
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      if ( ! ls {{ directory_package }}/images/kubevip/kubevip_v{{ kubevip_version }}.tar > /dev/null); then
+      skopeo copy docker://ghcr.io/kube-vip/kube-vip:v{{ kubevip_version }} docker-archive:{{ directory_package }}/images/kubevip/kubevip_v{{ kubevip_version }}.tar
+      fi;
+    executable: /bin/bash
+  changed_when: false

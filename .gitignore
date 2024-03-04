@@ -1,13 +1,27 @@
+# tmp
 .*.swp
 .govmomi
-.terraform*
-terraform.tfstate*
-# Workstation 
+# Workstation
 .DS_Store
 .vscode
 # loaded images
 **/roles/**/files/images/*
 images
+context
 # Galaxy artifacts.
 *.tar.gz
 *.zip
+*.iso
+*.log
+*.png
+*.tgz
+# Staging
+*kubeconfig.yaml
+*terraform*
+node_modules
+package*.json
+*.tfstate
+hosts.ini
+.key
+Chart.lock
+.venv/

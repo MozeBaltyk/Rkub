@@ -6,6 +6,7 @@ longhorn_servicename: "longhorn"
 longhorn_domain: "{{ global_domain }}"
 longhorn_url: "{{ longhorn_servicename }}.{{ longhorn_domain }}"
 longhorn_datapath: "{{ global_longhorn_datapath }}"
+longhorn_replica: "{{ global_longhorn_replica }}"
 
 # General
 admin_user: "{{ global_install_user }}"

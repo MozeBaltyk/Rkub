@@ -1,8 +1,10 @@
-# Download/Install helm on build server 
+---
+# Download/Install helm on build server
 - name: Download Helm binary
   ansible.builtin.get_url:
     url: "https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz"
     dest: "{{ directory_package }}/helm/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+    mode: 0750
 
 - name: Install Helm binary
   ansible.builtin.shell: |
@@ -11,6 +13,7 @@
     rm -rf linux-amd64 > /dev/null 2>&1
   args:
     chdir: "{{ directory_package }}/helm/"
+  changed_when: false
 
 # Add charts repository
 - name: Add jetstack chart repo
@@ -37,7 +40,7 @@
     repo_url: "https://neuvector.github.io/neuvector-helm/"
     force_update: true
 
-# Pull charts 
+# Pull charts
 - name: Download chart using chart url
   kubernetes.core.helm_pull:
     chart_ref: jetstack/cert-manager

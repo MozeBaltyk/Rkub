@@ -1,0 +1,21 @@
+---
+# .ansible-lint
+exclude_paths:
+  - .git/
+  - .gitignore
+  - Makefile
+  - justfile
+  - .cache/
+  - .github/
+  - molecule/
+  - docs/
+  - scripts/
+  - test/
+  - playbooks/tasks # Dir for testing locally
+
+skip_list:
+  - yaml[line-length]
+  - var-naming[no-role-prefix]
+  - command-instead-of-module
+  - var-naming[pattern]
+  - risky-file-permissions

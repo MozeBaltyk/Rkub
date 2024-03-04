@@ -1,0 +1,8 @@
+---
+# defaults file for install_utils_kubevip
+kubevip_version: "{{ global_kubevip_version }}"
+kubevip_svc_enable:  true
+kubevip_ipvs_lb_enable:
+kubevip_image: "ghcr.io/kube-vip/kube-vip:{{ kubevip_version }}"
+#kubevip_args:
+#rke2_kubevip_cloud_provider_image: ghcr.io/kube-vip/kube-vip-cloud-provider:v0.0.4

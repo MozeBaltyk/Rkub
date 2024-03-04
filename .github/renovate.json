@@ -1,0 +1,188 @@
+{
+    "labels": ["dependencies"],
+    "schedule": ["after 7am on saturday"],
+    "ansible-galaxy": { "fileMatch": ["(^|/)(galaxy|requirements|ee-requirements)(\\.ansible)?\\.ya?ml$"] },
+    "pre-commit": {
+      "enabled": true,
+      "addLabels": ["pre-commit"]
+    },
+    "packageRules": [
+      {
+        "matchManagers": ["dockerfile"],
+        "matchPackagePatterns": ["ubi8"],
+        "matchUpdateTypes": ["minor"],
+        "automerge": true
+      },
+      {
+        "matchManagers": ["github-actions"],
+        "matchUpdateTypes": ["minor"],
+        "automerge": true
+      },
+      {
+        "matchPackagePatterns": ["rke2"],
+        "addLabels": ["rke2"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["helm"],
+        "addLabels": ["helm"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["cert-manager"],
+        "addLabels": ["cert-manager"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["rancher"],
+        "addLabels": ["rancher"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["longhorn"],
+        "addLabels": ["longhorn"],
+        "extractVersion": "^longhorn-(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["neuvector"],
+        "addLabels": ["neuvector"],
+        "extractVersion": "(?<version>\\d+\\.\\d+.\\d+)"
+      }
+    ],
+    "customManagers": [
+      {
+        "description": "Update RKE2 helm charts version with customDatasource",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_rke2_version: \"(?<currentValue>.*)\"\\n",
+          "- rke2 version: (?<currentValue>.*)\\n",
+          "- \\[RKE2 (?<currentValue>[^\\]]+)\\]\\(https://docs.rke2.io\\) - Security focused Kubernetes (channel stable)\\n"
+        ],
+        "depNameTemplate": "rke2",
+        "versioningTemplate": "semver-coerced",
+        "datasourceTemplate": "custom.rke2"
+      },
+      {
+        "description": "Update helm binary version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$"
+        ],
+        "matchStrings": [
+          "global_helm_version: \"(?<currentValue>.*?)\"\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "helm",
+        "packageNameTemplate": "https://github.com/helm/helm",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "description": "Update cert-manager helm charts version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_CERT_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "- cert-manager version: (?<currentValue>.*)\\n",
+          "- \\[Cert-manager (?<currentValue>[^\\]]+)\\]\\(https://cert-manager.io/docs/\\) - Certificate manager\\n"
+        ],
+        "datasourceTemplate": "git-tags",
+        "depNameTemplate": "cert-manager",
+        "packageNameTemplate": "https://github.com/cert-manager/cert-manager",
+        "versioningTemplate": "semver"
+      },
+      {
+        "description": "Update Rancher helm charts version with customDatasource",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_RANCHER_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "- rancher version: (?<currentValue>.*)\\n",
+          "- \\[Rancher (?<currentValue>[^\\]]+)\\]\\(https://www.suse.com/products/suse-rancher/\\) - Multi-Cluster Kubernetes Management\\n"
+        ],
+        "depNameTemplate": "rancher",
+        "versioningTemplate": "semver-coerced",
+        "datasourceTemplate": "custom.rancher"
+      },
+      {
+        "description": "Update Longhorn helm charts version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_LONGHORN_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "- longhorn version: (?<currentValue>.*)\\n",
+          "- \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "longhorn",
+        "packageNameTemplate": "https://github.com/longhorn/charts",
+        "versioningTemplate": "semver"
+      },
+      {
+        "description": "Update Neuvector helm charts version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_NEU_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "- neuvector version: (?<currentValue>.*)\\n",
+          "- \\[Neuvector (?<currentValue>[^\\]]+)\\]\\(https://neuvector.com/\\) - Kubernetes Security Platform\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "neuvector",
+        "packageNameTemplate": "https://github.com/neuvector/neuvector-helm",
+        "versioningTemplate": "semver"
+      },
+      {
+        "description": "Update Kubevip version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$",
+          "CHANGELOG.md",
+          "README.md"
+        ],
+        "matchStrings": [
+          "global_kubevip_version: \"(?<currentValue>.*?)\"\\n",
+          "- kube-vip version: (?<currentValue>.*)\\n",
+          "- \\[Kube-vip (?<currentValue>[^\\]]+)\\]\\(https://kube-vip.io/\\) - Virtual IP and load balancer\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "kubevip",
+        "packageNameTemplate": "https://github.com/kube-vip/kube-vip",
+        "versioningTemplate": "semver"
+      }
+    ],
+    "customDatasources": {
+      "rke2": {
+        "defaultRegistryUrlTemplate": "https://update.rke2.io/v1-release/channels",
+        "transformTemplates": [
+          "{\"releases\":[{\"version\": $$.(data[id = 'stable'].latest),\"sourceUrl\":\"https://github.com/rancher/rke2\",\"changelogUrl\":$join([\"https://github.com/rancher/rke2/releases/\",data[id = 'stable'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rke2\",\"homepage\": \"https://docs.rke2.io\"}"
+        ]
+      },
+      "rancher": {
+        "defaultRegistryUrlTemplate": "https://update.rancher.io/v1-release/channels",
+        "transformTemplates": [
+          "{\"releases\":[{\"version\": $$.(data[id = 'latest'].latest),\"sourceUrl\":\"https://github.com/rancher/rancher\",\"changelogUrl\":$join([\"https://github.com/rancher/rancher/releases/\",data[id = 'latest'].latest])}],\"sourceUrl\": \"https://github.com/rancher/rancher\",\"homepage\": \"https://ranchermanager.docs.rancher.com\"}"
+        ]
+      }
+    }
+}

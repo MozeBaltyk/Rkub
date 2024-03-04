@@ -1,0 +1,9 @@
+---
+- name: Build RKE2 package
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files: ../../playbooks/vars/main.yml
+  tags: build
+  roles:
+    - {role: build_airgap_package, tags: package}

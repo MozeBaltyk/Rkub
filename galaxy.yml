@@ -2,7 +2,7 @@
 ### REQUIRED
 namespace: mozebaltyk
 name: rkub
-version: 1.0.2
+version: 1.0.3
 
 readme: README.md
 
@@ -14,16 +14,16 @@ description: >
   Ansible Collection to deploy a rancher RKE2 cluster.
 
 license:
-- Apache-2.0
+  - Apache-2.0
 
-tags: 
+tags:
   - devops
   - kubernetes
   - k8s
   - rancher
   - rke2
   - longhorn
-  - neuvector 
+  - neuvector
   - ansible
   - airgap
   - collection
@@ -39,12 +39,12 @@ issues: https://github.com/MozeBaltyk/rkub/issues
 
 build_ignore:
   - .gitignore
-  - '.*.swp' 
-  - .govmomi 
+  - '.*.swp'
+  - .govmomi
   - '.terraform*'
   - 'terraform.tfstate*'
   - .DS_Store
   - .vscode
   - '.*.tar.gz'
   - '*.zip'
-
+  - 'test'

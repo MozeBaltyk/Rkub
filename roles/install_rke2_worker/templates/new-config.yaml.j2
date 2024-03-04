@@ -1,0 +1,18 @@
+server: https://{{ master }}:9345
+token: {{ rke2_config_token }}
+
+# Common
+{% if rke2_profile_activated %}
+profile: cis
+{% endif %}
+node-name: {{ inventory_hostname }}
+write-kubeconfig-mode: 0600
+data-dir: {{ rke2_data_dir }}
+cluster-cidr: {{ rke2_cluster_cidr }}
+service-cidr: {{ rke2_service_cidr }}
+
+# Config Worker
+kube-apiserver-arg:
+- "authorization-mode=RBAC,Node"
+kubelet-arg:
+- "protect-kernel-defaults=true"

@@ -1,19 +1,20 @@
+---
 # Remove service from zone
-- name: Delete {{ service['name'] }} firewalld service
-  firewalld:
+- name: Delete firewalld service {{ service['name'] }}
+  ansible.posix.firewalld:
     service: "{{ service['name'] }}"
-    permanent: yes
-    immediate: yes
-    zone: "{{ service['zone'] | default( firewalld_default_zone ) }}"
+    permanent: true
+    immediate: true
+    zone: "{{ service['zone'] | default(firewalld_default_zone) }}"
     state: disabled
 
 # Completely delete service
-- name: Delete {{ service['name'] }} firewalld service definition
-  file:
+- name: Delete firewalld service definition {{ service['name'] }}
+  ansible.builtin.file:
     path: "{{ firewalld_path }}/services/{{ service['name'] }}.xml"
     state: absent
-  when:  service['erase'] == true
-  notify: restart firewalld
+  when:  service['erase']
+  notify: Restart firewalld
 
-- meta: flush_handlers
-
+- name: Flush handlers now
+  ansible.builtin.meta: flush_handlers

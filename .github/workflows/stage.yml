@@ -1,0 +1,278 @@
+---
+name: Stage deployment
+
+on:
+  workflow_dispatch:
+
+env:
+  DO_PAT: ${{secrets.DIGITALOCEAN_ACCESS_TOKEN}}
+  AWS_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@main
+        with:
+          provider: digitalocean
+          region: FRA1
+          access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+          secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+
+      - name: Create Space Bucket
+        run: |
+          sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          buck="github-action-${{ github.run_id }}"
+          s3cmd mb s3://$buck
+          sleep 10
+        continue-on-error: true
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    needs: Backend
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test/DO/ansible
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Terraform Init
+        id: init
+        run: |
+          terraform init
+
+      - name: Terraform plan
+        run: |
+          terraform plan -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
+          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+          sleep 600
+
+      - name: Terraform plan delete stack
+        run: |
+          terraform plan -destroy -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
+          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
+        continue-on-error: true
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+        continue-on-error: true
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: Package
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test/DO/infra
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Terraform Init
+        id: init
+        run: |
+          terraform init -backend-config="bucket=github-action-${{ github.run_id }}"
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "do_worker_count=0" \
+          -var "do_controller_count=1" \
+          -var "do_instance_size=s-2vcpu-4gb"
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+
+  reachable:
+    name: Reachable
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        id: setup_python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install ansible pytest-testinfra
+          ansible --version
+
+      - name: Get key
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Test if reachable
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -u root -vv --private-key .key
+
+  upload:
+    name: Upload
+    runs-on: ubuntu-latest
+    needs: [ Reachable, Package ]
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Run playbook upload
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/upload.yml
+
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    needs: [ Reachable, Upload ]
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Run playbook install
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/install.yml
+
+      #- name: Run Python Tests
+      #  run: |
+      #    export DEFAULT_PRIVATE_KEY_FILE=.key
+      #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
+      #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
+
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: Install
+    if: always()
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test/DO/infra
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Get key
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Terraform Init
+        id: init
+        run: |
+          terraform init -backend-config="bucket=github-action-${{ github.run_id }}"
+        continue-on-error: true
+
+      - name: Terraform plan delete stack
+        id: plan
+        run: |
+          terraform plan -destroy -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "do_worker_count=0" \
+          -var "do_controller_count=1" \
+          -var "do_instance_size=s-2vcpu-4gb"
+        continue-on-error: true
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+        continue-on-error: true
+
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@main
+        with:
+          provider: digitalocean
+          region: FRA1
+          access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+          secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+
+      - name: Remove Space bucket
+        run: |
+          sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          buck="github-action-${{ github.run_id }}"
+          s3cmd rb s3://${buck} --recursive
+          sleep 10
+        continue-on-error: true

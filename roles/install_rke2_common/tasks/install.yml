@@ -1,3 +1,5 @@
+---
+# Prerequisites
 - name: Ensure admin_user exist
   ansible.builtin.user:
     name: "{{ admin_user }}"
@@ -17,11 +19,33 @@
     - policycoreutils-python-utils
     - cryptsetup
   when:
+    - ansible_pkg_mgr == 'dnf'
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version | int >= 8 
+    - ansible_distribution_major_version | int >= 8
 
 - name: Create sysctl.conf from template
   ansible.builtin.template:
     src: rke2.conf
     dest: /etc/sysctl.d/rke2.conf
+    mode: '0600'
   notify: Restart systemd-sysctl
+
+# Prepare Dir
+- name: Ensure data_dir exists
+  ansible.builtin.file:
+    path: "{{ rke2_data_dir }}"
+    state: directory
+    mode: "0640"
+
+- name: Ensure dir /var/lib/rancher exists
+  ansible.builtin.file:
+    path: "/var/lib/rancher"
+    state: directory
+    mode: "0640"
+
+- name: Create Symlink between rke2_data_dir and /var/lib/rancher/rke2
+  ansible.builtin.file:
+    src: "{{ rke2_data_dir }}"
+    dest: /var/lib/rancher/rke2
+    state: link
+  when: rke2_data_dir != "/var/lib/rancher/rke2"

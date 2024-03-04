@@ -1,7 +1,7 @@
 ---
 # tasks file for export_nfs
 - name: Gather facts
-  setup:
+  ansible.builtin.setup:
     gather_subset:
       - "distribution"
       - "distribution_major_version"
@@ -10,13 +10,13 @@
     ansible_os_family is not defined
 
 - name: Tasks for Linux
-  import_tasks: selinux.yml
+  ansible.builtin.import_tasks: selinux.yml
 
 - name: Tasks for Linux
-  import_tasks: firewalld.yml
+  ansible.builtin.import_tasks: firewalld.yml
 
 - name: Tasks to install and setup NFS export
-  import_tasks: install.yml
+  ansible.builtin.import_tasks: install.yml
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

@@ -1,6 +1,5 @@
 ---
 # tasks file for deploy_neuvector
-
 - name: Install Cert-manager as Neuvector prerequisites
   ansible.builtin.import_role:
     name: deploy_certmanager
@@ -8,5 +7,5 @@
   tags: certmanager
 
 - name: Deploy with the Helm Charts on master
-  import_tasks: deploy.yml
+  ansible.builtin.import_tasks: deploy.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
