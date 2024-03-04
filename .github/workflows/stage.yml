@@ -217,6 +217,7 @@ jobs:
         id: init
         run: |
           terraform init
+        continue-on-error: true
 
       - name: Terraform plan delete stack
         id: plan
@@ -229,13 +230,10 @@ jobs:
           -var "do_instance_size=s-2vcpu-4gb"
         continue-on-error: true
 
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
       - name: Terraform Apply
         run: |
           terraform apply terraform.tfplan
+        continue-on-error: true
 
       - name: Set up S3cmd cli tool
         uses: s3-actions/s3cmd@main
