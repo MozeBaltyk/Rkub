@@ -13,9 +13,20 @@ On Digital Ocean account:
 
 Add inside ./test a file .key with the private ssh key generate by DO.
 
+## Create a bucket to store backend
+
 ```bash
 export DO_PAT="dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
+
+```
+
+## Create an infra
+
+```bash
+export DO_PAT="dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+##
 # init with backend config
 terraform init --backend-config=./backend_config.hcl
 # ./backend_config.hcl

@@ -6,67 +6,72 @@ on:
 
 env:
   DO_PAT: ${{secrets.DIGITALOCEAN_ACCESS_TOKEN}}
-  AWS_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
-  AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+  S3_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+  S3_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
 jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./test/DO/backend
-
     steps:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@v1.5.0
         with:
-          terraform_version: "1.7.3"
+          provider: digitalocean
+          region: 'fra1'
+          access_key: ${{ secrets.S3_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.S3_SECRET_ACCESS_KEY }}
 
-      - name: Config Terraform plugin cache
+      - name: Interact with object storage
         run: |
-          echo 'plugin_cache_dir="$HOME/.terraform.d/plugin-cache"' >~/.terraformrc
-          mkdir --parents ~/.terraform.d/plugin-cache
+          s3cmd info s3://terraform-backend-github-test || s3cmd mb s3://terraform-backend-github-test
 
-      - name: Cache Terraform
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.terraform.d/plugin-cache
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
-          restore-keys: |
-            ${{ runner.os }}-terraform-
-
-      - name: Init Terraform configuration
-        run: |
-          terraform init
-
-      - name: Terraform plan
-        id: plan
-        run: |
-          terraform plan -out=terraform.tfplan \
-          -var "do_token=${DO_PAT}" \
-          -var "spaces_access_key_id=${AWS_ACCESS_KEY_ID}" \
-          -var "spaces_access_key_secret=${AWS_SECRET_ACCESS_KEY}"
-        continue-on-error: true
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Terraform Apply
-        run: |
-          terraform apply terraform.tfplan
+#  backend:
+#    name: Backend
+#    runs-on: ubuntu-latest
+#
+#    defaults:
+#      run:
+#        shell: bash
+#        working-directory: ./test/DO/backend
+#
+#    steps:
+#      - name: Checkout files
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Terraform
+#        uses: hashicorp/setup-terraform@v3
+#        with:
+#          terraform_version: "1.7.3"
+#
+#      - name: Init Terraform configuration
+#        run: |
+#          terraform init
+#
+#      - name: Terraform plan
+#        id: plan
+#        run: |
+#          terraform plan -out=terraform.tfplan \
+#          -var "do_token=${DO_PAT}" \
+#          -var "spaces_access_key_id=${AWS_ACCESS_KEY_ID}" \
+#          -var "spaces_access_key_secret=${AWS_SECRET_ACCESS_KEY}"
+#        continue-on-error: true
+#
+#      - name: Terraform Plan Status
+#        if: steps.plan.outcome == 'failure'
+#        run: exit 1
+#
+#      - name: Terraform Apply
+#        run: |
+#          terraform apply terraform.tfplan
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: backend
 
     defaults:
       run:
@@ -281,3 +286,16 @@ jobs:
         run: |
           terraform workspace select default
           terraform workspace delete rkub-${GITHUB_RUN_ID}
+
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@v1.5.0
+        with:
+          provider: digitalocean
+          region: 'fra1'
+          access_key: ${{ secrets.S3_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+
+      - name: Interact with object storage
+        run: |
+          s3cmd rb s3://terraform-backend-github-test --recursive
+        continue-on-error: true
