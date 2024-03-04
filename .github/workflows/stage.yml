@@ -16,17 +16,17 @@ jobs:
 
     steps:
       - name: Set up S3cmd cli tool
-        uses: s3-actions/s3cmd@v1.5.0
+        uses: s3-actions/s3cmd@main
         with:
           provider: digitalocean
-          region: 'FRA1'
-          access_key: ${S3_ACCESS_KEY_ID}
-          secret_key: ${S3_SECRET_ACCESS_KEY}
+          region: FRA1
+          access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+          secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
-      - name: Interact with object storage
-        run: |
-          s3cmd info s3://terraform-backend-github-test || s3cmd mb s3://terraform-backend-github-test
-          sleep 10
+      #- name: Interact with object storage
+      #  run: |
+      #    s3cmd info s3://terraform-backend-github-test || s3cmd mb s3://terraform-backend-github-test
+      #    sleep 10
 
       - name: Interact with object storage
         run: |
