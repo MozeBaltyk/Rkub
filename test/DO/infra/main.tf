@@ -18,8 +18,8 @@ terraform {
     endpoints = {
       s3 = "https://fra1.digitaloceanspaces.com"
     }
-    region                      = "fra1" // needed
-    bucket                      = "terraform-backend-github"
+    region                      = "fra1"
+    // bucket                   = "terraform-backend-github"
     key                         = "terraform.tfstate"
   }
 }
@@ -96,19 +96,6 @@ resource "digitalocean_droplet" "workers" {
     ssh_keys = [
       data.digitalocean_ssh_key.terraform.id
     ]
-#  connection {
-#    host = self.ipv4_address
-#    user = "root"
-#    type = "ssh"
-#    private_key = file(pathexpand(".key"))
-#    timeout = "2m"
-#  }
-#  provisioner "remote-exec" {
-#    inline = [
-#      "export PATH=$PATH:/usr/bin",
-#      "cat /etc/os-release",
-#    ]
-#  }
 }
 
 ###

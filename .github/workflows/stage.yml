@@ -6,8 +6,8 @@ on:
 
 env:
   DO_PAT: ${{secrets.DIGITALOCEAN_ACCESS_TOKEN}}
-  S3_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
-  S3_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+  AWS_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
 jobs:
   backend:
@@ -23,7 +23,7 @@ jobs:
           access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
           secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
-      - name: Interact with object storage
+      - name: Create Space Bucket
         run: |
           sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
           buck="github-action-${{ github.run_id }}"
@@ -53,17 +53,13 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-          terraform init
+          terraform init -backend-config="bucket=github-action-${{ github.run_id }}"
 
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
 
-      - name: Terraform workspace
-        id: workspace
-        run: terraform workspace new rkub-${GITHUB_RUN_ID}
-
-      - name: Terraform plan
+      - name: Terraform Plan
         id: plan
         run: |
           terraform plan -out=terraform.tfplan \
@@ -216,7 +212,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-          terraform init
+          terraform init -backend-config="bucket=github-action-${{ github.run_id }}"
         continue-on-error: true
 
       - name: Terraform plan delete stack
@@ -243,7 +239,7 @@ jobs:
           access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
           secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
-      - name: Interact with object storage
+      - name: Remove Space bucket
         run: |
           sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
           buck="github-action-${{ github.run_id }}"

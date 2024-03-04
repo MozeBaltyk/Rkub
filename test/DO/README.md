@@ -19,7 +19,6 @@ Add inside ./test a file .key with the private ssh key generate by DO.
 ```bash
 export DO_PAT="dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-
 ```
 
 ## Create an infra
@@ -31,6 +30,7 @@ export DO_PAT="dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 # init with backend config
 terraform init --backend-config=./backend_config.hcl
 # ./backend_config.hcl
+# bucket="name"
 # access_key="<YOUR ACCESS KEY CONFIGURED AT STEP 1.2 Space Access Keys from the Tutorial>"
 # secret_key="<YOUR SECURE KEY CONFIGURED AT STEP 1.2 Space Access Keys from the Tutorial>"
 
@@ -38,18 +38,12 @@ terraform init --backend-config=./backend_config.hcl
 terraform init \
 -backend-config="access_key=$SPACES_ACCESS_TOKEN" \
 -backend-config="secret_key=$SPACES_SECRET_KEY" \
+-backend-config="bucket=terraform-backend-github"
 
 # recommended method
 export AWS_ACCESS_KEY_ID=DOxxxxxxxxxxxxxxxx
 export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxx
-terraform init
-
-# Create a workspace
-export GITHUB_RUN_ID="777"
-terraform workspace new rkub-${GITHUB_RUN_ID}
-
-# Get back to a workspace
-terraform workspace select rkub-${GITHUB_RUN_ID}
+terraform init -backend-config="bucket=terraform-backend-github"
 
 # auto-approve (default: size=s-1vcpu-1gb, 1 controller + 2 workers)
 terraform apply -var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" -var "do_token=${DO_PAT}" -auto-approve
@@ -86,8 +80,20 @@ terraform plan -destroy -out=terraform.tfplan \
 -var "do_worker_count=1" \
 -var "do_controller_count=3" \
 -var "do_instance_size=s-1vcpu-1gb"
+
 # Apply destroy
 terraform apply terraform.tfplan
+```
+
+## Use Workspace
+
+```bash
+# Create a workspace
+export GITHUB_RUN_ID="777"
+terraform workspace new rkub-${GITHUB_RUN_ID}
+
+# Get back to a workspace
+terraform workspace select rkub-${GITHUB_RUN_ID}
 
 # Delete Workspace
 terraform workspace select default
