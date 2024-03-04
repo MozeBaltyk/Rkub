@@ -60,7 +60,7 @@ jobs:
           terraform plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
-
+          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
 
       - name: Terraform Apply
         run: |
