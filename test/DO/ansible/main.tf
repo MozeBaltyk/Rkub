@@ -15,8 +15,8 @@ terraform {
     endpoints = {
       s3 = "https://fra1.digitaloceanspaces.com"
     }
-    region                      = "fra1"// needed
-    bucket                      = "terraform-backend-github"
+    region                      = "fra1"
+    // bucket                      = "terraform-backend-github"
     key                         = "terraform.tfstate"
   }
 }
