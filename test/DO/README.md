@@ -7,6 +7,7 @@ The puropse of this CI is to test the integration between RKE2, longhorn, ranche
 ## Prerequis
 
 On Digital Ocean account:
+
 - generate a PAT (private access token)
 - a set of SSH key
 - Create a Space with a an acces_key and a secret key
