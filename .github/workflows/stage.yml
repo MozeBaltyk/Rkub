@@ -15,20 +15,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout files
-        uses: actions/checkout@v4
-
       - name: Set up S3cmd cli tool
         uses: s3-actions/s3cmd@v1.5.0
         with:
           provider: digitalocean
-          region: 'fra1'
-          access_key: ${{ secrets.S3_ACCESS_KEY_ID }}
-          secret_key: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          region: 'FRA1'
+          access_key: ${S3_ACCESS_KEY_ID}
+          secret_key: ${S3_SECRET_ACCESS_KEY}
 
       - name: Interact with object storage
         run: |
           s3cmd info s3://terraform-backend-github-test || s3cmd mb s3://terraform-backend-github-test
+          sleep 10
+
+      - name: Interact with object storage
+        run: |
+          buck="github-action-${{ github.run_id }}"
+          mkdir example
+          s3cmd mb s3://$buck
+          echo 'foo' >> example/bar
+          s3cmd put example/bar s3://$buck
+          mkdir -p example/baz/bar
+          echo 'fizz' >> example/baz/bar/faz
+          sleep 10
+          s3cmd sync --recursive --acl-public example s3://$buck
+          #sleep 10
+          #s3cmd rm -r --force s3://$buck
+          #sleep 10
+          #s3cmd rb s3://$buck
 
 #  backend:
 #    name: Backend
@@ -299,4 +313,5 @@ jobs:
       - name: Interact with object storage
         run: |
           s3cmd rb s3://terraform-backend-github-test --recursive
+          sleep 10
         continue-on-error: true
