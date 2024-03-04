@@ -60,6 +60,8 @@ jobs:
           terraform plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
 
       - name: Terraform Apply
@@ -72,6 +74,8 @@ jobs:
           terraform plan -destroy -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
         continue-on-error: true
 
