@@ -50,26 +50,17 @@ jobs:
         with:
           terraform_version: "1.7.3"
 
-      - name: Get key
-        run: |
-          echo "$SSH_KEY" > .key
-          chmod 400 .key
-        shell: bash
-        env:
-          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-
       - name: Terraform Init
         id: init
         run: |
           terraform init
-        continue-on-error: true
 
       - name: Terraform plan
         run: |
           terraform plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
-          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
+
 
       - name: Terraform Apply
         run: |
