@@ -190,15 +190,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: Install
     if: always()
-    env:
-      DO_PAT: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.DIGITALOCEAN_SPACES_SECRET_KEY }}
 
     defaults:
       run:
         shell: bash
-        working-directory: ./test/DO
+        working-directory: ./test/DO/infra
 
     steps:
       - name: Checkout files
@@ -222,10 +218,6 @@ jobs:
         run: |
           terraform init
 
-      - name: Terraform cleanup workspace
-        run: |
-          terraform workspace select rkub-${GITHUB_RUN_ID}
-
       - name: Terraform plan delete stack
         id: plan
         run: |
@@ -244,11 +236,6 @@ jobs:
       - name: Terraform Apply
         run: |
           terraform apply terraform.tfplan
-
-      - name: Terraform cleanup workspace
-        run: |
-          terraform workspace select default
-          terraform workspace delete rkub-${GITHUB_RUN_ID}
 
       - name: Set up S3cmd cli tool
         uses: s3-actions/s3cmd@main
