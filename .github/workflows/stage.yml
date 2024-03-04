@@ -92,10 +92,10 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${ DO_PAT }
+      #- name: Install doctl
+      #  uses: digitalocean/action-doctl@v2
+      #  with:
+      #    token: ${DO_PAT}
 
       - name: Set up Python
         id: setup_python
