@@ -1,6 +1,6 @@
 ---
 # Version products
-global_rke2_version: "1.27.10"
+global_rke2_version: "1.27.12"
 global_kubevip_version: "0.7.0"
 global_helm_version: "3.14.0"
 global_CERT_VERSION: "1.14.1"
