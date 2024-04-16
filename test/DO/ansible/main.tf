@@ -39,8 +39,11 @@ locals {
       content     = "${var.spaces_access_key_id}:${var.spaces_access_key_secret}"
     }],
     runcmd = [
+      "systemctl daemon-reload",
       "mkdir -p ${var.mount_point}",
       "s3fs ${var.terraform_backend_bucket_name} ${var.mount_point} -o url=https://${var.region}.digitaloceanspaces.com",
+      "echo \"s3fs#${var.terraform_backend_bucket_name} ${var.mount_point} fuse _netdev,allow_other,use_cache=/tmp/cache,uid=<usr>,gid=<grp>,url=https://${var.region}.digitaloceanspaces.com 0 0\" >> /etc/fstab",
+      "systemctl daemon-reload",
       "git clone ${var.repository}",
     ]
   })

@@ -62,7 +62,7 @@ jobs:
           -var "do_token=${DO_PAT}" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
-          -var "repository=https://github.com/MozeBaltyk/Rkub.git"
+          -var "repository=https://github.com/MozeBaltyk/Rkub.git" \
           -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
 
       - name: Terraform Apply
@@ -77,7 +77,7 @@ jobs:
           -var "do_token=${DO_PAT}" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
-          -var "repository=https://github.com/MozeBaltyk/Rkub.git"
+          -var "repository=https://github.com/MozeBaltyk/Rkub.git" \
           -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
         continue-on-error: true
 
