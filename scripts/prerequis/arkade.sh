@@ -2,6 +2,11 @@
 set -eo pipefail
 
 find_home_profile(){
+  if [[ -z "$HOME" ]]; then
+    export user=$(whoami)
+    export HOME=$(awk -F":" -v v="$user" '{if ($1==v) print $6}' /etc/passwd)
+  fi
+
   if [[ "$SHELL" == *"/zsh" ]]; then
     HOME_PROFILE="$HOME/.zshrc"
   elif [[ "$SHELL" == *"/bash" ]]; then
