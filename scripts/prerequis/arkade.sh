@@ -3,9 +3,9 @@ set -eo pipefail
 
 find_home_profile(){
   if [[ "$SHELL" == *"/zsh" ]]; then
-    HOME_PROFILE="~/.zshrc"
+    HOME_PROFILE="$HOME/.zshrc"
   elif [[ "$SHELL" == *"/bash" ]]; then
-    HOME_PROFILE="~/.bashrc"
+    HOME_PROFILE="$HOME/.bashrc"
   fi
 }
 
