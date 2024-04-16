@@ -29,7 +29,8 @@ locals {
     },
     packages = [
       "epel-release",
-      "s3fs-fuse"
+      "s3fs-fuse",
+      "git"
     ],
     write_files = [{
       owner       = "root:root"
@@ -40,7 +41,7 @@ locals {
     runcmd = [
       "mkdir -p ${var.mount_point}",
       "s3fs ${var.terraform_backend_bucket_name} ${var.mount_point} -o url=https://${var.region}.digitaloceanspaces.com",
-      "git clone https://github.com/MozeBaltyk/Rkub.git",
+      "git clone ${var.repository}",
     ]
   })
 }

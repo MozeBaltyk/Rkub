@@ -10,6 +10,10 @@ variable "spaces_access_key_secret" {
   description = "Digital Ocean Spaces Access Key"
 }
 
+variable "repository" {
+  description = "Repository to be be clone inside VM"
+}
+
 variable "GITHUB_RUN_ID" {
   type    = string
   description = "github run id"
