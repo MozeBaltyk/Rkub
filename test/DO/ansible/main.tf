@@ -30,7 +30,9 @@ locals {
     packages = [
       "epel-release",
       "s3fs-fuse",
-      "git"
+      "git",
+      "ansible",
+      "make"
     ],
     write_files = [{
       owner       = "root:root"
@@ -42,9 +44,11 @@ locals {
       "systemctl daemon-reload",
       "mkdir -p ${var.mount_point}",
       "s3fs ${var.terraform_backend_bucket_name} ${var.mount_point} -o url=https://${var.region}.digitaloceanspaces.com",
-      "echo \"s3fs#${var.terraform_backend_bucket_name} ${var.mount_point} fuse _netdev,allow_other,use_cache=/tmp/cache,uid=<usr>,gid=<grp>,url=https://${var.region}.digitaloceanspaces.com 0 0\" >> /etc/fstab",
+      "echo \"s3fs#${var.terraform_backend_bucket_name} ${var.mount_point} fuse _netdev,allow_other,use_cache=/tmp/cache,url=https://${var.region}.digitaloceanspaces.com 0 0\" >> /etc/fstab",
       "systemctl daemon-reload",
-      "git clone ${var.repository}",
+      "git clone ${var.repository} ~/rkub",
+      "cd ~/rkub && make prerequis",
+      "cd ~/rkub/test && ansible-playbook playbooks/build.yml -e dir_build=\"${var.mount_point}/package\" -e package_name=\"${var.mount_point}/rke2_rancher_longhorn.zst\""
     ]
   })
 }

@@ -9,7 +9,7 @@ endif
 
 .PHONY: all
 ## all prerequisites (keep the phony order)
-all: pythons bindeps collections arkade images
+all: pythons bindeps collections arkade
 
 .PHONY: images
 ## Load images in files directories of each roles (since too big, those are in the .gitignore)
@@ -26,7 +26,7 @@ arkade:
 collections:
 	@printf "\e[1;34m[INFO]\e[m ## Install Ansible Collections dependencies ##\n"
 	@ansible-galaxy install -r ../../meta/ee-requirements.yml
-	@printf "\e[1;34m[INFO]\e[m ## Install $(REPO) version $(VERSION) ##\n"       
+	@printf "\e[1;34m[INFO]\e[m ## Install $(REPO) version $(VERSION) ##\n"
 	@ansible-galaxy collection install git+$(REPO).git
 	@printf "\e[1;32m[OK]\e[m Ansible Collections installed.\n"
 
@@ -92,4 +92,3 @@ show-help:
                 printf "\n"; \
         }' \
         | cat
-

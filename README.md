@@ -74,7 +74,7 @@ Add-on from my part, some part which were manual in Clemenko procedure are autom
 
 - Complete directory inside `./plugins/inventory/hosts.yml`.
 
-2. Build your package by running (works on Debian-like and Redhat-like):
+2. Build your package by running (works on Debian-like and Redhat-like and it targets localhost):
 
 ```sh
 ansible-playbook playbooks/tasks/build.yml         # All arguments below are not mandatory
