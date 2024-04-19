@@ -86,7 +86,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-          terraform init -backend-config="bucket=github-action-${{ github.run_id }}"
+          terraform init -backend-config="bucket=${BUCKET}"
 
       - name: Terraform Validate
         id: validate
@@ -224,7 +224,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-          terraform init -backend-config="bucket=github-action-${{ github.run_id }}"
+          terraform init -backend-config="bucket=${BUCKET}"
         continue-on-error: true
 
       - name: Terraform plan delete stack
@@ -247,14 +247,12 @@ jobs:
         uses: s3-actions/s3cmd@main
         with:
           provider: digitalocean
-          region: FRA1
+          region: ${{secrets.DIGITALOCEAN_REGION}}
           access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
           secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
       - name: Remove Space bucket
         run: |
           sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
-          buck="github-action-${{ github.run_id }}"
-          s3cmd rb s3://${buck} --recursive
+          s3cmd rb s3://${BUCKET} --recursive
           sleep 10
-        continue-on-error: true
