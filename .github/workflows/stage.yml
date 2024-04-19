@@ -8,10 +8,13 @@ env:
   DO_PAT: ${{secrets.DIGITALOCEAN_ACCESS_TOKEN}}
   AWS_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
   AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+  REGION: ${{secrets.DIGITALOCEAN_REGION}}
+  MOUNT_POINT: "/opt/rkub"
+  BUCKET: "rkub-github-action-${{ github.run_id }}"
 
 jobs:
-  backend:
-    name: Backend
+  bucket:
+    name: Bucket
     runs-on: ubuntu-latest
 
     steps:
@@ -19,72 +22,47 @@ jobs:
         uses: s3-actions/s3cmd@main
         with:
           provider: digitalocean
-          region: FRA1
+          region: ${{secrets.DIGITALOCEAN_REGION}}
           access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
           secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
 
       - name: Create Space Bucket
         run: |
           sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
-          buck="github-action-${{ github.run_id }}"
-          s3cmd mb s3://$buck
+          s3cmd mb s3://${BUCKET}
           sleep 10
-        continue-on-error: true
 
   package:
     name: Package
     runs-on: ubuntu-latest
-    needs: Backend
-
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./test/DO/ansible
+    needs: Bucket
 
     steps:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.7.3"
-
-      - name: Terraform Init
-        id: init
+      - name: Install s3fs-fuse on Ubuntu
         run: |
-          terraform init
+          sudo apt-get install automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
+          git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+          cd s3fs-fuse
+          ./autogen.sh
+          ./configure
+          make
+          sudo make install
 
-      - name: Terraform plan
+      - name: Mount Space Bucket
         run: |
-          terraform plan -out=terraform.tfplan \
-          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
-          -var "do_token=${DO_PAT}" \
-          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
-          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
-          -var "repository=https://github.com/MozeBaltyk/Rkub.git" \
-          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
+          echo "${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}:${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" > ./passwd-s3fs
+          chmod 600 ./passwd-s3fs
+          mkdir -p ${MOUNT_POINT}
+          s3fs ${BUCKET} ${MOUNT_POINT} -o url=https://${REGION}.digitaloceanspaces.com -o passwd_file=./passwd-s3fs
+          df -Th ${MOUNT_POINT}
 
-      - name: Terraform Apply
+      - name: Build
         run: |
-          terraform apply terraform.tfplan
-          sleep 600
-
-      - name: Terraform plan delete stack
-        run: |
-          terraform plan -destroy -out=terraform.tfplan \
-          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
-          -var "do_token=${DO_PAT}" \
-          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
-          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
-          -var "repository=https://github.com/MozeBaltyk/Rkub.git" \
-          -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
-        continue-on-error: true
-
-      - name: Terraform Apply
-        run: |
-          terraform apply terraform.tfplan
-        continue-on-error: true
+          cd ./rkub/test
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}/package" -e package_name="${MOUNT_POINT}/rke2_rancher_longhorn.zst"
 
   deploy:
     name: Deploy
@@ -187,6 +165,7 @@ jobs:
 
       - name: Run playbook upload
         run: |
+          cd ./rkub/test
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/upload.yml
 
   install:
@@ -205,6 +184,7 @@ jobs:
 
       - name: Run playbook install
         run: |
+          cd ./rkub/test
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/install.yml
 
       #- name: Run Python Tests
