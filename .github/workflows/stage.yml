@@ -38,9 +38,6 @@ jobs:
     needs: Bucket
 
     steps:
-      - name: Checkout files
-        uses: actions/checkout@v4
-
       - name: Install s3fs-fuse on Ubuntu
         run: |
           sudo apt-get install automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
@@ -59,9 +56,12 @@ jobs:
           s3fs ${BUCKET} ${MOUNT_POINT} -o url=https://${REGION}.digitaloceanspaces.com -o passwd_file=./passwd-s3fs
           df -Th ${MOUNT_POINT}
 
+      - name: Checkout files
+        uses: actions/checkout@v4
+
       - name: Build
         run: |
-          cd ./rkub/test
+          cd ./test
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}/package" -e package_name="${MOUNT_POINT}/rke2_rancher_longhorn.zst"
 
   deploy:
@@ -165,7 +165,6 @@ jobs:
 
       - name: Run playbook upload
         run: |
-          cd ./rkub/test
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/upload.yml
 
   install:
@@ -184,7 +183,6 @@ jobs:
 
       - name: Run playbook install
         run: |
-          cd ./rkub/test
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/install.yml
 
       #- name: Run Python Tests
@@ -197,7 +195,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     needs: Install
-#    if: always()
+    if: always()
 
     defaults:
       run:
