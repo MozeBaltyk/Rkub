@@ -116,8 +116,12 @@ jobs:
           cd ./DO/infra
           terraform apply terraform.tfplan
 
-      - name: Terraform Apply
+      - name: Display inventory
         run: |
+          pwd
+          ls
+          echo ${{ github.workspace }}
+          ls ${{ github.workspace }}/test/inventory/hosts.ini
           cat inventory/hosts.ini
 
       # No relative path allowed
@@ -126,7 +130,8 @@ jobs:
         with:
           name: inventory
           path: |
-            inventory/hosts.ini
+            ${{ github.workspace }}/test/inventory/hosts.ini
+          if-no-files-found: error
 
   reachable:
     name: Reachable
