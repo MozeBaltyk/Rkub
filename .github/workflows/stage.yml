@@ -67,7 +67,6 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: Package
 
     defaults:
       run:
@@ -199,10 +198,20 @@ jobs:
       #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
       #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
 
+  delay:
+    name: Delay
+    runs-on: ubuntu-latest
+    needs: Install
+    steps:
+      - name: Delay one hour
+        uses: whatnick/wait-action@master
+        with:
+          time: '3600s'
+
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: Install
+    needs: Delay
     if: always()
 
     defaults:
