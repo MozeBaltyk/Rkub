@@ -62,7 +62,7 @@ jobs:
       - name: Build
         run: |
           cd ./test
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}/package" -e package_name="${MOUNT_POINT}/rke2_rancher_longhorn.zst"
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}/rancher" -e package_name="${MOUNT_POINT}/rke2_rancher_longhorn.zst"
 
   deploy:
     name: Deploy
@@ -104,7 +104,9 @@ jobs:
           -var "do_token=${DO_PAT}" \
           -var "do_worker_count=0" \
           -var "do_controller_count=1" \
-          -var "do_instance_size=s-2vcpu-4gb"
+          -var "do_instance_size=s-2vcpu-4gb" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}"
         continue-on-error: true
 
       - name: Terraform Plan Status
@@ -149,12 +151,9 @@ jobs:
         with:
           name: inventory
 
-      - name: Terraform Apply
+      - name: Check if inventory present
         run: |
-          pwd
-          ls -l
-          ls -l ${{ github.workspace }}/test/inventory/
-          cat inventory/hosts.ini
+          cat ${{ github.workspace }}/hosts.ini
 
       - name: Set up Python
         id: setup_python
@@ -168,10 +167,11 @@ jobs:
           pip3 install ansible pytest-testinfra
           ansible --version
 
-      - name: Get key
+      - name: Get key and hosts.ini
         run: |
           echo "$SSH_KEY" > .key
           chmod 400 .key
+          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
         shell: bash
         env:
           SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
@@ -180,8 +180,8 @@ jobs:
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -u root -vv --private-key .key
 
-  upload:
-    name: Upload
+  install:
+    name: Install
     runs-on: ubuntu-latest
     needs: [ Reachable, Package ]
 
@@ -194,23 +194,19 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Run playbook upload
+      - name: Download inventory
+        uses: actions/download-artifact@v4
+        with:
+          name: inventory
+
+      - name: Get key and hosts.ini
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/upload.yml
-
-  install:
-    name: Install
-    runs-on: ubuntu-latest
-    needs: [ Reachable, Upload ]
-
-    defaults:
-      run:
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
         shell: bash
-        working-directory: ./test
-
-    steps:
-      - name: Checkout files
-        uses: actions/checkout@v4
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
       - name: Run playbook install
         run: |

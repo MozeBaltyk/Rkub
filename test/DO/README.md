@@ -63,7 +63,9 @@ terraform plan -out=terraform.tfplan \
 -var "do_token=${DO_PAT}" \
 -var "do_worker_count=1" \
 -var "do_controller_count=3" \
--var "do_instance_size=s-1vcpu-1gb"
+-var "do_instance_size=s-1vcpu-1gb" \
+-var "spaces_access_key_id=${SPACES_ACCESS_TOKEN}" \
+-var "spaces_access_key_secret=${SPACES_SECRET_KEY}"
 
 # Apply
 terraform apply terraform.tfplan
