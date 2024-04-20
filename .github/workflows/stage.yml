@@ -72,7 +72,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./test/DO/infra
+        #working-directory: ./test/DO/infra
 
     steps:
       - name: Checkout files
@@ -86,15 +86,19 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
+          cd ./test/DO/infra
           terraform init -backend-config="bucket=${BUCKET}"
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: |
+          cd ./test/DO/infra
+          terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
         run: |
+          cd ./test/DO/infra
           terraform plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
@@ -109,18 +113,21 @@ jobs:
 
       - name: Terraform Apply
         run: |
+          cd ./test/DO/infra
           terraform apply terraform.tfplan
 
       - name: Terraform Apply
         run: |
-          cat ../../inventory/hosts.ini
+          cd ./test/DO/infra
+          cat inventory/hosts.ini
 
+      # No relative path allowed
       - name: Inventory artifacts
         uses: actions/upload-artifact@v4
         with:
           name: inventory
           path: |
-            ../../inventory/hosts.ini
+            inventory/hosts.ini
 
   reachable:
     name: Reachable
@@ -145,7 +152,7 @@ jobs:
         run: |
           pwd
           ls
-          cat ../../inventory/hosts.ini
+          cat inventory/hosts.ini
 
       - name: Set up Python
         id: setup_python
