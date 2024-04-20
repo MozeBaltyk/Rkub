@@ -115,6 +115,13 @@ jobs:
         run: |
           cat ../../inventory/hosts.ini
 
+      - name: Inventory artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory
+          path: |
+            ../../inventory/hosts.ini
+
   reachable:
     name: Reachable
     runs-on: ubuntu-latest
@@ -126,11 +133,18 @@ jobs:
         working-directory: ./test
 
     steps:
+      - name: Download inventory
+        uses: actions/download-artifact@v4
+        with:
+          name: inventory
+
       - name: Checkout files
         uses: actions/checkout@v4
 
       - name: Terraform Apply
         run: |
+          pwd
+          ls
           cat ../../inventory/hosts.ini
 
       - name: Set up Python
