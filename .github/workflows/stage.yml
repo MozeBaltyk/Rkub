@@ -9,13 +9,14 @@ env:
   AWS_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
   AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
   REGION: ${{secrets.DIGITALOCEAN_REGION}}
-  MOUNT_POINT: "/opt/rkub"
+  MOUNT_POINT: "/opt"
   BUCKET: "rkub-github-action-${{ github.run_id }}"
 
 jobs:
   bucket:
     name: Bucket
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Set up S3cmd cli tool
@@ -36,6 +37,7 @@ jobs:
     name: Package
     runs-on: ubuntu-latest
     needs: Bucket
+    timeout-minutes: 60
 
     steps:
       - name: Install s3fs-fuse on Ubuntu
@@ -68,6 +70,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: Bucket
+    timeout-minutes: 20
 
     defaults:
       run:
@@ -106,7 +109,8 @@ jobs:
           -var "do_controller_count=1" \
           -var "do_instance_size=s-2vcpu-4gb" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
-          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}"
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
+          -var "mount_point=${MOUNT_POINT}"
         continue-on-error: true
 
       - name: Terraform Plan Status
@@ -136,6 +140,7 @@ jobs:
     name: Reachable
     runs-on: ubuntu-latest
     needs: deploy
+    timeout-minutes: 10
 
     defaults:
       run:
@@ -184,6 +189,7 @@ jobs:
     name: Install
     runs-on: ubuntu-latest
     needs: [ Reachable, Package ]
+    timeout-minutes: 60
 
     defaults:
       run:
@@ -210,7 +216,7 @@ jobs:
 
       - name: Run playbook install
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/install.yml
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/install.yml -e dir_target=${MOUNT_POINT}
 
       #- name: Run Python Tests
       #  run: |
@@ -233,6 +239,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: Delay
     if: always()
+    timeout-minutes: 30
 
     defaults:
       run:
@@ -270,7 +277,10 @@ jobs:
           -var "do_token=${DO_PAT}" \
           -var "do_worker_count=0" \
           -var "do_controller_count=1" \
-          -var "do_instance_size=s-2vcpu-4gb"
+          -var "do_instance_size=s-2vcpu-4gb" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
+          -var "mount_point=${MOUNT_POINT}"
         continue-on-error: true
 
       - name: Terraform Apply
