@@ -51,7 +51,7 @@ variable "terraform_backend_bucket_name" {
 
 variable "mount_point" {
   description = "Unique bucket name for storing terraform backend data"
-  default = "/mnt/rkub"
+  default = "/opt"
 }
 
 variable "spaces_access_key_id" {
