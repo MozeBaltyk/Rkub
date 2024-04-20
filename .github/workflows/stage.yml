@@ -118,10 +118,7 @@ jobs:
 
       - name: Display inventory
         run: |
-          pwd
-          ls
-          echo ${{ github.workspace }}
-          ls ${{ github.workspace }}/test/inventory/hosts.ini
+          ls -l ${{ github.workspace }}/test/inventory/hosts.ini
           cat inventory/hosts.ini
 
       # No relative path allowed
@@ -144,18 +141,19 @@ jobs:
         working-directory: ./test
 
     steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
       - name: Download inventory
         uses: actions/download-artifact@v4
         with:
           name: inventory
 
-      - name: Checkout files
-        uses: actions/checkout@v4
-
       - name: Terraform Apply
         run: |
           pwd
-          ls
+          ls -l
+          ls -l ${{ github.workspace }}/test/inventory/
           cat inventory/hosts.ini
 
       - name: Set up Python
