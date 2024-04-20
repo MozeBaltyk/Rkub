@@ -72,7 +72,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        #working-directory: ./test/DO/infra
+        working-directory: ./test
 
     steps:
       - name: Checkout files
@@ -86,19 +86,19 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-          cd ./test/DO/infra
+          cd ./DO/infra
           terraform init -backend-config="bucket=${BUCKET}"
 
       - name: Terraform Validate
         id: validate
         run: |
-          cd ./test/DO/infra
+          cd ./DO/infra
           terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
         run: |
-          cd ./test/DO/infra
+          cd ./DO/infra
           terraform plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
@@ -113,12 +113,11 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          cd ./test/DO/infra
+          cd ./DO/infra
           terraform apply terraform.tfplan
 
       - name: Terraform Apply
         run: |
-          cd ./test/DO/infra
           cat inventory/hosts.ini
 
       # No relative path allowed
