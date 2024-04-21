@@ -228,6 +228,8 @@ jobs:
     name: Delay
     runs-on: ubuntu-latest
     needs: Install
+    if: always()
+
     steps:
       - name: Delay one hour
         uses: whatnick/wait-action@master
