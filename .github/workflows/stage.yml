@@ -64,7 +64,7 @@ jobs:
       - name: Build
         run: |
           cd ./test
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}/rancher" -e package_name="${MOUNT_POINT}/rke2_rancher_longhorn.zst"
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}/rancher" -e package_name="${MOUNT_POINT}/rke2_rancher_longhorn.zst" -e archive="False"
 
   deploy:
     name: Deploy
@@ -111,6 +111,7 @@ jobs:
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}"
+          -var "terraform_backend_bucket_name=${BUCKET}"
         continue-on-error: true
 
       - name: Terraform Plan Status
@@ -283,6 +284,7 @@ jobs:
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}"
+          -var "terraform_backend_bucket_name=${BUCKET}"
         continue-on-error: true
 
       - name: Terraform Apply

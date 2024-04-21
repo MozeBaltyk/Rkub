@@ -10,6 +10,7 @@ NEU_VERSION: "{{ global_NEU_VERSION }}"
 directory_package: "{{ global_directory_package_build }}"
 tar_zst_name: "{{ global_package_name }}"
 path_to_package_zst: "{{ global_path_to_package_zst }}"
+archive_wanted: "{{ global_archive_tar_zst_bool }}"
 list_directory_package:
     - "{{ directory_package }}/rke2_{{ rke2_version }}"
     - "{{ directory_package }}/helm"

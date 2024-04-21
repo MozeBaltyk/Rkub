@@ -17,6 +17,7 @@ global_rke2_selinux_rpm_version: "rke2-selinux-0.17-1"                    #.el{{
 # General
 global_install_user: "{{ install_user | default('kuberoot') }}"
 global_directory_package_build: "{{ dir_build | default('$HOME/rkub') }}"
+global_archive_tar_zst_bool: "{{ archive | default('true') | bool }}"
 
 # Local
 global_package_name: "{{ package_name | default('rke2_rancher_longhorn.zst') }}"

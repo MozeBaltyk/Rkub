@@ -5,3 +5,4 @@
   args:
     chdir: "{{ directory_package }}/.."
   changed_when: false
+  when: archive_wanted

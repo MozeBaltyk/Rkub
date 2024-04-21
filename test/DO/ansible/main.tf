@@ -44,7 +44,7 @@ locals {
       "systemctl daemon-reload",
       "mkdir -p ${var.mount_point}",
       "s3fs ${var.terraform_backend_bucket_name} ${var.mount_point} -o url=https://${var.region}.digitaloceanspaces.com",
-      "echo \"s3fs#${var.terraform_backend_bucket_name} ${var.mount_point} fuse _netdev,allow_other,use_cache=/tmp/cache,url=https://${var.region}.digitaloceanspaces.com 0 0\" >> /etc/fstab",
+      "echo \"s3fs#${var.terraform_backend_bucket_name} ${var.mount_point} fuse _netdev,allow_other,nonempty,use_cache=/tmp/cache,url=https://${var.region}.digitaloceanspaces.com 0 0\" >> /etc/fstab",
       "systemctl daemon-reload",
       "git clone ${var.repository} ~/rkub",
       "cd ~/rkub && make prerequis",

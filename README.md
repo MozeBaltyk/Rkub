@@ -80,6 +80,7 @@ Add-on from my part, some part which were manual in Clemenko procedure are autom
 ansible-playbook playbooks/tasks/build.yml         # All arguments below are not mandatory
 -e dir_build="$HOME/rkub"                          # Directory where to upload everything (count 30G)
 -e package_name="rke2_rancher_longhorn.zst"        # Name of the package, by default rke2_rancher_longhorn.zst
+-e archive="True"                                  # Archive tar.zst true or false
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
