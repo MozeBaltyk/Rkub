@@ -217,7 +217,7 @@ jobs:
 
       - name: Run playbook install
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -vv --private-key .key playbooks/install.yml -e dir_target=${MOUNT_POINT}
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/install.yml -e dir_target=${MOUNT_POINT}
 
       #- name: Run Python Tests
       #  run: |
