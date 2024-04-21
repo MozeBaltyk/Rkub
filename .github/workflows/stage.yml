@@ -110,7 +110,7 @@ jobs:
           -var "do_instance_size=s-2vcpu-4gb" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
-          -var "mount_point=${MOUNT_POINT}"
+          -var "mount_point=${MOUNT_POINT}" \
           -var "terraform_backend_bucket_name=${BUCKET}"
         continue-on-error: true
 
@@ -283,7 +283,7 @@ jobs:
           -var "do_instance_size=s-2vcpu-4gb" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
-          -var "mount_point=${MOUNT_POINT}"
+          -var "mount_point=${MOUNT_POINT}" \
           -var "terraform_backend_bucket_name=${BUCKET}"
         continue-on-error: true
 
