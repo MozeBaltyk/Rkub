@@ -11,6 +11,9 @@ env:
   REGION: ${{secrets.DIGITALOCEAN_REGION}}
   MOUNT_POINT: "/opt/rkub"
   BUCKET: "rkub-github-action-${{ github.run_id }}"
+  CONTROLLER_COUNT: "1"
+  WORKER_COUNT: "0"
+  SIZE: "s-2vcpu-4gb"
 
 jobs:
   bucket:
@@ -105,9 +108,9 @@ jobs:
           terraform plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
-          -var "do_worker_count=0" \
-          -var "do_controller_count=1" \
-          -var "do_instance_size=s-2vcpu-4gb" \
+          -var "do_worker_count=${WORKER_COUNT}" \
+          -var "do_controller_count=${CONTROLLER_COUNT}" \
+          -var "do_instance_size=${SIZE}" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}" \
@@ -278,9 +281,9 @@ jobs:
           terraform plan -destroy -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "do_token=${DO_PAT}" \
-          -var "do_worker_count=0" \
-          -var "do_controller_count=1" \
-          -var "do_instance_size=s-2vcpu-4gb" \
+          -var "do_worker_count=${WORKER_COUNT}" \
+          -var "do_controller_count=${CONTROLLER_COUNT}" \
+          -var "do_instance_size=${SIZE}" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}" \

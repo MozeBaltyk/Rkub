@@ -14,7 +14,14 @@
 - name: Restart rke2-server
   ansible.builtin.systemd:
     name: rke2-server.service
-    state: restarted
+    state: stopped
+  notify: "Start rke2-server"
+
+- name: Start rke2-server
+  ansible.builtin.systemd:
+    name: rke2-server.service
+    state: started
+    enabled: true
   notify: "Service (re)started"
 
 - name: Restart rke2-agent
