@@ -67,7 +67,7 @@ jobs:
       - name: Build
         run: |
           cd ./test
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}" -e archive="False"
+          if [[ $BUCKET != "terraform-backend-github" ]]; then ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}" -e archive="False"; fi
 
   deploy:
     name: Deploy
@@ -235,10 +235,10 @@ jobs:
     if: always()
 
     steps:
-      - name: Delay one hour
+      - name: Delay half an hour
         uses: whatnick/wait-action@master
         with:
-          time: '3600s'
+          time: '1800s'
 
   cleanup:
     name: Cleanup
@@ -306,5 +306,5 @@ jobs:
       - name: Remove Space bucket
         run: |
           sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
-          s3cmd rb s3://${BUCKET} --recursive
+          if [[ $BUCKET != "terraform-backend-github" ]]; then s3cmd rb s3://${BUCKET} --recursive; fi
           sleep 10
