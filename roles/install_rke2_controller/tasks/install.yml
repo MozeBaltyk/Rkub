@@ -111,6 +111,10 @@
         - ansible_os_family == "RedHat"
         - ansible_distribution_major_version | int >= 8
 
+    - name: Pause for 3 seconds before start service
+      ansible.builtin.pause:
+        seconds: 3
+
     # Service
     - name: Mask RKE2 agent service on the first server
       ansible.builtin.systemd:
