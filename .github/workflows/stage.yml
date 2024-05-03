@@ -190,7 +190,11 @@ jobs:
 
       - name: Test if reachable
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible all -m ping -u root -vv --private-key .key
+          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m ping -u root -vv --private-key .key
+
+      - name: Wait for cloud-init to finish
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v --private-key .key
 
   install:
     name: Install
