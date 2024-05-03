@@ -33,7 +33,7 @@
 
     - name: Set homedir
       ansible.builtin.set_fact:
-        homedir: user_info['home']
+        homedir: "{{ user_info['home'] }}"
 
     - name: Copy utils into .arkade/bin
       ansible.builtin.copy:
