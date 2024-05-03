@@ -67,7 +67,7 @@ jobs:
       - name: Build
         run: |
           cd ./test
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}/rancher" -e package_name="${MOUNT_POINT}/rke2_rancher_longhorn.zst" -e archive="False"
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}" -e archive="False"
 
   deploy:
     name: Deploy
