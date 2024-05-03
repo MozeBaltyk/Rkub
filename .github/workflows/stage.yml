@@ -213,6 +213,7 @@ jobs:
 
       - name: Install requirements
         run: |
+          cd ..
           make prerequis
 
       - name: Download inventory
