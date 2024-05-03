@@ -8,5 +8,6 @@ mount_images_path: "{{ mount_path }}/images"
 mount_registry_tar: "{{ mount_path }}/images/registry/registry.tar"
 
 # General
-rke2_images_path: "/var/lib/rancher/rke2/agent/images/"
+rke2_data_path: "{{ global_rke2_data_dir }}"
+rke2_images_path: "{{ global_rke2_data_dir }}/agent/images/"
 registry_namespace: "kube-registry"
