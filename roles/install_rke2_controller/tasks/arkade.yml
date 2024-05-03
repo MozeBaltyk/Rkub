@@ -2,8 +2,8 @@
 # As root
 - name: Ensure that admin user can access
   ansible.builtin.file:
-    path: "{{ mount_path }}/.."
-    mode: "0755"
+    path: "{{ mount_path }}"
+    mode: "0750"
     recurse: true
   become: true
 
