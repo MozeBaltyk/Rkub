@@ -24,10 +24,21 @@
 - name: Import arkade packages
   become: true
   block:
+    - name: Get user info
+      ansible.builtin.user:
+        name: "{{ admin_user }}"
+        state: present
+      register: user_info
+      check_mode: true
+
+    - name: Set homedir
+      ansible.builtin.set_fact:
+        homedir: user_info['home']
+
     - name: Copy utils into .arkade/bin
       ansible.builtin.copy:
         src: "{{ mount_utils_path }}/{{ item }}"
-        dest: "$HOME/.arkade/bin/{{ item }}"
+        dest: "{{ homedir }}/.arkade/bin/{{ item }}"
         force: true
         remote_src: true
         mode: '0700'
@@ -41,7 +52,7 @@
 
     - name: Ensure admin user access arkade utils
       ansible.builtin.file:
-        path: "$HOME/.arkade/bin/{{ item }}"
+        path: "{{ homedir }}/.arkade/bin/{{ item }}"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         recurse: true
