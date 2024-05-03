@@ -52,7 +52,7 @@
 
     - name: Ensure admin user access arkade utils
       ansible.builtin.file:
-        path: "{{ homedir }}/.arkade/bin/{{ item }}"
+        path: "{{ homedir }}/.arkade/bin"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         recurse: true
