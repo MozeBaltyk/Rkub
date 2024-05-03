@@ -128,6 +128,8 @@
         state: started
         enabled: true
       notify: "Service (re)started"
+      async: 600
+      poll: 60
 
     - name: Wait for k8s apiserver
       ansible.builtin.wait_for:
