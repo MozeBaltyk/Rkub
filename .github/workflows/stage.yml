@@ -10,7 +10,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
   REGION: ${{secrets.DIGITALOCEAN_REGION}}
   MOUNT_POINT: "/opt/rkub"
-  BUCKET: "rkub-github-action-${{ github.run_id }}"
+  BUCKET: "rkub-github-action-${{ github.run_id }}" #terraform-backend-github
   CONTROLLER_COUNT: "1"
   WORKER_COUNT: "0"
   SIZE: "s-2vcpu-4gb"

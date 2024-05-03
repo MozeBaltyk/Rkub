@@ -39,7 +39,7 @@
 
 - name: Ensure target directory exist and accessible to connexion user
   ansible.builtin.file:
-    path: "{{ global_directory_package_target }}/rancher"
+    path: "{{ global_directory_package_target }}"
     state: directory
     recurse: true
     owner: "{{ ansible_user }}"
@@ -57,5 +57,5 @@
 - name: Unarchive Monster zst package on first controler
   ansible.builtin.unarchive:
     src: "{{ global_directory_package_target }}/{{ global_package_name }}"
-    dest: "{{ global_directory_package_target }}/rancher"
+    dest: "{{ global_directory_package_target }}"
     remote_src: true
