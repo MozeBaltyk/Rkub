@@ -15,7 +15,7 @@ This Ansible collection will install in airgap environnement RKE2 (one controler
 
 - [RKE2 1.27.10](https://docs.rke2.io) - Security focused Kubernetes (channel stable)
 
-- [Kube-vip 0.7.0](https://kube-vip.io/) - Virtual IP and load balancer
+- [Kube-vip 0.8.0](https://kube-vip.io/) - Virtual IP and load balancer
 
 - [Cert-manager 1.14.1](https://cert-manager.io/docs/) - Certificate manager
 
