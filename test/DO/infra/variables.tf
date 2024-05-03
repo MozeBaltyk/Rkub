@@ -6,7 +6,7 @@ variable "do_token" {
 variable "do_instance_size" {
   type = string
   description = "VM size"
-  default = "s-1vcpu-1gb"
+  default = "s-2vcpu-4gb"
 }
 
 variable "do_controller_count" {
@@ -51,7 +51,7 @@ variable "terraform_backend_bucket_name" {
 
 variable "mount_point" {
   description = "Unique bucket name for storing terraform backend data"
-  default = "/opt"
+  default = "/opt/rkub"
 }
 
 variable "spaces_access_key_id" {

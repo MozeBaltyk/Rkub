@@ -1,8 +1,10 @@
+{% if inventory_hostname in groups['RKE2_CONTROLLERS'][0] %}
+{% else %}
 server: https://{{ master }}:9345
+{% endif %}
 {% if rke2_config_token is defined %}
 token: {{ rke2_config_token }}
 {% endif %}
-
 # Common
 {% if rke2_profile_activated %}
 profile: cis
@@ -12,7 +14,6 @@ write-kubeconfig-mode: 0600
 data-dir: {{ rke2_data_dir }}
 cluster-cidr: {{ rke2_cluster_cidr }}
 service-cidr: {{ rke2_service_cidr }}
-
 # Config Controller
 selinux: true
 {% if ( rke2_cni is defined ) and ( rke2_cni | type_debug == "list" ) %}
@@ -26,7 +27,4 @@ cni: {{ rke2_cni }}
 tls-san:
   - cluster.local
   - {{ control_plane_endpoint }}
-{% if rke2_disable %}
-disable: {{ rke2_disable }}
-{% endif %}
 secrets-encryption: true

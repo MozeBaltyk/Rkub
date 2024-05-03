@@ -28,7 +28,18 @@ s3cmd mb s3://github-action-8147167750
 
 # delete
 s3cmd rb s3://github-action-8147167750 --recursive
+
+# with terraform
+cd ./test/DO/backend
+terraform init
+terraform plan -out=terraform.tfplan \
+-var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" \
+-var "do_token=${DO_PAT}" \
+-var "spaces_access_key_id=${AWS_ACCESS_KEY_ID}" \
+-var "spaces_access_key_secret=${AWS_SECRET_ACCESS_KEY}"
 ```
+
+
 
 ## Create an infra
 
@@ -58,14 +69,14 @@ terraform init -backend-config="bucket=terraform-backend-github"
 terraform apply -var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" -var "do_token=${DO_PAT}" -auto-approve
 
 # Deploy
-terraform plan -out=terraform.tfplan \
+terraform plan -destroy -out=terraform.tfplan \
 -var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" \
 -var "do_token=${DO_PAT}" \
--var "do_worker_count=1" \
--var "do_controller_count=3" \
+-var "do_worker_count=0" \
+-var "do_controller_count=1" \
 -var "do_instance_size=s-1vcpu-1gb" \
--var "spaces_access_key_id=${SPACES_ACCESS_TOKEN}" \
--var "spaces_access_key_secret=${SPACES_SECRET_KEY}"
+-var "spaces_access_key_id=${AWS_ACCESS_KEY_ID}" \
+-var "spaces_access_key_secret=${AWS_SECRET_ACCESS_KEY}"
 
 # Apply
 terraform apply terraform.tfplan

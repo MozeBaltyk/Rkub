@@ -24,6 +24,6 @@
   notify: "Service (re)started"
 
 - name: Restart systemd-sysctl
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     state: restarted
     name: systemd-sysctl

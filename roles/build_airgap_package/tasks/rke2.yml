@@ -46,6 +46,16 @@
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
         mode: "0750"
 
+    - name: Download rke2-images.linux-amd64.tar.zst
+      ansible.builtin.get_url:
+        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ item }}"
+        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ item }}"
+        mode: "0750"
+      loop:
+        - rke2-common-{{ rke2_version }}.rke2r1-0.el{{ ansible_distribution_major_version }}.x86_64.rpm
+        - rke2-agent-{{ rke2_version }}.rke2r1-0.el{{ ansible_distribution_major_version }}.x86_64.rpm
+        - rke2-server-{{ rke2_version }}.rke2r1-0.el{{ ansible_distribution_major_version }}.x86_64.rpm
+
 # if localhost is not a RHEL-like take el8
 - name: Download if localhost not a RHEL-like and take by default el8
   when:
@@ -62,3 +72,13 @@
         url: "https://github.com/rancher/rke2-selinux/releases/download/{{ rke2_selinux_repo_version }}/{{ rke2_selinux_rpm_version }}.el8.noarch.rpm"
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_selinux_rpm_version }}.el8.noarch.rpm"
         mode: "0750"
+
+    - name: Download rke2-images.linux-amd64.tar.zst
+      ansible.builtin.get_url:
+        url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ item }}"
+        dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ item }}"
+        mode: "0750"
+      loop:
+        - rke2-common-{{ rke2_version }}.rke2r1-0.el8.x86_64.rpm
+        - rke2-agent-{{ rke2_version }}.rke2r1-0.el8.x86_64.rpm
+        - rke2-server-{{ rke2_version }}.rke2r1-0.el8.x86_64.rpm

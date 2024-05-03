@@ -29,3 +29,6 @@
 - name: RKE2 Install specific for RHEL-like OS
   ansible.builtin.import_tasks: rhel.yml
   when: ansible_os_family == "RedHat"
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
