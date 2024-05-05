@@ -13,7 +13,7 @@ env:
   #BUCKET: "rkub-github-action-${{ github.run_id }}"
   BUCKET: "terraform-backend-github"
   CONTROLLER_COUNT: "1"
-  WORKER_COUNT: "0"
+  WORKER_COUNT: "2"
   SIZE: "s-4vcpu-8gb"
 
 jobs:
@@ -230,9 +230,21 @@ jobs:
         env:
           SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
-      - name: Run playbook install
+      - name: Run playbook install.yml
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/install.yml -e dir_target=${MOUNT_POINT}
+
+      - name: Run playbook rancher.yml
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/rancher.yml
+
+      - name: Run playbook longhorn.yml
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/longhorn.yml
+
+      - name: Run playbook neuvector.yml
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/neuvector.yml
 
       #- name: Run Python Tests
       #  run: |
