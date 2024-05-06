@@ -82,6 +82,8 @@
     executable: /bin/bash
   register: docker
   changed_when: false
+  become: true
+  become_user: "{{ admin_user }}"
 
 - name: Display Output
   ansible.builtin.debug:

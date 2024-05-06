@@ -24,8 +24,8 @@
         mode: '0750'
       with_items:
         - /etc/rancher/rke2/
-        - /var/lib/rancher/rke2/server/manifests/
-        - /var/lib/rancher/rke2/agent/images
+        - "{{ rke2_data_dir }}/server/manifests/"
+        - "{{ rke2_data_dir }}/agent/images"
 
     - name: Configure RKE2 config.yaml
       ansible.builtin.template:

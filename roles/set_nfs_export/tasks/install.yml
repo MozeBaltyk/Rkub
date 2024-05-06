@@ -16,7 +16,7 @@
     - name: Share out directory via NFS
       ansible.builtin.lineinfile:
         path: /etc/exports
-        line: "{{ export_nfs_path }} *(ro,fsid=1,sync,no_root_squash,no_all_squash)"
+        line: "{{ export_nfs_path }} *(rw,fsid=1,sync,no_root_squash,no_all_squash)"
       notify: Restart_NFS_Server
 
     - name: Enable and start NFS server service
