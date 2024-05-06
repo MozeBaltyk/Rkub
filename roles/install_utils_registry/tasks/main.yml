@@ -17,3 +17,7 @@
 - name: Load images in local registry
   ansible.builtin.import_tasks: load.yml
   when: caller_role_name == "controller"
+
+- name: List images imported in registry
+  ansible.builtin.import_tasks: post.yml
+  when: caller_role_name == "controller"

@@ -234,17 +234,17 @@ jobs:
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/install.yml -e dir_target=${MOUNT_POINT}
 
-      - name: Run playbook rancher.yml
-        run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/rancher.yml
+      #- name: Run playbook rancher.yml
+      #  run: |
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/rancher.yml
 
-      - name: Run playbook longhorn.yml
-        run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/longhorn.yml
+      #- name: Run playbook longhorn.yml
+      #  run: |
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/longhorn.yml
 
-      - name: Run playbook neuvector.yml
-        run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/neuvector.yml
+      #- name: Run playbook neuvector.yml
+      #  run: |
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/neuvector.yml
 
       #- name: Run Python Tests
       #  run: |

@@ -5,6 +5,7 @@
     dest: "{{ rke2_images_path }}"
     remote_src: true
     mode: "0750"
+    follow: true
   notify: Restart rke2-server
   when:  caller_role_name == "controller"
 
@@ -14,5 +15,6 @@
     dest: "{{ rke2_images_path }}"
     remote_src: true
     mode: "0750"
+    follow: true
   notify: Restart rke2-agent
   when: caller_role_name == "worker"
