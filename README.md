@@ -89,7 +89,7 @@ ansible-playbook playbooks/tasks/build.yml         # All arguments below are not
 ```sh
 ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not mandatory
 -e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
--e dir_target=/opt                                 # Directory where to sync and unarchive (by default /opt, count 50G available)
+-e dir_target=/opt/rkub                            # Directory where to sync and unarchive (by default /opt/rkub, count 50G available)
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
@@ -97,7 +97,7 @@ ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not
 
 ```sh
 ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
--e dir_target=/opt                                 # Dir on first master where to find package unarchive by previous task (by default /opt, count 50G available)
+-e dir_target=/opt/rkub                            # Dir on first master where to find package unarchive by previous task (by default /opt/rkub, count 50G available)
 -e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
 -e domain="example.com"                            # By default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
