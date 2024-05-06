@@ -24,7 +24,7 @@ global_package_name: "{{ package_name | default('rke2_rancher_longhorn.zst') }}"
 global_path_to_package_zst: "{{ global_directory_package_build }}/../{{ global_package_name }}"
 
 # Target
-global_directory_package_target: "{{ dir_target | default('/opt') }}"
+global_directory_package_target: "{{ dir_target | default('/opt/rkub') }}"
 global_directory_mount: "{{ dir_mount | default('/mnt/rkub') }}"
 
 # Options General

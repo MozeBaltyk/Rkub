@@ -39,8 +39,6 @@ terraform plan -out=terraform.tfplan \
 -var "spaces_access_key_secret=${AWS_SECRET_ACCESS_KEY}"
 ```
 
-
-
 ## Create an infra
 
 ```bash

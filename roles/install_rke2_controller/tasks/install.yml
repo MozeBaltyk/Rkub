@@ -149,6 +149,6 @@
         path: ~/.bashrc
         block: |
             export KUBECONFIG={{ rke2_kubeconfig_file }}
-            export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml
-            PATH=$PATH:/var/lib/rancher/rke2/bin
+            export CRI_CONFIG_FILE={{ rke2_data_dir }}/agent/etc/crictl.yaml
+            PATH=$PATH:{{ rke2_data_dir }}/bin
         marker: "# {mark} ANSIBLE install_rke2_controler"
