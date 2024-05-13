@@ -1,2 +1,22 @@
 ---
 # tasks file for deploy_hauler
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset:
+      - "distribution"
+      - "distribution_major_version"
+      - "default_ipv4"
+      - "!all,!min"
+  when: >
+    ansible_os_family is not defined
+  tags: [always]
+
+- name: Hauler Install and settings for RHEL-like OS
+  ansible.builtin.import_tasks: rhel.yml
+  when: ansible_os_family == "RedHat"
+
+- name: Send fail message if not a Redhat-like OS
+  ansible.builtin.fail:
+    msg: >
+      "deploy_hauler role currently apply only on Redhat-like OS"
+  when: ansible_os_family != "RedHat"

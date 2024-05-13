@@ -46,7 +46,7 @@
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
         mode: "0750"
 
-    - name: Download rke2-images.linux-amd64.tar.zst
+    - name: Download rke2 RPM
       ansible.builtin.get_url:
         url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ item }}"
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ item }}"
@@ -73,7 +73,7 @@
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ rke2_selinux_rpm_version }}.el8.noarch.rpm"
         mode: "0750"
 
-    - name: Download rke2-images.linux-amd64.tar.zst
+    - name: Download rke2 RPM
       ansible.builtin.get_url:
         url: "https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/{{ item }}"
         dest: "{{ directory_package }}/rke2_{{ rke2_version }}/{{ item }}"

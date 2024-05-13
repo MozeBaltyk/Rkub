@@ -1,2 +1,5 @@
 ---
 # handlers file for deploy_hauler
+- name: Systemd_reload
+  ansible.builtin.systemd:
+    daemon_reload: true

@@ -7,3 +7,4 @@ mount_path: "{{ global_directory_mount }}"
 # RKE2
 admin_user: "{{ global_install_user }}"
 rke2_data_dir: "{{ global_rke2_data_dir }}"
+hauler_server: "{{ global_hauler_ip }}"

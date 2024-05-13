@@ -1,9 +1,8 @@
 ---
-- name: Set versions
+- name: Build Hauler Package
   hosts: localhost
   connection: local
   gather_facts: false
   vars_files: ../../playbooks/vars/main.yml
   roles:
-    #- {role: set_versions, tags: versions}
     - {role: build_airgap_hauler, tags: hauler}

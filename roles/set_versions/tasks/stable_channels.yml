@@ -104,14 +104,44 @@
       ansible.builtin.set_fact:
         helm_version: "{{ helm_release.json.tag_name | regex_replace('^v', '') }}"
 
+# Nerdctl binary
+- name: Block Nerdctl
+  block:
+    - name: Get Nerdctl binary latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/containerd/nerdctl/releases/latest"
+        method: GET
+        return_content: true
+      register: nerdctl_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        nerdctl_version: "{{ nerdctl_release.json.tag_name | regex_replace('^v', '') }}"
+
+# K9S binary
+- name: Block K9S
+  block:
+    - name: Get K9S binary latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/derailed/k9s/releases/latest"
+        method: GET
+        return_content: true
+      register: k9s_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        k9s_version: "{{ k9s_release.json.tag_name | regex_replace('^v', '') }}"
+
 # Display result
 - name: Display versions
   ansible.builtin.debug:
     msg:
       - "Latest stable RKE2 version is {{ rke2_version }}"
-      - "Latest Kube-vip release tag is {{ kubevip_version | default('<none>') }}"
-      - "Latest Longhorn release tag is {{ longhorn_version | default('<none>') }}"
-      - "Latest Cert-manager release tag is {{ cert_manager_version | default('<none>') }}"
-      - "Latest Rancher release tag is {{ rancher_version | default('<none>') }}"
-      - "Latest Neuvector release tag is {{ neuvector_version | default('<none>') }}"
       - "Latest Helm release tag is {{ helm_version }}"
+      - "Latest Nerdctl release tag is {{ nerdctl_version }}"
+      - "Latest K9S release tag is {{ k9s_version }}"
+      - "{% if kubevip_wanted %}Latest Kube-vip release tag is {{ kubevip_version | default('<none>') }}{% endif %}"
+      - "{% if longhorn_wanted %}Latest Longhorn release tag is {{ longhorn_version | default('<none>') }}{% endif %}"
+      - "{% if rancher_wanted %}Latest Cert-manager release tag is {{ cert_manager_version | default('<none>') }}{% endif %}"
+      - "{% if rancher_wanted %}Latest Rancher release tag is {{ rancher_version | default('<none>') }}{% endif %}"
+      - "{% if neuvector_wanted %}Latest Neuvector release tag is {{ neuvector_version | default('<none>') }}{% endif %}"

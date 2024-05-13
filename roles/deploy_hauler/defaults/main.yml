@@ -1,2 +1,4 @@
 ---
 # defaults file for deploy_hauler
+deploy_hauler_directory: "{{ global_directory_package_target }}"
+deploy_hauler_server: "{{ global_hauler_ip }}"

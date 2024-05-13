@@ -11,10 +11,17 @@
     executable: /bin/bash
   changed_when: false
 
+- name: Copy the hauler binary to package
+  ansible.builtin.copy:
+    src: /usr/local/bin/hauler
+    dest: "{{ directory_package }}"
+    mode: '0750'
+  become: true
+
 - name: Push template
   ansible.builtin.template:
     src: "{{ item }}"
-    dest: "{{directory_package}}/{{ item | basename | regex_replace('.j2$', '') }}"
+    dest: "{{ directory_package }}/{{ item | basename | regex_replace('.j2$', '') }}"
     mode: 0660
   loop:
     - "airgap_hauler.yaml.j2"
@@ -30,6 +37,8 @@
       set -o pipefail
       hauler store sync -f {{ directory_package }}/airgap_hauler.yaml
     executable: /bin/bash
+  args:
+    chdir: "{{ directory_package }}"
   changed_when: false
 
 # zstd not include in ansible module archive

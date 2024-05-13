@@ -1,0 +1,7 @@
+---
+- name: Hauler Server
+  hosts: "{{ hauler_ip | default(RKE2_CONTROLLERS[0]) }}"
+  gather_facts: false
+  vars_files: ../../playbooks/vars/main.yml
+  roles:
+    - {role: build_airgap_hauler, tags: hauler}

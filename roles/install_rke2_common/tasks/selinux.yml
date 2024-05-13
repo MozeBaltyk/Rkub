@@ -1,0 +1,25 @@
+---
+# https://docs.rke2.io/install/airgap => only if selinux activated
+
+- name: Set repo Hauler Air Gap Server
+  ansible.builtin.yum_repository:
+    name: hauler.repo
+    description: "Hauler Air Gap Server"
+    baseurl: "http://{{ hauler_server }}:8080"
+    gpgcheck: true
+    gpgkey: "http://{{ hauler_server }}:8080/public.key"
+
+- name: Install common packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - iptables
+    - container-selinux
+    - libnetfilter_conntrack
+    - libnfnetlink
+    - libnftnl
+    - policycoreutils-python-utils
+    - cryptsetup
+    - rke2-common
+    - rke2-selinux

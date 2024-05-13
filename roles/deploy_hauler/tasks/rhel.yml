@@ -1,0 +1,77 @@
+---
+# as root
+- name: Install and create repo for RPM type
+  become: true
+  block:
+    - name: Copy the hauler binary to /usr/local/bin
+      ansible.builtin.copy:
+        src: "{{ deploy_hauler_directory }}/hauler"
+        dest: /usr/local/bin/hauler
+        mode: '0755'
+
+    - name: Push template hauler service
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "/etc/systemd/system/hauler@.service"
+        mode: 0660
+      loop:
+        - "hauler.service.j2"
+      notify: Systemd_reload
+
+    - name: Enable and start the hauler services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: "started"
+        enabled: true
+      loop:
+        - "hauler@fileserver"
+        - "hauler@registry"
+
+    - name: Pause for 5 seconds
+      ansible.builtin.pause:
+        seconds: 5
+
+    - name: Wait until there are 4 RPM files in /opt/hauler/store-files/
+      ansible.builtin.wait_for:
+        path: "{{ deploy_hauler_directory }}/store-files/"
+        search_regex: '\.rpm$'
+        count: 2
+        delay: 2
+
+    - name: Wait until 'hauler store info' command succeeds
+      ansible.builtin.shell:
+        cmd: "hauler store info > /dev/null 2>&1"
+        executable: /bin/bash
+      args:
+        chdir: "{{ deploy_hauler_directory }}"
+      changed_when: false
+      register: hauler_store_info
+      until: hauler_store_info.rc == 0
+      retries: 20
+      delay: 5
+
+    - name: Install createrepo
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - createrepo
+
+    - name: Save hauler index to store-files
+      ansible.builtin.template:
+        src: /dev/null
+        dest: "{{ deploy_hauler_directory }}/store-files/_hauler_index.txt"
+        content: "{{ hauler_store_info['stdout'] }}"
+
+    - name: Save hauler repo to store-files
+      ansible.builtin.template:
+        src: hauler.repo.j2
+        dest: "{{ deploy_hauler_directory }}/store-files/hauler.repo"
+
+    - name: Install Hauler if not present
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          createrepo {{ deploy_hauler_directory }}/store-files
+        executable: /bin/bash
+      changed_when: false

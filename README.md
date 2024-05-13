@@ -39,19 +39,19 @@ With Ansible:
 
 Add-on from my part:
 
-- Some flexibility about path (possible to build, install on path of your choice)
+- Some flexibility about path with the possibility to build and install on a choosen path.
 
-- Arkade to install utilities binaries
+- Admin user (by default 'kuberoot') on first controller node with some admin tools.
 
-- Admin user (by default kuberoot) on first controler node with all necessary tools
+- Nerdctl as complement of containerd to handle oci-archive.
 
-- Nerdctl (as complement of containerd to handle oci-archive)
+- K9S on first controller for admin purpose.
 
-- Firewalld settings if firewalld running
+- Firewalld settings if firewalld running.
 
-- Uninstall playbook to cleanup (and maybe reinstall if needed)
+- Uninstall playbook to cleanup (and maybe reinstall if needed).
 
-- Collection Released, so possibilty to get back to older versions
+- Collection Released, so possibilty to get back to older versions.
 
 ## Prerequisites
 
@@ -77,7 +77,7 @@ Add-on from my part:
 ```sh
 ansible-playbook playbooks/tasks/build.yml                    # All arguments below are not mandatory
 -e "dir_build=$HOME/rkub"                                     # Directory where to upload everything (count 30G)
--e "package_name=rke2_rancher_longhorn.zst"                   # Name of the package, by default rke2_rancher_longhorn.zst
+-e "package_name=rkub.zst"                                    # Name of the package, by default rkub.zst
 -e "archive=true"                                             # Archive tar.zst true or false (default value "true")
 -e "stable=false"                                             # Stable channels or defined version in Rkub collection (default value "false")
 -e "el=9"                                                     # RHEL version (take default value from localhost if OS is different from RedHat-like take value "8")
@@ -209,8 +209,6 @@ Improvments:
 ## Special thanks to 📢
 
 * Clemenko, for the idea [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh).
-
-* Alex Ellis, for its [Arkade project](https://github.com/alexellis/arkade). I cannot live without anymore.
 
 ## References:
 
