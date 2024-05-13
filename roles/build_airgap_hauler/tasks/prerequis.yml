@@ -10,7 +10,7 @@
     ansible_os_family is not defined
 
 # for RHEL-like
-- name: Install zstd and skopeo
+- name: Install zstd and jq
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
@@ -22,7 +22,7 @@
   become: true
 
 # for Debian-like
-- name: Install zstd and skopeo
+- name: Install zstd and jq
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
@@ -34,7 +34,7 @@
   become: true
 
 # check command and install if not present
-- name: Install Helm 3 if not present
+- name: Ensure Helm 3 is present
   ansible.builtin.shell:
     cmd: |
       set -o pipefail

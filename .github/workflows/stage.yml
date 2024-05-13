@@ -10,8 +10,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
   REGION: ${{secrets.DIGITALOCEAN_REGION}}
   MOUNT_POINT: "/opt/rkub"
-  #BUCKET: "rkub-github-action-${{ github.run_id }}"
-  BUCKET: "terraform-backend-github"
+  BUCKET: "rkub-github-action-${{ github.run_id }}"
+  #BUCKET: "terraform-backend-github"
   CONTROLLER_COUNT: "1"
   WORKER_COUNT: "2"
   SIZE: "s-4vcpu-8gb"
@@ -69,7 +69,7 @@ jobs:
         run: |
           cd ./test
           if [[ $BUCKET != "terraform-backend-github" ]]; then \
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/build.yml -e dir_build="${MOUNT_POINT}" -e archive="False"; \
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/hauler_build.yml -e dir_build="${MOUNT_POINT}" -e archive="false"; \
           fi
 
   deploy:
@@ -229,6 +229,10 @@ jobs:
         shell: bash
         env:
           SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Run playbook hauler_server.yml
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/hauler_server.yml -e dir_target=${MOUNT_POINT}
 
       - name: Run playbook install.yml
         run: |

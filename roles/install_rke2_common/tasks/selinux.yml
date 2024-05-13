@@ -3,7 +3,7 @@
 
 - name: Set repo Hauler Air Gap Server
   ansible.builtin.yum_repository:
-    name: hauler.repo
+    name: hauler
     description: "Hauler Air Gap Server"
     baseurl: "http://{{ hauler_server }}:8080"
     gpgcheck: true

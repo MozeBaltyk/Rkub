@@ -8,9 +8,6 @@ control_plane_endpoint: "{{ global_rke2_api_ip }}"
 # Mount share
 mount_path: "{{ global_directory_mount }}"
 mount_rke2_path: "{{ mount_path }}/rke2_{{ rke2_version }}"
-mount_utils_path: "{{ mount_path }}/utils"
-mount_rke2_common_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
-mount_rke2_selinux_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
 
 # RKE2 config
 rke2_kubeconfig_file: "/etc/rancher/rke2/rke2.yaml"

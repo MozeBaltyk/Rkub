@@ -29,7 +29,7 @@
 # Hauler Store
 - name: Display Info
   ansible.builtin.debug:
-    msg: "Start Hauler store - this step can take some times..."
+    msg: "Start Hauler store - this step may take some times..."
 
 - name: Hauler store the all things
   ansible.builtin.shell:

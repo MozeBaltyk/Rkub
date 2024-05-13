@@ -8,6 +8,7 @@
         src: "{{ deploy_hauler_directory }}/hauler"
         dest: /usr/local/bin/hauler
         mode: '0755'
+        remote_src: true
 
     - name: Push template hauler service
       ansible.builtin.template:
@@ -31,13 +32,6 @@
       ansible.builtin.pause:
         seconds: 5
 
-    - name: Wait until there are 4 RPM files in /opt/hauler/store-files/
-      ansible.builtin.wait_for:
-        path: "{{ deploy_hauler_directory }}/store-files/"
-        search_regex: '\.rpm$'
-        count: 2
-        delay: 2
-
     - name: Wait until 'hauler store info' command succeeds
       ansible.builtin.shell:
         cmd: "hauler store info > /dev/null 2>&1"
@@ -57,21 +51,20 @@
       with_items:
         - createrepo
 
-    - name: Save hauler index to store-files
-      ansible.builtin.template:
-        src: /dev/null
-        dest: "{{ deploy_hauler_directory }}/store-files/_hauler_index.txt"
+    - name: Save hauler index to fileserver
+      ansible.builtin.copy:
+        dest: "{{ deploy_hauler_directory }}/fileserver/_hauler_index.txt"
         content: "{{ hauler_store_info['stdout'] }}"
 
-    - name: Save hauler repo to store-files
+    - name: Save hauler repo to fileserver
       ansible.builtin.template:
         src: hauler.repo.j2
-        dest: "{{ deploy_hauler_directory }}/store-files/hauler.repo"
+        dest: "{{ deploy_hauler_directory }}/fileserver/hauler.repo"
 
-    - name: Install Hauler if not present
+    - name: Createrepo on fileserver
       ansible.builtin.shell:
         cmd: |
           set -o pipefail
-          createrepo {{ deploy_hauler_directory }}/store-files
+          createrepo {{ deploy_hauler_directory }}/fileserver
         executable: /bin/bash
       changed_when: false

@@ -90,7 +90,7 @@ ansible-playbook playbooks/tasks/build.yml                    # All arguments be
 
 ```sh
 ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not mandatory
--e package_path=/home/me/rke2_rancher_longhorn.zst # Will be prompt if not given in the command
+-e package_path=/home/me/rkub.zst                  # Will be prompt if not given in the command
 -e dir_target=/opt/rkub                            # Directory where to sync and unarchive (by default /opt/rkub, count 50G available)
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
