@@ -62,6 +62,13 @@ jobs:
           s3fs ${BUCKET} ${MOUNT_POINT} -o url=https://${REGION}.digitaloceanspaces.com -o passwd_file=./passwd-s3fs
           df -Th ${MOUNT_POINT}
 
+      - name: Test access Mount point
+        run: |
+          ls -ld ${MOUNT_POINT}
+          ls -l ${MOUNT_POINT}
+          cd ${MOUNT_POINT}
+          ls
+
       - name: Checkout files
         uses: actions/checkout@v4
 
