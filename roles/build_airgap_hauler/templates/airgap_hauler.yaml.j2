@@ -1,0 +1,49 @@
+apiVersion: content.hauler.cattle.io/v1alpha1
+kind: Images
+metadata:
+  name: rancher-images
+  annotations:
+    hauler.dev/platform: linux/amd64
+spec:
+  images:
+{% for item in list_images %}
+    - name: {{ item }}
+{% endfor %}
+---
+apiVersion: content.hauler.cattle.io/v1alpha1
+kind: Charts
+metadata:
+  name: rancher-charts
+spec:
+  charts:
+{% if rancher_wanted %}
+    - name: rancher
+      repoURL: https://releases.rancher.com/server-charts/latest
+      version: {{ rancher_version }}
+    - name: cert-manager
+      repoURL: https://charts.jetstack.io
+      version: {{ cert_manager_version }}
+{% endif %}
+{% if longhorn_wanted %}
+    - name: longhorn
+      repoURL: https://charts.longhorn.io
+      version: {{ longhorn_version }}
+{% endif %}
+{% if neuvector_wanted %}
+    - name: core
+      repoURL: https://neuvector.github.io/neuvector-helm/
+      version: {{ neuvector_version }}
+{% endif %}
+---
+apiVersion: content.hauler.cattle.io/v1alpha1
+kind: Files
+metadata:
+  name: rancher-files
+spec:
+  files:
+    - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-common-{{ rke2_version }}.rke2r1-0.{{ rhel_version }}.x86_64.rpm
+    - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-agent-{{ rke2_version }}.rke2r1-0.{{ rhel_version }}.x86_64.rpm
+    - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-server-{{ rke2_version }}.rke2r1-0.{{ rhel_version }}.x86_64.rpm
+    - path: https://github.com/rancher/rke2-selinux/releases/download/v0.17.stable.1/rke2-selinux-0.17-1.{{ rhel_version }}.noarch.rpm
+    - path: https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz
+    - path: https://raw.githubusercontent.com/clemenko/rke_airgap_install/main/hauler_all_the_things.sh

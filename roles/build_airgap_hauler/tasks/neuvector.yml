@@ -1,0 +1,20 @@
+---
+#  for i in $(helm template neuvector/core --version $NEU_VERSION | awk '$1 ~ /image:/ {print $2}' | sed -e 's/\"//g'); do echo "    - name: "$i >> airgap_hauler.yaml; done
+- name: Add neuvector chart repo
+  kubernetes.core.helm_repository:
+    name: neuvector
+    repo_url: "https://neuvector.github.io/neuvector-helm/"
+    force_update: true
+
+- name: Neuvector List - helm template
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      helm template neuvector/core --version {{ neuvector_version }} | awk '$1 ~ /image:/ {print $2}' | sed s/\"//g
+    executable: /bin/bash
+  changed_when: false
+  register: neuvector_images
+
+- name: Create a list from output
+  ansible.builtin.set_fact:
+    list_images_neuvector: "{{ neuvector['stdout'].splitlines() }}"

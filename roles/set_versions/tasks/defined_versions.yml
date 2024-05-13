@@ -1,0 +1,21 @@
+---
+- name: Set Versions variables
+  ansible.builtin.set_fact:
+    rke2_version: "{{ global_versions['rke2'] }}"
+    kubevip_version: "{{ global_versions['kubevip'] }}"
+    longhorn_version: "{{ global_versions['cert_manager'] }}"
+    cert_manager_version: "{{ global_versions['rancher'] }}"
+    rancher_version: "{{ global_versions['longhorn'] }}"
+    neuvector_version: "{{ global_versions['neuvector'] }}"
+    helm_version: "{{ global_versions['helm'] }}"
+
+- name: Display
+  ansible.builtin.debug:
+    msg:
+      - "Defined RKE2 version in this ansible collection is {{ rke2_version }}"
+      - "Defined Kube-vip version in this ansible collection is {{ kubevip_version }}"
+      - "Defined Longhorn version in this ansible collection is {{ longhorn_version }}"
+      - "Defined Cert-manager version in this ansible collection is {{ cert_manager_version }}"
+      - "Defined Rancher version in this ansible collection is {{ rancher_version }}"
+      - "Defined Neuvector version in this ansible collection is {{ neuvector_version }}"
+      - "Defined Helm version in this ansible collection is {{ helm_version }}"

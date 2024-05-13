@@ -1,0 +1,12 @@
+---
+# tasks file for set_versions
+- name: Set RHEL Versions variables
+  ansible.builtin.import_tasks: rhel_version.yml
+
+- name: Set Versions variables
+  ansible.builtin.import_tasks: stable_channels.yml
+  when: stable_channel_wanted
+
+- name: Set Versions variables
+  ansible.builtin.import_tasks: defined_versions.yml
+  when: not stable_channel_wanted

@@ -1,0 +1,117 @@
+---
+# RKE2
+- name: Block RKE2
+  block:
+    # export RKE_VERSION=$(curl -s https://update.rke2.io/v1-release/channels | jq -r '.data[] | select(.id=="stable") | .latest' | awk -F"+" '{print $1}'| sed 's/v//')
+    - name: Get RKE2 latest stable version
+      ansible.builtin.uri:
+        url: "https://update.rke2.io/v1-release/channels"
+        method: GET
+        return_content: true
+      register: rke2_channels
+
+    - name: Extract latest stable version
+      ansible.builtin.set_fact:
+        rke2_version: "{{ rke2_channels.json.data | selectattr('id', 'equalto', 'stable') | map(attribute='latest') | first | regex_replace('\\+.*', '') | regex_replace('^v', '') }}"
+
+# Kubevip
+- name: Block Kubevip
+  when: kubevip_wanted
+  block:
+    # export KUBEVIP_VERSION=$(curl -s https://api.github.com/repos/kube-vip/kube-vip/releases/latest | jq -r .tag_name)
+    - name: Get Kube-vip latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/kube-vip/kube-vip/releases/latest"
+        method: GET
+        return_content: true
+      register: kubevip_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        kubevip_version: "{{ kubevip_release.json.tag_name }}"
+
+# Longhorn
+- name: Block Longhorn
+  when: longhorn_wanted
+  block:
+    # export LONGHORN_VERSION=$(curl -s https://api.github.com/repos/longhorn/longhorn/releases/latest | jq -r .tag_name)
+    - name: Get Longhorn latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/longhorn/longhorn/releases/latest"
+        method: GET
+        return_content: true
+      register: longhorn_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        longhorn_version: "{{ longhorn_release.json.tag_name }}"
+
+# Rancher
+- name: Block Rancher
+  when: rancher_wanted
+  block:
+    # export CERT_VERSION=$(curl -s https://api.github.com/repos/cert-manager/cert-manager/releases/latest | jq -r .tag_name)
+    - name: Get Cert-Manager latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/cert-manager/cert-manager/releases/latest"
+        method: GET
+        return_content: true
+      register: cert_manager_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        cert_manager_version: "{{ cert_manager_release.json.tag_name }}"
+
+    # export RANCHER_VERSION=$(curl -s https://api.github.com/repos/rancher/rancher/releases/latest | jq -r .tag_name)
+    - name: Get Rancher latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/rancher/rancher/releases/latest"
+        method: GET
+        return_content: true
+      register: rancher_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        rancher_version: "{{ rancher_release.json.tag_name }}"
+
+# Neuvector
+- name: Block Neuvector
+  when: neuvector_wanted
+  block:
+    # export NEU_VERSION=$(curl -s https://api.github.com/repos/neuvector/neuvector-helm/releases/latest | jq -r .tag_name)
+    - name: Get Neuvector latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/neuvector/neuvector-helm/releases/latest"
+        method: GET
+        return_content: true
+      register: neuvector_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        neuvector_version: "{{ neuvector_release.json.tag_name }}"
+
+# Helm binary
+- name: Block Helm
+  block:
+    - name: Get Helm binary latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/helm/helm/releases/latest"
+        method: GET
+        return_content: true
+      register: helm_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        helm_version: "{{ helm_release.json.tag_name }}"
+
+# Display result
+- name: Display versions
+  ansible.builtin.debug:
+    msg:
+      - "Latest stable RKE2 version is {{ rke2_version }}"
+      - "Latest Kube-vip release tag is {{ kubevip_version | default('<none>') }}"
+      - "Latest Longhorn release tag is {{ longhorn_version | default('<none>') }}"
+      - "Latest Cert-manager release tag is {{ cert_manager_version | default('<none>') }}"
+      - "Latest Rancher release tag is {{ rancher_version | default('<none>') }}"
+      - "Latest Neuvector release tag is {{ neuvector_version | default('<none>') }}"
+      - "Latest Helm release tag is {{ helm_version }}"

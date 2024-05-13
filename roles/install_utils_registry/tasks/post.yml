@@ -5,6 +5,7 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail &&
+      source $HOME/.bashrc &&
       for i in $(curl -sk localhost:5000/v2/_catalog | jq -r '.repositories[]'); do
         for tag in $(curl -sk localhost:5000/v2/${i}/tags/list | jq -r '.tags[]'); do
           echo ${i}:${tag};

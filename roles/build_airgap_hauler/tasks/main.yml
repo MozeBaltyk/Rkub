@@ -1,0 +1,27 @@
+---
+# tasks file for build_airgap_hauler
+- name: First set variables
+  ansible.builtin.import_role:
+    name: set_versions
+    tasks_from: main
+
+- name: Prerequisites
+  ansible.builtin.import_tasks: prerequis.yml
+
+- name: Get list images RKE2
+  ansible.builtin.import_tasks: rke2.yml
+
+- name: Get list images Longhorn
+  ansible.builtin.import_tasks: longhorn.yml
+  when: longhorn_wanted
+
+- name: Get list images Rancher
+  ansible.builtin.import_tasks: rancher.yml
+  when: rancher_wanted
+
+- name: Get list images Neuvector
+  ansible.builtin.import_tasks: neuvector.yml
+  when: neuvector_wanted
+
+- name: Hauler install and store
+  ansible.builtin.import_tasks: hauler.yml

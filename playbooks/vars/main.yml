@@ -8,11 +8,25 @@ global_RANCHER_VERSION: "2.8.1"
 global_LONGHORN_VERSION: "1.6.0"
 global_NEU_VERSION: "2.7.2"
 
-# extras RPM
-global_rke2_common_repo_version: "v{{ rke2_version }}%2Brke2r1"           #.stable.0
-global_rke2_common_rpm_version: "rke2-common-{{ rke2_version }}.rke2r1-0" #.el{{ ansible_distribution_major_version }}.x86_64.rpm
-global_rke2_selinux_repo_version: "v0.17.stable.1"
-global_rke2_selinux_rpm_version: "rke2-selinux-0.17-1"                    #.el{{ ansible_distribution_major_version }}.noarch.rpm
+# Not used yet
+global_stable_channel: "{{ stable | default('false') }}"
+global_all_wanted: "{{ all | default('false') }}"
+global_extras_components:
+  kubevip: "{{ kubevip | default(global_all_wanted) }}"
+  rancher: "{{ rancher | default(global_all_wanted) }}"
+  longhorn: "{{ longhorn | default(global_all_wanted) }}"
+  neuvector: "{{ neuvector | default(global_all_wanted) }}"
+
+global_versions:
+  rke2: "1.27.12"
+  kubevip: "0.8.0"
+  cert_manager: "1.14.1"
+  rancher: "2.8.1"
+  longhorn: "1.6.0"
+  neuvector: "2.7.2"
+  helm: "3.14.0"
+
+global_rhel_version: "{{ el }}"
 
 # General
 global_install_user: "{{ install_user | default('kuberoot') }}"

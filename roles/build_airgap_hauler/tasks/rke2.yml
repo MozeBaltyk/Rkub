@@ -1,0 +1,12 @@
+---
+# for i in $(curl -sL https://github.com/rancher/rke2/releases/download/v$RKE_VERSION%2Brke2r1/rke2-images-all.linux-amd64.txt|grep -v "sriov\|cilium\|vsphere"); do echo "    - name: "$i >> airgap_hauler.yaml ; done
+- name: Get rke2 images from URL
+  ansible.builtin.uri:
+    url: "https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/rke2-images-all.linux-amd64.txt"
+    method: GET
+    return_content: true
+  register: rke2_images
+
+- name: Add rke2 images to list_images variable
+  ansible.builtin.set_fact:
+    list_images_rke2: "{{ rke2_images['content'].splitlines() | select('match', '^(?!.*(sriov|cilium|vsphere)).*$') }}"

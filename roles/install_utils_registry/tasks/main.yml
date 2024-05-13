@@ -14,8 +14,8 @@
   ansible.builtin.import_tasks: deploy.yml
   when: caller_role_name == "controller"
 
-- name: Load images in local registry
-  ansible.builtin.import_tasks: load.yml
+- name: Wait for local registry to be reachable
+  ansible.builtin.import_tasks: wait.yml
   when: caller_role_name == "controller"
 
 - name: List images imported in registry

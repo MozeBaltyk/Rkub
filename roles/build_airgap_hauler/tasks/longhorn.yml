@@ -1,0 +1,5 @@
+---
+#  for i in $(curl -sL https://github.com/longhorn/longhorn/releases/download/$LONGHORN_VERSION/longhorn-images.txt); do echo "    - name: "$i >> airgap_hauler.yaml; done
+- name: Add longhorn images to list_images variable
+  ansible.builtin.set_fact:
+    list_images_longhorn: "{{ lookup('ansible.builtin.url', 'https://raw.githubusercontent.com/longhorn/longhorn/{{ longhorn_version }}/deploy/longhorn-images.txt', wantlist=True) }}"

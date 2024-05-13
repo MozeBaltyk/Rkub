@@ -1,0 +1,14 @@
+---
+# append list
+- name: Append lists together
+  ansible.builtin.set_fact:
+    list_images: "{{ list_images_rke2 + list_images_longhorn | default([]) + list_images_certmanager | default([]) + list_images_rancher_latest | default([]) + list_images_neuvector | default([]) }}"
+
+# install
+- name: Install Hauler if not present
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      command -v hauler || curl -sfL https://get.hauler.dev | bash
+    executable: /bin/bash
+  changed_when: false
