@@ -13,9 +13,9 @@
   ansible.builtin.debug:
     msg:
       - "Defined RKE2 version in this ansible collection is {{ rke2_version }}"
-      - "Defined Kube-vip version in this ansible collection is {{ kubevip_version }}"
-      - "Defined Longhorn version in this ansible collection is {{ longhorn_version }}"
-      - "Defined Cert-manager version in this ansible collection is {{ cert_manager_version }}"
-      - "Defined Rancher version in this ansible collection is {{ rancher_version }}"
-      - "Defined Neuvector version in this ansible collection is {{ neuvector_version }}"
       - "Defined Helm version in this ansible collection is {{ helm_version }}"
+      - "{% if kubevip_wanted %}Defined Kube-vip version in this ansible collection is {{ kubevip_version }}{% endif %}"
+      - "{% if longhorn_wanted %}Defined Longhorn version in this ansible collection is {{ longhorn_version }}{% endif %}"
+      - "{% if rancher_wanted %}Defined Cert-manager version in this ansible collection is {{ cert_manager_version }}{% endif %}"
+      - "{% if rancher_wanted %}Defined Rancher version in this ansible collection is {{ rancher_version }}{% endif %}"
+      - "{% if neuvector_wanted %}Defined Neuvector version in this ansible collection is {{ neuvector_version }}{% endif %}"

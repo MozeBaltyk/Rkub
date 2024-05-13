@@ -28,7 +28,7 @@
 
     - name: Extract latest release tag
       ansible.builtin.set_fact:
-        kubevip_version: "{{ kubevip_release.json.tag_name }}"
+        kubevip_version: "{{ kubevip_release.json.tag_name | regex_replace('^v', '') }}"
 
 # Longhorn
 - name: Block Longhorn
@@ -44,7 +44,7 @@
 
     - name: Extract latest release tag
       ansible.builtin.set_fact:
-        longhorn_version: "{{ longhorn_release.json.tag_name }}"
+        longhorn_version: "{{ longhorn_release.json.tag_name | regex_replace('^v', '') }}"
 
 # Rancher
 - name: Block Rancher
@@ -60,7 +60,7 @@
 
     - name: Extract latest release tag
       ansible.builtin.set_fact:
-        cert_manager_version: "{{ cert_manager_release.json.tag_name }}"
+        cert_manager_version: "{{ cert_manager_release.json.tag_name | regex_replace('^v', '') }}"
 
     # export RANCHER_VERSION=$(curl -s https://api.github.com/repos/rancher/rancher/releases/latest | jq -r .tag_name)
     - name: Get Rancher latest release
@@ -72,7 +72,7 @@
 
     - name: Extract latest release tag
       ansible.builtin.set_fact:
-        rancher_version: "{{ rancher_release.json.tag_name }}"
+        rancher_version: "{{ rancher_release.json.tag_name | regex_replace('^v', '') }}"
 
 # Neuvector
 - name: Block Neuvector
@@ -88,7 +88,7 @@
 
     - name: Extract latest release tag
       ansible.builtin.set_fact:
-        neuvector_version: "{{ neuvector_release.json.tag_name }}"
+        neuvector_version: "{{ neuvector_release.json.tag_name | regex_replace('^v', '') }}"
 
 # Helm binary
 - name: Block Helm
@@ -102,7 +102,7 @@
 
     - name: Extract latest release tag
       ansible.builtin.set_fact:
-        helm_version: "{{ helm_release.json.tag_name }}"
+        helm_version: "{{ helm_release.json.tag_name | regex_replace('^v', '') }}"
 
 # Display result
 - name: Display versions

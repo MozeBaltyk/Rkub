@@ -4,9 +4,3 @@ directory_package: "{{ global_directory_package_build }}"
 tar_zst_name: "{{ global_package_name }}"
 path_to_package_zst: "{{ global_path_to_package_zst }}"
 archive_wanted: "{{ global_archive_tar_zst_bool }}"
-
-# Components wanted
-#kubevip_wanted: "{{ global_extras_components['kubevip'] | bool }}"
-#longhorn_wanted: "{{ global_extras_components['longhorn'] | bool }}"
-#rancher_wanted: "{{ global_extras_components['rancher'] | bool }}"
-#neuvector_wanted: "{{ global_extras_components['neuvector'] | bool }}"

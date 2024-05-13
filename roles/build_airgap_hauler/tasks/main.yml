@@ -23,5 +23,9 @@
   ansible.builtin.import_tasks: neuvector.yml
   when: neuvector_wanted
 
+- name: Get list images Kube-vip
+  ansible.builtin.import_tasks: kubevip.yml
+  when: kubevip_wanted
+
 - name: Hauler install and store
   ansible.builtin.import_tasks: hauler.yml

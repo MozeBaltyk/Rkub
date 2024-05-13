@@ -1,3 +1,4 @@
+# images
 apiVersion: content.hauler.cattle.io/v1alpha1
 kind: Images
 metadata:
@@ -9,6 +10,8 @@ spec:
 {% for item in list_images %}
     - name: {{ item }}
 {% endfor %}
+{% if rancher_wanted or longhorn_wanted or neuvector_wanted %}
+# Helm Charts
 ---
 apiVersion: content.hauler.cattle.io/v1alpha1
 kind: Charts
@@ -34,6 +37,8 @@ spec:
       repoURL: https://neuvector.github.io/neuvector-helm/
       version: {{ neuvector_version }}
 {% endif %}
+{% endif %}
+# Files and RPM
 ---
 apiVersion: content.hauler.cattle.io/v1alpha1
 kind: Files
@@ -45,5 +50,5 @@ spec:
     - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-agent-{{ rke2_version }}.rke2r1-0.{{ rhel_version }}.x86_64.rpm
     - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-server-{{ rke2_version }}.rke2r1-0.{{ rhel_version }}.x86_64.rpm
     - path: https://github.com/rancher/rke2-selinux/releases/download/v0.17.stable.1/rke2-selinux-0.17-1.{{ rhel_version }}.noarch.rpm
-    - path: https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz
+    - path: https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz
     - path: https://raw.githubusercontent.com/clemenko/rke_airgap_install/main/hauler_all_the_things.sh

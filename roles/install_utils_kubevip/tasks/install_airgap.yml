@@ -14,6 +14,6 @@
     owner: root
     group: root
     mode: 0664
-  with_fileglob:
+  loop:
     - "templates/airgap/kube-vip.yml.j2"
     - "templates/airgap/kube-vip-rbac.yml.j2"

@@ -26,7 +26,7 @@ This Ansible collection will install in airgap environnement RKE2 (one controler
 - [Neuvector 2.7.2](https://neuvector.com/) - Kubernetes Security Platform
 <!-- END -->
 
-This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh).
+This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/).
 I tried it and like the idea but I was frustrated with Shell scripting limitations. So I decided to rewrite it in Ansible.
 
 With Ansible:
@@ -35,13 +35,11 @@ With Ansible:
 
 - User agnostic: can be launch by any user (with sudo rights).
 
-- OS agnositc: can be launch on any Linux systems (at least for the package build, for the install depend on your participation to this project 😸)
+- OS agnositc: can be launch on any Linux systems (at least for the package build, for the install part, it depends on your participation 😸)
 
-Add-on from my part, some part which were manual in Clemenko procedure are automated with Ansible like:
+Add-on from my part:
 
-- the upload or NFS mount
-
-- Some flexibility about path (possible to export or mount NFS in choosen place)
+- Some flexibility about path (possible to build, install on path of your choice)
 
 - Arkade to install utilities binaries
 
@@ -57,7 +55,7 @@ Add-on from my part, some part which were manual in Clemenko procedure are autom
 
 ## Prerequisites
 
-- Linux Host as a package builder (can be a VM or your WSL). Count 30G of free space in the build directory of your package builder (17G for download + 7G for the zst package).
+- Linux Host as a package builder (can be a VM or your WSL). Count 10G of free space in the build directory of your package builder.
 
 - An Ansible Controler, can be the same host for ansible and for building package, at your convenience...
 
@@ -77,11 +75,15 @@ Add-on from my part, some part which were manual in Clemenko procedure are autom
 2. Build your package by running (works on Debian-like and Redhat-like and it targets localhost):
 
 ```sh
-ansible-playbook playbooks/tasks/build.yml         # All arguments below are not mandatory
--e dir_build="$HOME/rkub"                          # Directory where to upload everything (count 30G)
--e package_name="rke2_rancher_longhorn.zst"        # Name of the package, by default rke2_rancher_longhorn.zst
--e archive="True"                                  # Archive tar.zst true or false (default value "true")
--u admin -Kk                                       # Other Ansible Arguments (like -vvv)
+ansible-playbook playbooks/tasks/build.yml                    # All arguments below are not mandatory
+-e "dir_build=$HOME/rkub"                                     # Directory where to upload everything (count 30G)
+-e "package_name=rke2_rancher_longhorn.zst"                   # Name of the package, by default rke2_rancher_longhorn.zst
+-e "archive=true"                                             # Archive tar.zst true or false (default value "true")
+-e "stable=false"                                             # Stable channels or defined version in Rkub collection (default value "false")
+-e "el=9"                                                     # RHEL version (take default value from localhost if OS is different from RedHat-like take value "8")
+-e "all=false"                                                # if you want to install all components kubevip,longhorn,rancher,neuvector (default value "false")
+-e "kubevip=true longhorn=true rancher=true neuvector=true"   # which extras components you want to add to package (default value from var 'all')
+-u admin -Kk                                                  # Other Ansible Arguments (like -vvv)
 ```
 
 3. Push your package to first controler:

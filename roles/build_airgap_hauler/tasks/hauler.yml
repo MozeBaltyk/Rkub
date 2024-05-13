@@ -1,10 +1,8 @@
 ---
-# append list
 - name: Append lists together
   ansible.builtin.set_fact:
-    list_images: "{{ list_images_rke2 + list_images_longhorn | default([]) + list_images_certmanager | default([]) + list_images_rancher_latest | default([]) + list_images_neuvector | default([]) }}"
+    list_images: "{{ list_images_rke2 + list_images_longhorn | default([]) + list_images_certmanager | default([]) + list_images_rancher_latest | default([]) + list_images_neuvector | default([]) + list_images_kubevip | default([]) }}"
 
-# install
 - name: Install Hauler if not present
   ansible.builtin.shell:
     cmd: |
@@ -12,3 +10,33 @@
       command -v hauler || curl -sfL https://get.hauler.dev | bash
     executable: /bin/bash
   changed_when: false
+
+- name: Push template
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{directory_package}}/{{ item | basename | regex_replace('.j2$', '') }}"
+    mode: 0660
+  loop:
+    - "airgap_hauler.yaml.j2"
+
+# Hauler Store
+- name: Display Info
+  ansible.builtin.debug:
+    msg: "Start Hauler store - this step can take some times..."
+
+- name: Hauler store the all things
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      hauler store sync -f {{ directory_package }}/airgap_hauler.yaml
+    executable: /bin/bash
+  changed_when: false
+
+# zstd not include in ansible module archive
+- name: Compress files using zstd and create an archive
+  ansible.builtin.command:
+    "tar -I zstd -vcf {{ tar_zst_name }} -C {{ directory_package }} ."
+  args:
+    chdir: "{{ directory_package }}/.."
+  changed_when: false
+  when: archive_wanted

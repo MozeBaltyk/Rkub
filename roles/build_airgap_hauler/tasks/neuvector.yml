@@ -17,4 +17,4 @@
 
 - name: Create a list from output
   ansible.builtin.set_fact:
-    list_images_neuvector: "{{ neuvector['stdout'].splitlines() }}"
+    list_images_neuvector: "{{ neuvector_images['stdout'].splitlines() }}"

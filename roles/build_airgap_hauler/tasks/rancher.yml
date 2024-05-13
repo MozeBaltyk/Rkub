@@ -28,7 +28,7 @@
 
 - name: Get Rancher images from URL
   ansible.builtin.uri:
-    url: "https://github.com/rancher/rancher/releases/download/{{ rancher_version }}/rancher-images.txt"
+    url: "https://github.com/rancher/rancher/releases/download/v{{ rancher_version }}/rancher-images.txt"
     method: GET
     return_content: true
   register: rancher_images
