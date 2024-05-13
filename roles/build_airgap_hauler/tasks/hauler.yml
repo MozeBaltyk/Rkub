@@ -16,6 +16,7 @@
     src: /usr/local/bin/hauler
     dest: "{{ directory_package }}"
     mode: '0750'
+    remote_src: true
   become: true
 
 - name: Push template
