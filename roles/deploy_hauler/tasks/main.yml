@@ -11,6 +11,21 @@
     ansible_os_family is not defined
   tags: [always]
 
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
+
+- name: Hauler firewalld
+  vars:
+    firewalld_rules: "{{ hauler_firewalld_rules }}"
+  ansible.builtin.import_role:
+    name: set_firewalld
+    tasks_from: main
+  when:
+    - ansible_facts['services']['firewalld.service'] is defined
+    - ansible_facts['services']['firewalld.service']['state'] == "running"
+  tags: firewalld
+
 - name: Hauler Install and settings for RHEL-like OS
   ansible.builtin.import_tasks: rhel.yml
   when: ansible_os_family == "RedHat"
