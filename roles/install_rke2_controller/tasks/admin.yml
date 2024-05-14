@@ -53,18 +53,19 @@
     # Install helm / k9s
     - name: Ensure .local/bin dir exist
       ansible.builtin.file:
-        path: "$HOME/.local/bin/{{ item }}"
+        path: "{{ item }}"
         state: directory
         mode: 0700
         recurse: true
       loop:
-        - "helm-tmp"
-        - "k9s-tmp"
+        - "$HOME/helm-tmp"
+        - "$HOME/k9s-tmp"
+        - "$HOME/.local/bin"
 
     - name: Download helm bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/helm.tar.gz"
-        dest: "$HOME/.local/bin/helm-tmp"
+        dest: "$HOME/helm-tmp"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
@@ -73,7 +74,7 @@
 
     - name: Copy helm binary file
       ansible.builtin.copy:
-        src: "$HOME/.local/bin/helm-tmp/linux-amd64/helm"
+        src: "$HOME/helm-tmp/linux-amd64/helm"
         dest: "$HOME/.local/bin/helm"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
@@ -82,7 +83,7 @@
     - name: Download k9s bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/k9s.tar.gz"
-        dest: "$HOME/.local/bin/k9s-tmp"
+        dest: "$HOME/k9s-tmp"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
@@ -91,7 +92,7 @@
 
     - name: Copy k9s binary file
       ansible.builtin.copy:
-        src: "$HOME/.local/bin/k9s-tmp/k9s"
+        src: "$HOME/k9s-tmp/k9s"
         dest: "$HOME/.local/bin/k9s"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
@@ -99,9 +100,9 @@
 
     - name: Cleanup tmp dir
       ansible.builtin.file:
-        path: "$HOME/.local/bin/{{ item }}"
+        path: "{{ item }}"
         state: absent
         recurse: true
       loop:
-        - "helm-tmp"
-        - "k9s-tmp"
+        - "$HOME/helm-tmp"
+        - "$HOME/k9s-tmp"
