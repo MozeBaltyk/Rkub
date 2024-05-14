@@ -100,7 +100,6 @@ ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not
 ```sh
 ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
 -e dir_target=/opt/rkub                            # Dir on first master where to find package unarchive by previous task (by default /opt/rkub, count 50G available)
--e dir_mount=/mnt/rkub                             # NFS mount point (on first master, it will be a symlink to "dir_target")
 -e domain="example.com"                            # By default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```

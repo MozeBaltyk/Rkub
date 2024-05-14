@@ -17,9 +17,13 @@
       ansible.builtin.debug:
         var: install_server_output['stdout_lines']
 
-    - name: Pause for 3 seconds before start service
+    - name: Display install complete output
+      ansible.builtin.debug:
+        var: install_server_output
+
+    - name: Pause for 5 seconds before start service
       ansible.builtin.pause:
-        seconds: 3
+        seconds: 5
 
     # Service
     - name: Mask RKE2 agent service on the first server
