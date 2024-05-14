@@ -41,8 +41,8 @@
       changed_when: false
       register: hauler_store_info
       until: hauler_store_info.rc == 0
-      retries: 20
-      delay: 5
+      retries: 30
+      delay: 10
 
     - name: Install createrepo
       ansible.builtin.dnf:
