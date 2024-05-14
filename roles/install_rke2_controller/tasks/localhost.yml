@@ -18,8 +18,10 @@
       ansible.builtin.command: type kubecm
       register: is_installed
       changed_when: false
+      failed_when: false
 
     - name: Add kubeconfig to kubecm
+      when: is_installed.rc == 0
       block:
         - name: Test if default context already exist in your kubeconfig.
           ansible.builtin.command: "kubecm list default > /dev/null  2>&1"
@@ -38,10 +40,12 @@
           ansible.builtin.command: "kubecm switch default"
           changed_when: false
 
-  rescue:
     - name: No Kubecm
-      ansible.builtin.debug:
-        msg: "Kubecm is not installed on your localhost! Not a big problem, but I did not add it to your local kubeconfig."
+      when: is_installed.rc != 0
+      block:
+        - name: No Kubecm
+          ansible.builtin.debug:
+            msg: "Kubecm is not installed on your localhost! Not a big problem, but I did not add it to your local kubeconfig."
 
   always:
     - name: Message to you
