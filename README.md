@@ -41,13 +41,11 @@ Add-on from my part:
 
 - Some flexibility about path with the possibility to build and install on a choosen path.
 
-- Admin user (by default 'kuberoot') on first controller node with some admin tools.
+- Admin user (by default 'kuberoot') on first controller node with some admin tools (k9s, helm).
 
 - Nerdctl as complement of containerd to handle oci-archive.
 
 - K9S on first controller for admin purpose.
-
-- Firewalld settings if firewalld running.
 
 - Uninstall playbook to cleanup (and maybe reinstall if needed).
 
@@ -156,6 +154,8 @@ ANSIBLE_USER=admin                                 # equal to '-u admin'
 All prerequisites are set in folder `meta` and `meta/execution-environment.yml`. So it's possible to use ansible-builder (though not tested yet).
 
 ## Some details
+
+I favored the tarball installation since it's the one the most compact and also leave an tar.zst on all nodes.
 
 **Build** have for purpose to create a tar zst with following content:
 
