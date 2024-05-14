@@ -53,29 +53,30 @@
     # Install helm / k9s
     - name: Ensure .local/bin dir exist
       ansible.builtin.file:
-        path: "$HOME/.local/bin"
+        path: "$HOME/.local/bin/{{ item }}"
         state: directory
         mode: 0700
         recurse: true
+      loop:
+        - "helm"
+        - "k9s"
 
     - name: Download helm bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/helm.tar.gz"
-        dest: "$HOME/.local/bin"
+        dest: "$HOME/.local/bin/helm"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
         remote_src: true
         validate_certs: false
-        extra_opts: ['--strip-components=1']
 
     - name: Download k9s bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/k9s.tar.gz"
-        dest: "$HOME/.local/bin"
+        dest: "$HOME/.local/bin/k9s"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
         remote_src: true
         validate_certs: false
-        extra_opts: ['--strip-components=1']

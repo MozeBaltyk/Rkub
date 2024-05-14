@@ -14,16 +14,20 @@
         path: /usr/local/bin/nerdctl
       register: file_data
 
+    - name: Create tmp dir
+      ansible.builtin.file:
+        path: /tmp/nerdctl
+        state: directory
+        mode: '0750'
+      when: not file_data.stat.exists
+
     - name: Download Nerdctl bin into /usr/local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/nerdctl.tar.gz"
-        dest: "/usr/local/bin"
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
+        dest: "/tmp/nerdctl"
         mode: '0750'
         remote_src: true
         validate_certs: false
-        extra_opts: ['--strip-components=1']
       when: not file_data.stat.exists
 
 #- name: Download Nerdctl archive
@@ -35,7 +39,7 @@
 #- name: Unarchive Nerdctl
 #  ansible.builtin.unarchive:
 #    src: "/usr/local/bin/nerdctl-archive.tar.gz"
-#    dest: "/usr/local/bin/"
+#    dest: "/usr/local/bin/."
 #    owner: "{{ admin_user }}"
 #    group: "{{ admin_user }}"
 #    mode: '0750'
