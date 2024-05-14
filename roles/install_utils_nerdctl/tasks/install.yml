@@ -12,13 +12,12 @@
 
 - name: Download Nerdctl bin into /usr/local/bin
   ansible.builtin.unarchive:
-    src: "http://{{ hauler_server }}:8080/nerdctl-*-linux-amd64.tar.gz"
+    src: "http://{{ hauler_server }}:8080/nerdctl.tar.gz"
     dest: "/usr/local/bin/"
     owner: "{{ admin_user }}"
     group: "{{ admin_user }}"
     mode: '0750'
     remote_src: true
-    extra_opts: [--wildcards, --no-anchored, --strip-components=1]
     validate_certs: false
   when: not file_data.stat.exists
 

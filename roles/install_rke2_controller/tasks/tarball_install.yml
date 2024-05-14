@@ -6,7 +6,7 @@
     - name: TARBALL | Make temp dir
       ansible.builtin.tempfile:
         state: directory
-        suffix: rke2-install.
+        suffix: rke2-install.XXXXXXXXXX
         path: "{{ tarball_tmp_dir | default(omit) }}"
       register: temp_dir
 

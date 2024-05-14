@@ -66,7 +66,9 @@ spec:
       path: https://get.rke2.io
     {% endif -%}
     # Addons
-    - path: https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz
-    - path: https://github.com/containerd/nerdctl/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
-    - path: https://github.com/derailed/k9s/v{{ k9s_version }}/k9s_Linux_amd64.tar.gz
-    #- path: https://raw.githubusercontent.com/clemenko/rke_airgap_install/main/hauler_all_the_things.sh
+    - name: helm.tar.gz
+      path: https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz
+    - name: nerdctl.tar.gz
+      path: https://github.com/containerd/nerdctl/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
+    - name: k9s.tar.gz
+      path: https://github.com/derailed/k9s/v{{ k9s_version }}/k9s_Linux_amd64.tar.gz

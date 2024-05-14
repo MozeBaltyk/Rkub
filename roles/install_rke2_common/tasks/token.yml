@@ -7,7 +7,7 @@
     validate_certs: false
     return_content: false
   register: token_response
-  ignore_errors: true
+  failed_when: false
 
 - name: Store Master node-token
   ansible.builtin.set_fact:
