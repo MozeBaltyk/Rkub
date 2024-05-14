@@ -1,0 +1,60 @@
+---
+# As root
+- name: Install with tarball method
+  become: true
+  block:
+    - name: Install RKE2 server node
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ mount_rke2_path }} INSTALL_RKE2_TYPE=server sh {{ mount_rke2_path }}/install.sh
+        chdir: "{{ mount_rke2_path }}"
+        executable: /bin/bash
+      register: install_server_output
+      failed_when: false
+      changed_when: false
+
+    - name: Display install output
+      ansible.builtin.debug:
+        var: install_server_output['stdout_lines']
+
+    - name: Pause for 3 seconds before start service
+      ansible.builtin.pause:
+        seconds: 3
+
+    # Service
+    - name: Mask RKE2 agent service on the first server
+      ansible.builtin.systemd:
+        name: "rke2-agent.service"
+        enabled: false
+        masked: true
+
+    - name: Start and enable rke2-server
+      ansible.builtin.systemd:
+        name: rke2-server.service
+        state: started
+        enabled: true
+      notify: "Service (re)started"
+      async: 600
+      poll: 60
+
+    - name: Wait for k8s apiserver
+      ansible.builtin.wait_for:
+        host: localhost
+        port: "6443"
+        state: present
+        timeout: 300
+
+    - name: Create symlink for containerd.sock
+      ansible.builtin.file:
+        src: /var/run/k3s/containerd/containerd.sock
+        dest: /var/run/containerd/containerd.sock
+        state: link
+
+    - name: Update root .bashrc
+      ansible.builtin.blockinfile:
+        path: ~/.bashrc
+        block: |
+          export KUBECONFIG={{ rke2_kubeconfig_file }}
+          export CRI_CONFIG_FILE={{ rke2_data_dir }}/agent/etc/crictl.yaml
+          PATH=$PATH:{{ rke2_data_dir }}/bin
+        marker: "# {mark} ANSIBLE install_rke2_controler"

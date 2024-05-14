@@ -10,6 +10,7 @@
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int >= 8
+
 - name: Import a key from a file
   ansible.builtin.rpm_key:
     state: present
@@ -23,6 +24,7 @@
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int >= 8
+
 - name: Install RKE2 common packages
   ansible.builtin.dnf:
     name: "{{ mount_rke2_common_rpm_path }}"

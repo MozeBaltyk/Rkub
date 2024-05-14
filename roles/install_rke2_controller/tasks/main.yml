@@ -33,7 +33,7 @@
 #     tasks_from: main
 #   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
 #   tags: nfs_export
-#
+
 # - name: Set NFS mount on other nodes
 #   ansible.builtin.import_role:
 #     name: set_nfs_mount

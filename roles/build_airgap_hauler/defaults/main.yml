@@ -1,6 +1,8 @@
 ---
 # defaults file for build_airgap_hauler
-hauler_version: "1.0.3"
+hauler_version: "{{ global_versions['hauler'] }}"
+rpm_install: "{{ global_rpm_install | bool }}"
+tarball_install: "{{ global_tarball_install | bool }}"
 directory_package: "{{ global_directory_package_build }}"
 tar_zst_name: "{{ global_package_name }}"
 path_to_package_zst: "{{ global_path_to_package_zst }}"

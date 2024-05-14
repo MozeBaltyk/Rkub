@@ -27,6 +27,7 @@ global_versions:
   helm: "3.14.0"
   nerdctl: "1.7.6"
   k9s: "0.32.4"
+  hauler: "1.0.3"
 
 global_rhel_version: "{{ el }}"
 
@@ -34,6 +35,9 @@ global_rhel_version: "{{ el }}"
 global_install_user: "{{ install_user | default('kuberoot') }}"
 global_directory_package_build: "{{ dir_build | default('$HOME/rkub') }}"
 global_archive_tar_zst_bool: "{{ archive | default('true') | bool }}"
+global_method_install: "{{ method | default('tarball') }}"
+global_rpm_install: "{{ global_method_install == 'rpm' }}"
+global_tarball_install: "{{ global_method_install == 'tarball' }}"
 
 # Local
 global_package_name: "{{ package_name | default('rkub.zst') }}"

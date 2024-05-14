@@ -1,13 +1,14 @@
 ---
 # defaults file for install_controler
-rke2_version: "{{ global_rke2_version }}"
 admin_user: "{{ global_install_user }}"
 master: "{{ global_master_ip }}"
 control_plane_endpoint: "{{ global_rke2_api_ip }}"
+rpm_install: "{{ global_rpm_install | bool }}"
+tarball_install: "{{ global_tarball_install | bool }}"
 
 # Mount share
 mount_path: "{{ global_directory_mount }}"
-mount_rke2_path: "{{ mount_path }}/rke2_{{ rke2_version }}"
+mount_rke2_path: "{{ mount_path }}/fileserver"
 
 # RKE2 config
 rke2_kubeconfig_file: "/etc/rancher/rke2/rke2.yaml"

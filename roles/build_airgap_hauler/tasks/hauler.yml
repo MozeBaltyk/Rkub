@@ -2,7 +2,11 @@
 - name: Append lists together
   ansible.builtin.set_fact:
     list_images: "{{ list_images_longhorn | default([]) + list_images_certmanager | default([]) + list_images_rancher_latest | default([]) + list_images_neuvector | default([]) + list_images_kubevip | default([]) }}"
-    #list_images: "{{ list_images_rke2 + list_images_longhorn | default([]) + list_images_certmanager | default([]) + list_images_rancher_latest | default([]) + list_images_neuvector | default([]) + list_images_kubevip | default([]) }}"
+
+- name: Append lists for RPM install with custom registry
+  ansible.builtin.set_fact:
+    list_images: "{{ list_images | default([]) + list_images_rke2 }}"
+  when: rpm_install
 
 - name: Install Hauler if not present
   ansible.builtin.shell:
