@@ -1,3 +1,4 @@
+{% if list_images|length > 0 %}
 # images
 apiVersion: content.hauler.cattle.io/v1alpha1
 kind: Images
@@ -10,6 +11,7 @@ spec:
 {% for item in list_images %}
     - name: {{ item }}
 {% endfor %}
+{% endif %}
 {% if rancher_wanted or longhorn_wanted or neuvector_wanted %}
 # Helm Charts
 ---
