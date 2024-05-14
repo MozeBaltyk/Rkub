@@ -47,3 +47,5 @@
         block: |
           export KUBECONFIG="~/.kube/{{ inventory_hostname }}.yaml"
         marker: "# {mark} ANSIBLE setup Kubeconfig"
+
+# Install helm / k9s

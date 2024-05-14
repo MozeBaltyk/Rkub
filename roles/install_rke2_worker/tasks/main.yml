@@ -49,14 +49,6 @@
   when: ansible_selinux['status'] == 'enabled'
 
 # Utils
-- name: Install registry on worker
-  vars:
-    caller_role_name: worker
-  ansible.builtin.import_role:
-    name: install_utils_registry
-    tasks_from: main
-  tags: registry
-
 - name: RKE2 install nerdctl
   vars:
     caller_role_name: worker

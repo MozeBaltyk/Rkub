@@ -19,6 +19,6 @@
     - name: Write token on mount path
       ansible.builtin.copy:
         content: "{{ rke2_config_token }}"
-        dest: "{{ mount_path }}/token"
+        dest: "{{ mount_rke2_path }}/token"
         follow: true
         mode: "0640"
