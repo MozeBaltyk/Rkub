@@ -6,6 +6,7 @@
       - "distribution"
       - "distribution_major_version"
       - "default_ipv4"
+      - "selinux"
       - "!all,!min"
   when: >
     ansible_os_family is not defined
@@ -26,13 +27,6 @@
     - ansible_facts['services']['firewalld.service']['state'] == "running"
   tags: firewalld
 
-# NFS share
-- name: Set NFS mount on other nodes
-  ansible.builtin.import_role:
-    name: set_nfs_mount
-    tasks_from: main
-  tags: nfs_mount
-
 # Start install
 - name: RKE2 common to worker and controler tasks
   vars:
@@ -45,6 +39,14 @@
 - name: RKE2 Install worker
   ansible.builtin.import_tasks: install.yml
   tags: install
+
+- name: Tasks if SELinux is activated for RKE2 installation
+  vars:
+    caller_role_name: worker
+  ansible.builtin.import_role:
+    name: install_rke2_common
+    tasks_from: selinux
+  when: ansible_selinux['status'] == 'enabled'
 
 # Utils
 - name: Install registry on worker

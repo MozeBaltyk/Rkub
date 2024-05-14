@@ -5,7 +5,6 @@
     gather_subset:
       - "distribution"
       - "distribution_major_version"
-      - "selinux"
       - "!min"
   when: >
     ansible_os_family is not defined
@@ -23,10 +22,6 @@
 
 - name: Tasks common to Linux servers for RKE2 installation
   ansible.builtin.import_tasks: common.yml
-
-- name: Tasks if SELinux is activated for RKE2 installation
-  ansible.builtin.import_tasks: selinux.yml
-  when: ansible_selinux['status'] == 'enabled'
 
 - name: Get Token if one exist
   ansible.builtin.import_tasks: token.yml

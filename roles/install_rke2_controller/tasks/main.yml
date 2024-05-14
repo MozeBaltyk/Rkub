@@ -6,6 +6,7 @@
       - "distribution"
       - "distribution_major_version"
       - "default_ipv4"
+      - "selinux"
       - "!all,!min"
   when: >
     ansible_os_family is not defined
@@ -26,21 +27,6 @@
     - ansible_facts['services']['firewalld.service']['state'] == "running"
   tags: firewalld
 
-# Here, we start export NFS on first controler and mounting on all other controlers
-# - name: Set NFS export on first node
-#   ansible.builtin.import_role:
-#     name: set_nfs_export
-#     tasks_from: main
-#   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
-#   tags: nfs_export
-
-# - name: Set NFS mount on other nodes
-#   ansible.builtin.import_role:
-#     name: set_nfs_mount
-#     tasks_from: main
-#   when: inventory_hostname in groups['RKE2_CONTROLLERS'][1:]
-#   tags: nfs_mount
-
 # Start install
 - name: RKE2 common to worker and controler tasks
   vars:
@@ -55,16 +41,18 @@
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: install
 
+- name: Tasks if SELinux is activated for RKE2 installation
+  vars:
+    caller_role_name: controller
+  ansible.builtin.import_role:
+    name: install_rke2_common
+    tasks_from: selinux
+  when: ansible_selinux['status'] == 'enabled'
+
 - name: RKE2 Get Token
   ansible.builtin.import_tasks: token.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: token
-
-# Admin setup
-#- name: Arkade utils push in admin user
-#  ansible.builtin.import_tasks: arkade.yml
-#  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
-#  tags: arkade
 
 - name: Admin user setup
   ansible.builtin.import_tasks: admin.yml
