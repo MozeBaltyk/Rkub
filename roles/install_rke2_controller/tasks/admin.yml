@@ -51,10 +51,17 @@
         marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
 
     # Install helm / k9s
+    - name: Ensure .local/bin dir exist
+      ansible.builtin.file:
+        path: "$HOME/.local/bin"
+        state: directory
+        mode: 0700
+        recurse: true
+
     - name: Download helm bin to
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/helm.tar.gz"
-        dest: "/usr/local/bin/helm"
+        dest: "$HOME/.local/bin"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
@@ -65,7 +72,7 @@
     - name: Download k9s bin into /usr/local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/k9s.tar.gz"
-        dest: "/usr/local/bin/k9s"
+        dest: "$HOME/.local/bin"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'

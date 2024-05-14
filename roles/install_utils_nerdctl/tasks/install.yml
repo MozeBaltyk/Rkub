@@ -1,26 +1,30 @@
 ---
-- name: Create the NERDCTL directory
-  ansible.builtin.file:
-    path: /etc/nerdctl
-    state: directory
-    mode: '0754'
+# As root
+- name: Install Nerdctl
+  become: true
+  block:
+    - name: Create the NERDCTL directory
+      ansible.builtin.file:
+        path: /etc/nerdctl
+        state: directory
+        mode: '0754'
 
-- name: Check if file does exist
-  ansible.builtin.stat:
-    path: /usr/local/bin/nerdctl
-  register: file_data
+    - name: Check if file does exist
+      ansible.builtin.stat:
+        path: /usr/local/bin/nerdctl
+      register: file_data
 
-- name: Download Nerdctl bin into /usr/local/bin
-  ansible.builtin.unarchive:
-    src: "http://{{ hauler_server }}:8080/nerdctl.tar.gz"
-    dest: "/usr/local/bin/nerdctl"
-    owner: "{{ admin_user }}"
-    group: "{{ admin_user }}"
-    mode: '0750'
-    remote_src: true
-    validate_certs: false
-    extra_opts: ['--strip-components=1']
-  when: not file_data.stat.exists
+    - name: Download Nerdctl bin into /usr/local/bin
+      ansible.builtin.unarchive:
+        src: "http://{{ hauler_server }}:8080/nerdctl.tar.gz"
+        dest: "/usr/local/bin/nerdctl"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+        validate_certs: false
+        extra_opts: ['--strip-components=1']
+      when: not file_data.stat.exists
 
 #- name: Download Nerdctl archive
 #  ansible.builtin.get_url:
@@ -37,18 +41,18 @@
 #    mode: '0750'
 #    remote_src: true
 
-- name: Copy NERDCTL configuration file
-  ansible.builtin.template:
-    src: nerdctl.toml
-    dest: /etc/nerdctl
-    owner: "{{ admin_user }}"
-    group: "{{ admin_user }}"
-    mode: '0644'
+    - name: Copy NERDCTL configuration file
+      ansible.builtin.template:
+        src: nerdctl.toml
+        dest: /etc/nerdctl
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0644'
 
-- name: Copy SUDO configuration
-  ansible.builtin.template:
-    src: secure-path
-    dest: /etc/sudoers.d
-    owner: "root"
-    group: "root"
-    mode: '0440'
+    - name: Copy SUDO configuration
+      ansible.builtin.template:
+        src: secure-path
+        dest: /etc/sudoers.d
+        owner: "root"
+        group: "root"
+        mode: '0440'
