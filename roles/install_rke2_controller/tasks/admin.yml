@@ -50,4 +50,25 @@
           PATH=$PATH:{{ rke2_data_dir }}/bin
         marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
 
-# Install helm / k9s
+    # Install helm / k9s
+    - name: Download helm bin to
+      ansible.builtin.unarchive:
+        src: "http://{{ hauler_server }}:8080/helm.tar.gz"
+        dest: "/usr/local/bin/helm"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+        validate_certs: false
+        extra_opts: ['--strip-components=1']
+
+    - name: Download k9s bin into /usr/local/bin
+      ansible.builtin.unarchive:
+        src: "http://{{ hauler_server }}:8080/k9s.tar.gz"
+        dest: "/usr/local/bin/k9s"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+        validate_certs: false
+        extra_opts: ['--strip-components=1']

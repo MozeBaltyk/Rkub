@@ -33,7 +33,7 @@
 
       rescue:
         - name: Add to kubecm
-          ansible.builtin.command: "kubecm add -c -f ~/.kube/{{ inventory_hostname }}.yaml"
+          ansible.builtin.command: "kubecm add -c --context-name {{ inventory_hostname }} -f ~/.kube/{{ inventory_hostname }}.yaml"
           changed_when: false
 
         - name: Switch to default
