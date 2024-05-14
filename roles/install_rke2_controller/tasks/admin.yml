@@ -58,7 +58,7 @@
         mode: 0700
         recurse: true
 
-    - name: Download helm bin to
+    - name: Download helm bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/helm.tar.gz"
         dest: "$HOME/.local/bin"
@@ -69,7 +69,7 @@
         validate_certs: false
         extra_opts: ['--strip-components=1']
 
-    - name: Download k9s bin into /usr/local/bin
+    - name: Download k9s bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/k9s.tar.gz"
         dest: "$HOME/.local/bin"
