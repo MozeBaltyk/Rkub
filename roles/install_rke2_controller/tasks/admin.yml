@@ -79,6 +79,7 @@
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
+        remote_src: true
 
     - name: Download k9s bin to .local/bin
       ansible.builtin.unarchive:
@@ -97,6 +98,7 @@
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
+        remote_src: true
 
     - name: Cleanup tmp dir
       ansible.builtin.file:
