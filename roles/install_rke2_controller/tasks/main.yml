@@ -47,7 +47,13 @@
   ansible.builtin.import_role:
     name: install_rke2_common
     tasks_from: selinux
+  tags: selinux
   when: ansible_selinux['status'] == 'enabled'
+
+- name: RKE2 post install after selinux
+  ansible.builtin.import_tasks: post.yml
+  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
+  tags: post
 
 - name: RKE2 Get Token
   ansible.builtin.import_tasks: token.yml
