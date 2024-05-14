@@ -6,7 +6,7 @@
     - name: TARBALL | Make temp dir
       ansible.builtin.tempfile:
         state: directory
-        suffix: "-rke2-controller-install"
+        suffix: "-rke2-worker-install"
         path: "{{ tarball_tmp_dir | default(omit) }}"
       register: temp_dir
 
@@ -21,19 +21,19 @@
         - sha256sum-amd64.txt
         - install.sh
 
-    - name: TARBALL | Install RKE2 server node
+    - name: TARBALL | Install RKE2 worker node
       ansible.builtin.shell:
         cmd: |
-          set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ temp_dir['path'] }} INSTALL_RKE2_TYPE=server sh {{ temp_dir['path'] }}/install.sh
+          set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ temp_dir['path'] }} INSTALL_RKE2_TYPE=agent sh {{ temp_dir['path'] }}/install.sh
         chdir: "{{ temp_dir['path'] }}"
         executable: /bin/bash
-      register: install_server_output
+      register: install_worker_output
       failed_when: false
       changed_when: false
 
     - name: TARBALL | Display install output
       ansible.builtin.debug:
-        var: install_server_output['stdout_lines']
+        var: install_worker_output['stdout_lines']
 
     - name: TARBALL | Pause for 5 seconds before start service
       ansible.builtin.pause:

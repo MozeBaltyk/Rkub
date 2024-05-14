@@ -48,6 +48,10 @@
     tasks_from: selinux
   when: ansible_selinux['status'] == 'enabled'
 
+- name: RKE2 start worker after Selinux
+  ansible.builtin.import_tasks: start.yml
+  tags: start
+
 # Utils
 - name: RKE2 install nerdctl
   vars:

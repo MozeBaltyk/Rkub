@@ -50,10 +50,10 @@
   tags: selinux
   when: ansible_selinux['status'] == 'enabled'
 
-- name: RKE2 post install after selinux
-  ansible.builtin.import_tasks: post.yml
+- name: Start RKE2 after selinux config
+  ansible.builtin.import_tasks: start.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
-  tags: post
+  tags: start
 
 - name: RKE2 Get Token
   ansible.builtin.import_tasks: token.yml

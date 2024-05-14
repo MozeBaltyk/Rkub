@@ -1,7 +1,9 @@
 ---
+# As root
 - name: Install RKE2 worker
   become: true
   block:
+    # prerequis
     - name: Create directories
       ansible.builtin.file:
         path: "{{ item }}"
@@ -17,33 +19,11 @@
         dest: /etc/rancher/rke2/config.yaml
         mode: "0640"
 
-    - name: Install RKE2 worker nodes
-      ansible.builtin.shell:
-        cmd: |
-          set -o pipefail && INSTALL_RKE2_ARTIFACT_PATH={{ mount_rke2_path }} INSTALL_RKE2_TYPE=agent sh {{ mount_rke2_path }}/install.sh
-        executable: /bin/bash
-        chdir: "{{ mount_rke2_path }}"
-      register: install_worker_output
-      failed_when: false
-      changed_when: false
+# Install regarding choosen method
+- name: RKE2 Install tarball method
+  ansible.builtin.import_tasks: tarball_install.yml
+  when: tarball_install
 
-    - name: Display output from install
-      ansible.builtin.debug:
-        var: install_worker_output['stdout_lines']
-
-    # Start
-    - name: Mask RKE2 agent service on the first server
-      ansible.builtin.systemd:
-        name: "rke2-server.service"
-        enabled: false
-        masked: true
-
-    - name: Start and enable rke2-server
-      ansible.builtin.systemd:
-        name: rke2-agent.service
-        state: started
-        enabled: true
-      notify: "Service (re)started"
-      register: rke2_service
-      until: rke2_service is succeeded
-      retries: 5
+- name: RKE2 Install rpm method
+  ansible.builtin.import_tasks: rpm_install.yml
+  when: rpm_install

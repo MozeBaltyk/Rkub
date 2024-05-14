@@ -13,7 +13,7 @@
 - name: Download Nerdctl bin into /usr/local/bin
   ansible.builtin.unarchive:
     src: "http://{{ hauler_server }}:8080/nerdctl.tar.gz"
-    dest: "/usr/local/bin/"
+    dest: "/usr/local/bin/nerdctl"
     owner: "{{ admin_user }}"
     group: "{{ admin_user }}"
     mode: '0750'

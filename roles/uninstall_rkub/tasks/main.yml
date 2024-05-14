@@ -24,9 +24,6 @@
 - name: Admin Uninstall
   ansible.builtin.import_tasks: admin.yml
 
-- name: NFS Uninstall
-  ansible.builtin.import_tasks: nfs.yml
-
 - name: RKE2 firewalld remove
   vars:
     firewalld_remove: "{{ firewalld_rules_to_remove }}"

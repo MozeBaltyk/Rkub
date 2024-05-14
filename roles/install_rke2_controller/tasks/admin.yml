@@ -46,6 +46,8 @@
         path: "$HOME/.bashrc"
         block: |
           export KUBECONFIG="~/.kube/{{ inventory_hostname }}.yaml"
-        marker: "# {mark} ANSIBLE setup Kubeconfig"
+          export CRI_CONFIG_FILE={{ rke2_data_dir }}/agent/etc/crictl.yaml
+          PATH=$PATH:{{ rke2_data_dir }}/bin
+        marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
 
 # Install helm / k9s
