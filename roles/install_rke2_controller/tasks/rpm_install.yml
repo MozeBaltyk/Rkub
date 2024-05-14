@@ -1,16 +1,5 @@
 ---
 # RPM
-- name: Install packages common to controlers
-  ansible.builtin.dnf:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - zstd
-  become: true
-  when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version | int >= 8
-
 - name: Import a key from a file
   ansible.builtin.rpm_key:
     state: present

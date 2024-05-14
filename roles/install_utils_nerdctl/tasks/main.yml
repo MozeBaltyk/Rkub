@@ -1,5 +1,7 @@
 ---
 # tasks file for install_utils_nerdctl
+- name: Tasks prerequis
+  ansible.builtin.import_tasks: prerequis.yml
 
 - name: Tasks to install nerdctl
   ansible.builtin.import_tasks: install.yml

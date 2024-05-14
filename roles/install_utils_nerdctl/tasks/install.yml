@@ -19,6 +19,7 @@
     mode: '0750'
     remote_src: true
     validate_certs: false
+    extra_opts: ['--strip-components=1']
   when: not file_data.stat.exists
 
 - name: Copy NERDCTL configuration file
