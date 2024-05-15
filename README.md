@@ -155,26 +155,30 @@ All prerequisites are set in folder `meta` and `meta/execution-environment.yml`.
 
 ## Some details
 
-I favored the tarball installation since it's the one the most compact and also leave an tar.zst on all nodes.
+I favored the tarball installation since it's the most compact and install rely on a archive tar.zst which stay on all nodes.
 
-**Build** have for purpose to create a tar zst with following content:
+The rpm install is much straight forward.
+
+**hauler_build** have for purpose to create a tar.zst with following content using hauler tool:
 
 ```bash
 rkub
-├── helm          # all helm charts
-├── images        # all images
-│   ├── cert
-│   ├── longhorn
-│   ├── neuvector
-│   ├── rancher
-│   └── registry
-├── rke2_1.26.11  # RKE2 binaries
-└── utils         # utilities packages downloaded with arkade
+├── airgap_hauler.yaml    # yaml listing all resources
+├── hauler                # hauler binary
+└── store                 # hauler store made from above yaml and hauler command
+    ├── blobs
+    │   └── sha256
+    │       ├── 024f2ae6c3625583f0e10ab4d68e4b8947b55d085c88e34c0bd916944ed05add
+    └── index.json
 ```
 
 **upload** push the big monster packages (around 7G) and unarchive on first node on chosen targeted path.
 
+**hauler_server** deploy a registry and a fileserver using hauler on target host.
+
 **install** RKE2 (currently only one master) with:
+
+  - install with tarball method by default or rpm method if given in argument
   - An admin user (by default `kuberoot`) on first master with some administation tools like `k9s` `kubectl` or `helm`.
   - Master export NFS with all the unarchive content + registry content
   - Workers mount the NFS to get above content
@@ -200,8 +204,6 @@ Milestones:
 Improvments:
 
 * Improve collection to run as true collection
-
-* CI
 
 # Acknowledgements
 

@@ -1,5 +1,5 @@
 ---
-name: Stage deployment
+name: Stage airgap
 
 on:
   workflow_dispatch:
