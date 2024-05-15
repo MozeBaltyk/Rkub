@@ -25,3 +25,4 @@ hosts.ini
 .key
 Chart.lock
 .venv/
+AWS

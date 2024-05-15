@@ -1,5 +1,5 @@
 ---
-name: Stage airgap
+name: Stage airgap install
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ env:
   BUCKET: "rkub-github-action-${{ github.run_id }}"
   #BUCKET: "terraform-backend-github"
   CONTROLLER_COUNT: "1"
-  WORKER_COUNT: "0"
+  WORKER_COUNT: "2"
   SIZE: "s-4vcpu-8gb"
 
 jobs:
@@ -176,7 +176,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip3 install ansible pytest-testinfra
+          pip3 install ansible
           ansible --version
 
       - name: Get key and hosts.ini
@@ -236,7 +236,7 @@ jobs:
 
       - name: Run playbook install.yml
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/install.yml -e dir_target=${MOUNT_POINT}
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/install.yml
 
       #- name: Run playbook rancher.yml
       #  run: |
@@ -250,16 +250,51 @@ jobs:
       #  run: |
       #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/neuvector.yml
 
-      #- name: Run Python Tests
-      #  run: |
-      #    export DEFAULT_PRIVATE_KEY_FILE=.key
-      #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
-      #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: Install
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Download inventory
+        uses: actions/download-artifact@v4
+        with:
+          name: inventory
+
+      - name: Get key and hosts.ini
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install ansible
+          ansible --version
+
+      - name: Run Python Tests
+        run: |
+          export DEFAULT_PRIVATE_KEY_FILE=.key
+          pytest --hosts=RKE2_CONTROLLERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --sudo basic_server_tests.py
+          pytest --hosts=RKE2_WORKERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --sudo basic_agent_tests.py
 
   delay:
     name: Delay
     runs-on: ubuntu-latest
-    needs: Install
+    needs: Test
     if: always()
 
     steps:

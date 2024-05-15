@@ -42,7 +42,6 @@
           ansible.builtin.file:
             path: /tmp/nerdctl
             state: absent
-            recurse: true
 
     - name: Copy NERDCTL configuration file
       ansible.builtin.template:

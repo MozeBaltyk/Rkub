@@ -1,9 +1,9 @@
 ---
-- name: Build RKE2 package
+- name: Build RKE2 Package with Hauler
   hosts: localhost
   connection: local
   gather_facts: false
   vars_files: ../vars/main.yml
   tags: build
   roles:
-    - {role: mozebaltyk.rkub.build_airgap_package, tags: package}
+    - {role: mozebaltyk.rkub.build_airgap_hauler, tags: hauler}

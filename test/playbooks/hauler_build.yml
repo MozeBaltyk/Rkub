@@ -1,5 +1,5 @@
 ---
-- name: Build Hauler Package
+- name: Build RKE2 Package with Hauler
   hosts: localhost
   connection: local
   gather_facts: false

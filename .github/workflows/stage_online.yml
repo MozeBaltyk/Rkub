@@ -1,0 +1,303 @@
+---
+name: Stage online install
+
+on:
+  workflow_dispatch:
+
+env:
+  DO_PAT: ${{secrets.DIGITALOCEAN_ACCESS_TOKEN}}
+  AWS_ACCESS_KEY_ID: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+  REGION: ${{secrets.DIGITALOCEAN_REGION}}
+  MOUNT_POINT: "/opt/rkub"
+  BUCKET: "rkub-github-action-${{ github.run_id }}"
+  #BUCKET: "terraform-backend-github"
+  CONTROLLER_COUNT: "1"
+  WORKER_COUNT: "0"
+  SIZE: "s-4vcpu-8gb"
+
+jobs:
+  bucket:
+    name: Bucket
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@main
+        with:
+          provider: digitalocean
+          region: ${{secrets.DIGITALOCEAN_REGION}}
+          access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+          secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+
+      - name: Create Space Bucket
+        run: |
+          sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          if [[ $BUCKET != "terraform-backend-github" ]]; then s3cmd mb s3://${BUCKET}; fi
+          sleep 10
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: Bucket
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Terraform Init
+        id: init
+        run: |
+          cd ./DO/infra
+          terraform init -backend-config="bucket=${BUCKET}"
+
+      - name: Terraform Validate
+        id: validate
+        run: |
+          cd ./DO/infra
+          terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          cd ./DO/infra
+          terraform plan -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "do_worker_count=${WORKER_COUNT}" \
+          -var "do_controller_count=${CONTROLLER_COUNT}" \
+          -var "do_instance_size=${SIZE}" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
+          -var "mount_point=${MOUNT_POINT}" \
+          -var "terraform_backend_bucket_name=${BUCKET}"
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        run: |
+          cd ./DO/infra
+          terraform apply terraform.tfplan
+
+      - name: Display inventory
+        run: |
+          ls -l ${{ github.workspace }}/test/inventory/hosts.ini
+          cat inventory/hosts.ini
+
+      # No relative path allowed
+      - name: Inventory artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory
+          path: |
+            ${{ github.workspace }}/test/inventory/hosts.ini
+          if-no-files-found: error
+
+  reachable:
+    name: Reachable
+    runs-on: ubuntu-latest
+    needs: deploy
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Download inventory
+        uses: actions/download-artifact@v4
+        with:
+          name: inventory
+
+      - name: Check if inventory present
+        run: |
+          cat ${{ github.workspace }}/hosts.ini
+
+      - name: Set up Python
+        id: setup_python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install ansible pytest-testinfra
+          ansible --version
+
+      - name: Get key and hosts.ini
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Test if reachable
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m ping -u root -vv --private-key .key
+
+      - name: Wait for cloud-init to finish
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v --private-key .key
+
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    needs: [ Reachable, Package ]
+    timeout-minutes: 60
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Install requirements
+        run: |
+          cd ..
+          make prerequis
+
+      - name: Download inventory
+        uses: actions/download-artifact@v4
+        with:
+          name: inventory
+
+      - name: Get key and hosts.ini
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Run playbook hauler_server.yml
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/hauler_server.yml -e dir_target=${MOUNT_POINT}
+
+      - name: Run playbook install.yml
+        run: |
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/install.yml -e dir_target=${MOUNT_POINT}
+
+      #- name: Run playbook rancher.yml
+      #  run: |
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/rancher.yml
+
+      #- name: Run playbook longhorn.yml
+      #  run: |
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/longhorn.yml
+
+      #- name: Run playbook neuvector.yml
+      #  run: |
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/neuvector.yml
+
+      #- name: Run Python Tests
+      #  run: |
+      #    export DEFAULT_PRIVATE_KEY_FILE=.key
+      #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
+      #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
+
+  delay:
+    name: Delay
+    runs-on: ubuntu-latest
+    needs: Install
+    if: always()
+
+    steps:
+      - name: Delay half an hour
+        uses: whatnick/wait-action@master
+        with:
+          time: '1800s'
+
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: Delay
+    if: always()
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test/DO/infra
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Get key
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Terraform Init
+        id: init
+        run: |
+          terraform init -backend-config="bucket=${BUCKET}"
+        continue-on-error: true
+
+      - name: Terraform plan delete stack
+        id: plan
+        run: |
+          terraform plan -destroy -out=terraform.tfplan \
+          -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+          -var "do_token=${DO_PAT}" \
+          -var "do_worker_count=${WORKER_COUNT}" \
+          -var "do_controller_count=${CONTROLLER_COUNT}" \
+          -var "do_instance_size=${SIZE}" \
+          -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
+          -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
+          -var "mount_point=${MOUNT_POINT}" \
+          -var "terraform_backend_bucket_name=${BUCKET}"
+        continue-on-error: true
+
+      - name: Terraform Apply
+        run: |
+          terraform apply terraform.tfplan
+        continue-on-error: true
+
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@main
+        with:
+          provider: digitalocean
+          region: ${{secrets.DIGITALOCEAN_REGION}}
+          access_key: ${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}
+          secret_key: ${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}
+
+      - name: Remove Space bucket
+        run: |
+          sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          if [[ $BUCKET != "terraform-backend-github" ]]; then s3cmd rb s3://${BUCKET} --recursive; fi
+          sleep 10

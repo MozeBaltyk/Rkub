@@ -73,49 +73,56 @@ Add-on from my part:
 2. Build your package by running (works on Debian-like and Redhat-like and it targets localhost):
 
 ```sh
-ansible-playbook playbooks/tasks/build.yml                    # All arguments below are not mandatory
+ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments below are not mandatory
 -e "dir_build=$HOME/rkub"                                     # Directory where to upload everything (count 30G)
 -e "package_name=rkub.zst"                                    # Name of the package, by default rkub.zst
 -e "archive=true"                                             # Archive tar.zst true or false (default value "true")
--e "stable=false"                                             # Stable channels or defined version in Rkub collection (default value "false")
+-e "stable=false"                                             # Stable channels or take version as defined in Rkub collection (default value "false")
 -e "el=9"                                                     # RHEL version (take default value from localhost if OS is different from RedHat-like take value "8")
--e "all=false"                                                # if you want to install all components kubevip,longhorn,rancher,neuvector (default value "false")
--e "kubevip=true longhorn=true rancher=true neuvector=true"   # which extras components you want to add to package (default value from var 'all')
+-e "all=false"                                                # Add all components kubevip,longhorn,rancher,neuvector (default value "false")
+-e "kubevip=true longhorn=true rancher=true neuvector=true"   # Add extras components to package (default value from var 'all')
 -u admin -Kk                                                  # Other Ansible Arguments (like -vvv)
 ```
 
 3. Push your package to first controler:
 
 ```sh
-ansible-playbook playbooks/tasks/upload.yml        # All arguments below are not mandatory
--e package_path=/home/me/rkub.zst                  # Will be prompt if not given in the command
--e dir_target=/opt/rkub                            # Directory where to sync and unarchive (by default /opt/rkub, count 50G available)
+ansible-playbook mozebaltyk.rkub.upload.yml        # All arguments below are not mandatory
+-e "package_path=/home/me/rkub.zst"                # Will be prompt if not given in the command
+-e "dir_target=/opt/rkub"                          # Directory where to sync and unarchive (by default /opt/rkub, count 50G available)
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-4. Start installation:
+4. Deploy Hauler services:
 
 ```sh
-ansible-playbook playbooks/tasks/install.yml       # All arguments below are not mandatory
--e dir_target=/opt/rkub                            # Dir on first master where to find package unarchive by previous task (by default /opt/rkub, count 50G available)
+ansible-playbook mozebaltyk.rkub.hauler.yml        # All arguments below are not mandatory
+-e "dir_target=/opt/rkub"                          # Directory where to find package untar with previous playbook
+-u admin -Kk                                       # Other Ansible Arguments (like -vvv)
+```
+
+5. Start installation:
+
+```sh
+ansible-playbook mozebaltyk.rkub.install.yml       # All arguments below are not mandatory
 -e domain="example.com"                            # By default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-5. Deploy Rancher:
+6. Deploy Rancher:
 
 ```sh
-ansible-playbook playbooks/tasks/rancher.yml       # All arguments below are not mandatory
+ansible-playbook mozebaltyk.rkub.rancher.yml       # All arguments below are not mandatory
 -e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -e password="BootStrapAllTheThings"                # Default password is "BootStrapAllTheThings"
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-6. Deploy Longhorn:
+7. Deploy Longhorn:
 
 ```sh
-ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not mandatory
+ansible-playbook mozebaltyk.rkub.longhorn.yml      # All arguments below are not mandatory
 -e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -e datapath="/opt/longhorn"                        # Longhorn Path for PVC, by default equal "{{ dir_target }}/longhorn".
@@ -123,16 +130,16 @@ ansible-playbook playbooks/tasks/longhorn.yml      # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-7. Deploy Neuvector
+8. Deploy Neuvector
 
 ```sh
-ansible-playbook playbooks/tasks/neuvector.yml     # All arguments below are not mandatory
+ansible-playbook mozebaltyk.rkub.neuvector.yml     # All arguments below are not mandatory
 -e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-8. Bonus:
+9. Bonus:
 
 With make command, all playbooks above are in the makefile. `make` alone display options and small descriptions.
 
@@ -159,7 +166,7 @@ I favored the tarball installation since it's the most compact and install rely 
 
 The rpm install is much straight forward.
 
-**hauler_build** have for purpose to create a tar.zst with following content using hauler tool:
+**build** have for purpose to create a tar.zst with following content using hauler tool:
 
 ```bash
 rkub
@@ -174,17 +181,17 @@ rkub
 
 **upload** push the big monster packages (around 7G) and unarchive on first node on chosen targeted path.
 
-**hauler_server** deploy a registry and a fileserver using hauler on target host.
+**hauler** (by default on first controller but could be on dedicated server)
+  - deploy a registry as systemd service and make it available on port 5000 using hauler.
+  - deploy a fileserver as systemd service and make it available on port 8080 using hauler.
 
 **install** RKE2 (currently only one master) with:
-
-  - install with tarball method by default or rpm method if given in argument
+  - Install with tarball method by default or rpm method if given in argument.
   - An admin user (by default `kuberoot`) on first master with some administation tools like `k9s` `kubectl` or `helm`.
-  - Master export NFS with all the unarchive content + registry content
-  - Workers mount the NFS to get above content
-  - A minimal registry is deploy on each nodes pointing to the NFS mount and responding to `localhost:5000`
-  - Nerdctl as complement to containerd and allow oci-archive
-  - Firewalld settings if firewalld running
+  - Nerdctl as complement to containerd and allow oci-archive.
+  - Firewalld settings if firewalld running.
+  - Selinux rpm if selinux enabled.
+  - Fetch and add kubeconfig to ansible controller in directory ./kube (and add to kubecm if present).
 
 **deploy** keeping this order, *Rancher*, *Longhorn*, *Neuvector*
   - Those are simple playbooks which deploy with helm charts
