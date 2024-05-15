@@ -8,6 +8,8 @@ tarball_install: "{{ global_tarball_install | bool }}"
 
 # Fileserver
 hauler_server: "{{ global_hauler_ip }}"
+mount_path: "{{ global_directory_package_target }}"
+mount_rke2_path: "{{ mount_path }}/fileserver"
 
 # RKE2 config
 rke2_kubeconfig_file: "/etc/rancher/rke2/rke2.yaml"
