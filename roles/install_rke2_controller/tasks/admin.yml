@@ -58,14 +58,14 @@
         mode: 0700
         recurse: true
       loop:
-        - "$HOME/helm-tmp"
-        - "$HOME/k9s-tmp"
+        - "/tmp/helm"
+        - "/tmp/k9s"
         - "$HOME/.local/bin"
 
     - name: Download helm bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/helm.tar.gz"
-        dest: "$HOME/helm-tmp"
+        dest: "/tmp/helm"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
@@ -74,7 +74,7 @@
 
     - name: Copy helm binary file
       ansible.builtin.copy:
-        src: "$HOME/helm-tmp/linux-amd64/helm"
+        src: "/tmp/helm/linux-amd64/helm"
         dest: "$HOME/.local/bin/helm"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
@@ -84,7 +84,7 @@
     - name: Download k9s bin to .local/bin
       ansible.builtin.unarchive:
         src: "http://{{ hauler_server }}:8080/k9s.tar.gz"
-        dest: "$HOME/k9s-tmp"
+        dest: "/tmp/k9s"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         mode: '0750'
@@ -93,7 +93,7 @@
 
     - name: Copy k9s binary file
       ansible.builtin.copy:
-        src: "$HOME/k9s-tmp/k9s"
+        src: "/tmp/k9s/k9s"
         dest: "$HOME/.local/bin/k9s"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
@@ -106,5 +106,5 @@
         state: absent
         recurse: true
       loop:
-        - "$HOME/helm-tmp"
-        - "$HOME/k9s-tmp"
+        - "/tmp/helm"
+        - "/tmp/k9s"
