@@ -10,7 +10,7 @@
 
 - name: Install RKE2 rpm packages
   ansible.builtin.dnf:
-    name: "{{ mount_rke2_selinux_rpm_path }}"
+    name: "{{ item }}"
     state: present
   loop:
     - rke2-selinux
