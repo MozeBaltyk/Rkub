@@ -1,0 +1,8 @@
+---
+- name: Configure RKE2 registries.yaml
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/rancher/rke2/{{ item | basename | regex_replace('.j2$', '') }}"
+    mode: "0640"
+  loop:
+    - "registries.yaml.j2"
