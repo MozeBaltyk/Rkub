@@ -104,7 +104,6 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
-        recurse: true
       loop:
         - "/tmp/helm"
         - "/tmp/k9s"
