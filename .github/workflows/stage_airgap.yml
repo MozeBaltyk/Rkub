@@ -129,11 +129,6 @@ jobs:
           cd ./DO/infra
           terraform apply terraform.tfplan
 
-      - name: Display inventory
-        run: |
-          ls -l ${{ github.workspace }}/test/inventory/hosts.ini
-          cat inventory/hosts.ini
-
       # No relative path allowed
       - name: Inventory artifacts
         uses: actions/upload-artifact@v4

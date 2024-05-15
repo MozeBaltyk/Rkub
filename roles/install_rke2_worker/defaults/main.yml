@@ -2,6 +2,12 @@
 # defaults file for install_worker
 admin_user: "{{ global_install_user }}"
 master: "{{ global_master_ip }}"
+control_plane_endpoint: "{{ global_rke2_api_ip }}"
+rpm_install: "{{ global_rpm_install | bool }}"
+tarball_install: "{{ global_tarball_install | bool }}"
+
+# Fileserver
+hauler_server: "{{ global_hauler_ip }}"
 
 # Worker options
 rke2_data_dir: "{{ global_rke2_data_dir }}"

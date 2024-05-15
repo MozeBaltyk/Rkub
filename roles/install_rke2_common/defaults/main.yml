@@ -1,9 +1,2 @@
 ---
 # defaults file for install_common
-
-# RKE2
-admin_user: "{{ global_install_user }}"
-rke2_data_dir: "{{ global_rke2_data_dir }}"
-
-# Fileserver
-hauler_server: "{{ global_hauler_ip }}"
