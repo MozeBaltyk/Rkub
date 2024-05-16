@@ -113,7 +113,6 @@ ansible-playbook mozebaltyk.rkub.install.yml       # All arguments below are not
 
 ```sh
 ansible-playbook mozebaltyk.rkub.rancher.yml       # All arguments below are not mandatory
--e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -e password="BootStrapAllTheThings"                # Default password is "BootStrapAllTheThings"
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
@@ -123,7 +122,6 @@ ansible-playbook mozebaltyk.rkub.rancher.yml       # All arguments below are not
 
 ```sh
 ansible-playbook mozebaltyk.rkub.longhorn.yml      # All arguments below are not mandatory
--e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -e datapath="/opt/longhorn"                        # Longhorn Path for PVC, by default equal "{{ dir_target }}/longhorn".
                                                    # The best is to have a dedicated LVM filesystem for this one.
@@ -134,7 +132,6 @@ ansible-playbook mozebaltyk.rkub.longhorn.yml      # All arguments below are not
 
 ```sh
 ansible-playbook mozebaltyk.rkub.neuvector.yml     # All arguments below are not mandatory
--e dir_mount=/mnt/rkub                             # NFS mount point, by default value is /mnt/rkub
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
@@ -163,8 +160,7 @@ All prerequisites are set in folder `meta` and `meta/execution-environment.yml`.
 ## Some details
 
 I favored the tarball installation since it's the most compact and install rely on a archive tar.zst which stay on all nodes.
-
-The rpm install is much straight forward.
+The rpm install is much straight forward but match only system with RPM (so mainly Redhat-like).
 
 **build** have for purpose to create a tar.zst with following content using hauler tool:
 
