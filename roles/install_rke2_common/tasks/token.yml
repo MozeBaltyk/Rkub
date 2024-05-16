@@ -5,7 +5,7 @@
     url: "http://{{ hauler_server }}:8080/token"
     method: GET
     validate_certs: false
-    return_content: false
+    return_content: true
   register: token_response
   failed_when: false
 
