@@ -3,9 +3,9 @@
   ansible.builtin.set_fact:
     rke2_version: "{{ global_versions['rke2'] }}"
     kubevip_version: "{{ global_versions['kubevip'] }}"
-    longhorn_version: "{{ global_versions['cert_manager'] }}"
-    cert_manager_version: "{{ global_versions['rancher'] }}"
-    rancher_version: "{{ global_versions['longhorn'] }}"
+    longhorn_version: "{{ global_versions['longhorn'] }}"
+    cert_manager_version: "{{ global_versions['cert_manager'] }}"
+    rancher_version: "{{ global_versions['rancher'] }}"
     neuvector_version: "{{ global_versions['neuvector'] }}"
     helm_version: "{{ global_versions['helm'] }}"
     nerdctl_version: "{{ global_versions['nerdctl'] }}"
