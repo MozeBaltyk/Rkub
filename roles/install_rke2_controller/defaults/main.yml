@@ -8,6 +8,8 @@ tarball_install: "{{ global_tarball_install | bool }}"
 
 # Fileserver
 hauler_server: "{{ global_hauler_ip }}"
+
+# currently needed to store token - need to be replace
 mount_path: "{{ global_directory_package_target }}"
 mount_rke2_path: "{{ mount_path }}/fileserver"
 

@@ -9,7 +9,11 @@
   register: token_response
   failed_when: false
 
-- name: Store Master node-token
+- name: Debug URL
+  ansible.builtin.debug:
+    var: token_response
+
+- name: Set variable with token
   ansible.builtin.set_fact:
     rke2_config_token: "{{ token_response['content'] }}"
   when: token_response.status == 200
