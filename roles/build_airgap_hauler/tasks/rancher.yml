@@ -10,7 +10,6 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
-      helm repo update
       helm template jetstack/cert-manager --version {{ cert_manager_version }} | awk '$1 ~ /image:/ {print $2}' | sed s/\"//g
     executable: /bin/bash
   changed_when: false
@@ -21,12 +20,6 @@
     list_images_certmanager: "{{ certmanager_images['stdout'].splitlines() }}"
 
 # Rancher
-- name: Add Rancher helm repo
-  kubernetes.core.helm_repository:
-    name: rancher-latest
-    repo_url: "https://releases.rancher.com/server-charts/latest"
-    force_update: true
-
 - name: Get Rancher images from URL
   ansible.builtin.uri:
     url: "https://github.com/rancher/rancher/releases/download/v{{ rancher_version }}/rancher-images.txt"

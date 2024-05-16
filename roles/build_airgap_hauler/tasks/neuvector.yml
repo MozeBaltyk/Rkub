@@ -10,7 +10,6 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
-      helm repo update
       helm template neuvector/core --version {{ neuvector_version }} | awk '$1 ~ /image:/ {print $2}' | sed s/\"//g
     executable: /bin/bash
   changed_when: false

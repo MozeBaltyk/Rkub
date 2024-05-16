@@ -65,7 +65,7 @@ But the target to handle all the usecase below:
 | OS     | Versions                | Method         | CNI    | Cloud providers | Extra Install   |
 |--------|-------------------------|----------------|--------|-----------------|-----------------|
 | Rocky8 | Defined in collections  | airgap tarball | Canal  | Digital Ocean   | Kubevip         |
-| Ubuntu | Stable channels         | airgap rpm     | Calico | AWS             | Longhorn        |
+| Ubuntu | Stable channels         | airgap rpm     |        | AWS             | Longhorn        |
 |        | Custom                  | online         |        | Azure           | Rancher         |
 |        |                         |                |        |                 | Neuvector       |
 
