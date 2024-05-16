@@ -283,8 +283,8 @@ jobs:
       - name: Run Python Tests
         run: |
           export DEFAULT_PRIVATE_KEY_FILE=.key
-          pytest --hosts=RKE2_CONTROLLERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --sudo basic_server_tests.py
-          pytest --hosts=RKE2_WORKERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --sudo basic_agent_tests.py
+          pytest --hosts=RKE2_CONTROLLERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --user=root basic_server_tests.py
+          pytest --hosts=RKE2_WORKERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --user=root basic_agent_tests.py
 
   delay:
     name: Delay
