@@ -10,6 +10,7 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
+      helm repo update
       helm template jetstack/cert-manager --version {{ cert_manager_version }} | awk '$1 ~ /image:/ {print $2}' | sed s/\"//g
     executable: /bin/bash
   changed_when: false
