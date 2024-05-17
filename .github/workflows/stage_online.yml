@@ -211,12 +211,6 @@ jobs:
       #  run: |
       #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/neuvector.yml
 
-      #- name: Run Python Tests
-      #  run: |
-      #    export DEFAULT_PRIVATE_KEY_FILE=.key
-      #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
-      #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -248,15 +242,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip3 install ansible pytest-testinfra
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -U pytest-testinfra ansible pytest-sugar pytest
           ansible --version
 
       - name: Run Python Tests
         run: |
           export DEFAULT_PRIVATE_KEY_FILE=.key
-          pytest --hosts=RKE2_CONTROLLERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --user=root basic_server_tests.py
-          pytest --hosts=RKE2_WORKERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --user=root basic_agent_tests.py
+          python3 -m pytest --hosts=RKE2_CONTROLLERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible basic_server_tests.py
+          python3 -m pytest --hosts=RKE2_WORKERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible basic_agent_tests.py
 
   delay:
     name: Delay

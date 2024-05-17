@@ -25,4 +25,5 @@ hosts.ini
 .key
 Chart.lock
 .venv/
+__pycache__
 AWS
