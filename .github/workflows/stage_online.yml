@@ -40,7 +40,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: Bucket
+    needs: [ Bucket ]
     timeout-minutes: 20
 
     defaults:
@@ -111,7 +111,7 @@ jobs:
   reachable:
     name: Reachable
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: [ Deploy ]
     timeout-minutes: 10
 
     defaults:
@@ -164,7 +164,7 @@ jobs:
   install:
     name: Install
     runs-on: ubuntu-latest
-    needs: [ Reachable, Package ]
+    needs: [ Reachable ]
     timeout-minutes: 60
 
     defaults:
@@ -217,10 +217,51 @@ jobs:
       #    pytest --hosts=rke2_servers --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_server_tests.py
       #    pytest --hosts=rke2_agents --ansible-inventory=hosts.ini --force-ansible --connection=ansible --sudo test/basic_agent_tests.py
 
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [ Install ]
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./test
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
+      - name: Download inventory
+        uses: actions/download-artifact@v4
+        with:
+          name: inventory
+
+      - name: Get key and hosts.ini
+        run: |
+          echo "$SSH_KEY" > .key
+          chmod 400 .key
+          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install ansible pytest-testinfra
+          ansible --version
+
+      - name: Run Python Tests
+        run: |
+          export DEFAULT_PRIVATE_KEY_FILE=.key
+          pytest --hosts=RKE2_CONTROLLERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --user=root basic_server_tests.py
+          pytest --hosts=RKE2_WORKERS --ansible-inventory=inventory/hosts.ini --force-ansible --connection=ansible --user=root basic_agent_tests.py
+
   delay:
     name: Delay
     runs-on: ubuntu-latest
-    needs: Install
+    needs: [ Test ]
     if: always()
 
     steps:
@@ -232,7 +273,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: Delay
+    needs: [ Delay ]
     if: always()
     timeout-minutes: 30
 
