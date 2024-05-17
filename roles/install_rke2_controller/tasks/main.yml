@@ -28,7 +28,7 @@
   tags: firewalld
 
 # Start install
-- name: RKE2 common to worker and controler tasks
+- name: RKE2 common tasks
   vars:
     caller_role_name: controller
   ansible.builtin.import_role:
@@ -36,21 +36,18 @@
     tasks_from: main
   tags: common
 
+# Install first node
+- name: RKE2 config controler before install
+  ansible.builtin.import_tasks: config.yml
+  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
+  tags: config
+
 - name: RKE2 Install controler
   ansible.builtin.import_tasks: install.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: install
 
-- name: Tasks if SELinux is activated for RKE2 installation
-  vars:
-    caller_role_name: controller
-  ansible.builtin.import_role:
-    name: install_rke2_common
-    tasks_from: selinux
-  tags: selinux
-  when: ansible_selinux['status'] == 'enabled'
-
-- name: Start RKE2 after selinux config
+- name: RKE2 start controller
   ansible.builtin.import_tasks: start.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: start
@@ -69,6 +66,9 @@
   ansible.builtin.import_tasks: localhost.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: localhost
+
+# Install other controllers
+# ...
 
 # Utils
 - name: RKE2 install nerdctl

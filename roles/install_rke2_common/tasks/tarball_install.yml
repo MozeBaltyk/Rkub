@@ -1,0 +1,145 @@
+---
+# NB:
+# - Airgap does not need to have rke2 version variable, since it take what is present in Hauler repo.
+# - Tarball Should work for all Linux
+
+# Define which type of node
+- name: Define server install
+  ansible.builtin.set_fact:
+    type_node: "server"
+  when: caller_role_name == "controller"
+
+- name: Define agent install
+  ansible.builtin.set_fact:
+    type_node: "agent"
+  when: caller_role_name == "worker"
+
+# Not Airgap
+- name: Install with tarball method
+  become: true
+  when:
+    - not airgap_install
+  block:
+    - name: TARBALL | Versions needed to set repo
+      ansible.builtin.import_role:
+        name: set_versions
+        tasks_from: only_rke2
+
+    - name: TARBALL | Install RKE2 node
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          curl -sfL https://get.rke2.io | INSTALL_RKE2_METHOD=tar INSTALL_RKE2_TYPE={{ type_node }} INSTALL_RKE2_VERSION=v{{ rke2_version }}+rke2r1 sh -
+        executable: /bin/bash
+      register: install_output
+      failed_when: false
+      changed_when: false
+
+    - name: TARBALL | Display install output
+      ansible.builtin.debug:
+        var: install_output['stdout']
+
+# Airgap
+- name: Install with tarball method
+  become: true
+  when:
+    - airgap_install
+  block:
+    - name: TARBALL | Make temp dir
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: "-rke2-install"
+        path: "{{ tarball_tmp_dir | default(omit) }}"
+      register: temp_dir
+
+    - name: TARBALL | Get RKE2 Artifacts from URL
+      ansible.builtin.get_url:
+        url: "http://{{ hauler_server }}:8080/{{ item }}"
+        dest: "{{ temp_dir['path'] }}/{{ item }}"
+        validate_certs: false
+      loop:
+        - rke2-images.linux-amd64.tar.zst
+        - rke2.linux-amd64.tar.gz
+        - sha256sum-amd64.txt
+        - install.sh
+
+    - name: TARBALL | Install RKE2 server node
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          INSTALL_RKE2_ARTIFACT_PATH={{ temp_dir['path'] }} INSTALL_RKE2_TYPE={{ type_node }} sh {{ temp_dir['path'] }}/install.sh
+        chdir: "{{ temp_dir['path'] }}"
+        executable: /bin/bash
+      register: install_server_output
+      failed_when: false
+      changed_when: false
+
+    - name: TARBALL | Display install output
+      ansible.builtin.debug:
+        var: install_server_output['stdout_lines']
+
+### RPM apply only for Redhat-like OS ###
+
+# Not airgap
+- name: Set repo for RPM with internet access
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+    - not airgap_install
+  block:
+    - name: Set Official RKE2 common repo
+      ansible.builtin.yum_repository:
+        name: rancher-rke2-common-latest
+        description: "Rancher RKE2 Common Latest"
+        baseurl: "https://rpm.rancher.io/rke2/latest/common/centos/{{ ansible_distribution_major_version }}/noarch"
+        gpgcheck: true
+        gpgkey: "https://rpm.rancher.io/public.key"
+
+    - name: Set Official RKE2 version repo
+      ansible.builtin.yum_repository:
+        name: rancher-rke2-latest
+        description: "Rancher RKE2 Latest"
+        baseurl: "https://rpm.rancher.io/rke2/latest/{{ rke2_version.split('.')[:2] | join('.') }}/centos/{{ ansible_distribution_major_version }}/x86_64"
+        gpgcheck: true
+        gpgkey: "https://rpm.rancher.io/public.key"
+
+# Airgap
+- name: Set Hauler as an airgap repo for RPM
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+    - airgap_install
+  block:
+    - name: Set repo Hauler Airgap Server
+      ansible.builtin.yum_repository:
+        name: hauler
+        description: "Hauler Airgap Server"
+        baseurl: "http://{{ hauler_server }}:8080"
+        gpgcheck: true
+        gpgkey: "http://{{ hauler_server }}:8080/public.key"
+
+# Install needed only if selinux enabled
+- name: Set Hauler as an airgap repo for RPM
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+    - ansible_selinux['status'] == 'enabled'
+  block:
+    # https://docs.rke2.io/install/airgap => only if selinux activated common to tarball or rpm install
+    - name: Install common packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - iptables
+        - container-selinux
+        - libnetfilter_conntrack
+        - libnfnetlink
+        - libnftnl
+        - policycoreutils-python-utils
+        - cryptsetup
+        - rke2-common
+        - rke2-selinux

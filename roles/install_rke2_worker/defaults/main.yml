@@ -5,6 +5,7 @@ master: "{{ global_master_ip }}"
 control_plane_endpoint: "{{ global_rke2_api_ip }}"
 rpm_install: "{{ global_rpm_install | bool }}"
 tarball_install: "{{ global_tarball_install | bool }}"
+airgap_install: "{{ global_airgap_install | bool }}"
 
 # Fileserver
 hauler_server: "{{ global_hauler_ip }}"

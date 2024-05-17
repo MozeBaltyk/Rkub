@@ -1,5 +1,5 @@
 ---
-# Admin setup
+# Admin setup on first master
 - name: Admin setup
   become_user: "{{ admin_user }}"
   become: true
@@ -50,7 +50,79 @@
           PATH=$PATH:{{ rke2_data_dir }}/bin
         marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
 
-    # Install helm / k9s
+# Install helm / k9s
+- name: Install admin tools not in Airgap
+  become_user: "{{ admin_user }}"
+  become: true
+  when:
+    - not airgap_install
+  block:
+    - name: Download Helm command line tool
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        return_content: true
+      register: helm_installer
+
+    - name: Install Helm
+      ansible.builtin.command:
+        cmd: bash
+        stdin: "{{ helm_installer.content }}"
+        creates: /usr/local/bin/helm
+      environment:
+        DESIRED_VERSION: "{{ helm_version | default('') }}"
+
+    - name: Get K9S binary latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/derailed/k9s/releases/latest"
+        method: GET
+        return_content: true
+      register: k9s_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        k9s_version: "{{ k9s_release.json.tag_name | regex_replace('^v', '') }}"
+
+    - name: Ensure .local/bin dir exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0700
+        recurse: true
+      loop:
+        - "/tmp/k9s"
+
+    - name: Download k9s bin to .local/bin
+      ansible.builtin.unarchive:
+        src: "https://github.com/derailed/k9s/releases/download/v{{ k9s_version }}/k9s_Linux_amd64.tar.gz"
+        dest: "/tmp/k9s"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+        validate_certs: false
+
+    - name: Copy k9s binary file
+      ansible.builtin.copy:
+        src: "/tmp/k9s/k9s"
+        dest: "$HOME/.local/bin/k9s"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+
+    - name: Cleanup tmp dir
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/k9s"
+
+- name: Install admin tools in Airgap
+  become_user: "{{ admin_user }}"
+  become: true
+  when:
+    - airgap_install
+  block:
     - name: Ensure .local/bin dir exist
       ansible.builtin.file:
         path: "{{ item }}"

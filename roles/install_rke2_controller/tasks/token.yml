@@ -1,13 +1,14 @@
 ---
-# As root
-- name: Get and write token
+# On controller[0] as root
+- name: Get token on first master
+  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   become: true
   block:
     - name: Wait for node-token
       ansible.builtin.wait_for:
         path: "{{ rke2_data_dir }}/server/node-token"
 
-    - name: Read node-token from master
+    - name: Read node-token from first master
       ansible.builtin.slurp:
         src: "{{ rke2_data_dir }}/server/node-token"
       register: node_token
@@ -15,10 +16,3 @@
     - name: Store Master node-token
       ansible.builtin.set_fact:
         rke2_config_token: "{{ node_token['content'] | b64decode | regex_replace('\n', '') }}"
-
-    - name: Write token on mount path
-      ansible.builtin.copy:
-        content: "{{ rke2_config_token }}"
-        dest: "{{ mount_rke2_path }}/token"
-        follow: true
-        mode: "0640"

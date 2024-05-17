@@ -6,10 +6,6 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int >= 8
   block:
-    - name: Display message
-      ansible.builtin.debug:
-        msg: "Specific actions regarding servers in RHEL 8/9"
-
     # Desactivate Cloud services
     - name: Disable service nm-cloud-setup
       ansible.builtin.systemd:

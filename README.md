@@ -88,14 +88,17 @@ But the target to handle all the usecase below:
 
 - Complete directory inside `./plugins/inventory/hosts.yml`.
 
-2. Build your package by running (works on Debian-like and Redhat-like and it targets localhost):
+2. Build your package by running (works on Debian-like or Redhat-like and targets localhost).
+This step concern only an airgap install. If targeted servers have an internet access then skip and go to step 5:
+
 
 ```sh
 ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments below are not mandatory
--e "dir_build=$HOME/rkub"                                     # Directory where to upload everything (count 30G)
+-e "dir_build=$HOME/rkub"                                     # Directory where to upload everything (count 10G)
 -e "package_name=rkub.zst"                                    # Name of the package, by default rkub.zst
 -e "archive=true"                                             # Archive tar.zst true or false (default value "true")
 -e "stable=false"                                             # Stable channels or take version as defined in Rkub collection (default value "false")
+-e "method=tarball"                                           # Method for install, value possible "tarball" or "rpm" (default value "tarball")
 -e "el=9"                                                     # RHEL version (take default value from localhost if OS is different from RedHat-like take value "8")
 -e "all=false"                                                # Add all components kubevip,longhorn,rancher,neuvector (default value "false")
 -e "kubevip=true longhorn=true rancher=true neuvector=true"   # Add extras components to package (default value from var 'all')
@@ -107,7 +110,7 @@ ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments be
 ```sh
 ansible-playbook mozebaltyk.rkub.upload.yml        # All arguments below are not mandatory
 -e "package_path=/home/me/rkub.zst"                # Will be prompt if not given in the command
--e "dir_target=/opt/rkub"                          # Directory where to sync and unarchive (by default /opt/rkub, count 50G available)
+-e "dir_target=/opt/rkub"                          # Directory where to sync and unarchive (by default /opt/rkub, count 30G available)
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
@@ -124,6 +127,9 @@ ansible-playbook mozebaltyk.rkub.hauler.yml        # All arguments below are not
 ```sh
 ansible-playbook mozebaltyk.rkub.install.yml       # All arguments below are not mandatory
 -e domain="example.com"                            # By default take the host domain from master server
+-e "method=tarball"                                # Method for install, value possible "tarball" or "rpm" (default value "tarball")
+-e "airgap=true"                                   # if servers have internet access then set airgap to false (default value "true")
+  -e "stable=false"                                # if airgap false then choose btw Stable channels or version from this collection. (default value "false")
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 

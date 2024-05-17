@@ -23,10 +23,6 @@
 - name: Tasks common to Linux servers for RKE2 installation
   ansible.builtin.import_tasks: common.yml
 
-- name: Set mirror registry (needed for rpm_install)
-  ansible.builtin.import_tasks: registry.yml
-  when: rpm_install
-
 - name: Get Token if one exist
   ansible.builtin.import_tasks: token.yml
 

@@ -1,0 +1,26 @@
+---
+# Stable version from URL
+- name: Set RKE2 Versions variables
+  when: stable_channel_wanted
+  block:
+    # export RKE_VERSION=$(curl -s https://update.rke2.io/v1-release/channels | jq -r '.data[] | select(.id=="stable") | .latest' | awk -F"+" '{print $1}'| sed 's/v//')
+    - name: Get RKE2 latest stable version
+      ansible.builtin.uri:
+        url: "https://update.rke2.io/v1-release/channels"
+        method: GET
+        return_content: true
+      register: rke2_channels
+
+    - name: Extract latest stable version
+      ansible.builtin.set_fact:
+        rke2_version: "{{ rke2_channels.json.data | selectattr('id', 'equalto', 'stable') | map(attribute='latest') | first | regex_replace('\\+.*', '') | regex_replace('^v', '') }}"
+
+# Version defined in this Ansible collection
+- name: Set RKE2 Versions variables
+  ansible.builtin.set_fact:
+    rke2_version: "{{ global_versions['rke2'] }}"
+  when: not stable_channel_wanted
+
+- name: Display RKE2 version
+  ansible.builtin.debug:
+    msg:  "RKE2 version to be installed is {{ rke2_version }}"

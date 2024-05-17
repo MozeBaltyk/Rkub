@@ -1,5 +1,5 @@
 ---
-# All tasks to do realize on ansible controler
+# All tasks on ansible controller
 - name: Fetch RKE2 kubeconfig to localhost
   ansible.builtin.fetch:
     src: "$HOME/.kube/{{ inventory_hostname }}.yaml"

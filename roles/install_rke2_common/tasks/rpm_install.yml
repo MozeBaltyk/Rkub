@@ -1,0 +1,101 @@
+---
+# NB:
+# - Airgap does not need to have rke2 version variable, since it take what is present in Hauler repo.
+# - RPM apply only for Redhat-like OS
+
+# Define which type of node
+- name: Define server install
+  ansible.builtin.set_fact:
+    type_node: "server"
+  when: caller_role_name == "controller"
+
+- name: Define agent install
+  ansible.builtin.set_fact:
+    type_node: "agent"
+  when: caller_role_name == "worker"
+
+# Not airgap
+- name: Set repo for RPM with internet access
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+    - not airgap_install
+  block:
+    - name: TARBALL | Versions needed to set repo
+      ansible.builtin.import_role:
+        name: set_versions
+        tasks_from: only_rke2
+
+    - name: Set Official RKE2 common repo
+      ansible.builtin.yum_repository:
+        name: rancher-rke2-common-latest
+        description: "Rancher RKE2 Common Latest"
+        baseurl: "https://rpm.rancher.io/rke2/latest/common/centos/{{ ansible_distribution_major_version }}/noarch"
+        gpgcheck: true
+        gpgkey: "https://rpm.rancher.io/public.key"
+
+    - name: Set Official RKE2 version repo
+      ansible.builtin.yum_repository:
+        name: rancher-rke2-latest
+        description: "Rancher RKE2 Latest"
+        baseurl: "https://rpm.rancher.io/rke2/latest/{{ rke2_version.split('.')[:2] | join('.') }}/centos/{{ ansible_distribution_major_version }}/x86_64"
+        gpgcheck: true
+        gpgkey: "https://rpm.rancher.io/public.key"
+
+# Airgap
+- name: Set Hauler as an airgap repo and registry for RPM
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+    - airgap_install
+  block:
+    - name: Set repo Hauler Airgap Server
+      ansible.builtin.yum_repository:
+        name: hauler
+        description: "Hauler Airgap Server"
+        baseurl: "http://{{ hauler_server }}:8080"
+        gpgcheck: true
+        gpgkey: "http://{{ hauler_server }}:8080/public.key"
+
+    - name: Set mirror registry (needed for rpm_install in airgap)
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "/etc/rancher/rke2/{{ item | basename | regex_replace('.j2$', '') }}"
+        mode: "0640"
+      loop:
+        - "registries.yaml.j2"
+
+# Install needed
+- name: Install RKE2 with rpm method
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+  block:
+    - name: Install RKE2 rpm packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - "rke2-{{ type_node }}"
+
+    # https://docs.rke2.io/install/airgap
+    # - only if selinux activated
+    # - common to tarball and rpm install
+    - name: Install common packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - iptables
+        - container-selinux
+        - libnetfilter_conntrack
+        - libnfnetlink
+        - libnftnl
+        - policycoreutils-python-utils
+        - cryptsetup
+        - rke2-common
+        - rke2-selinux
+      when: ansible_selinux['status'] == 'enabled'

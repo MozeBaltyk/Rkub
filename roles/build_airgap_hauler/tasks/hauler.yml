@@ -14,9 +14,10 @@
       set -o pipefail
       curl -sfL https://get.hauler.dev | HAULER_VERSION={{ hauler_version }} bash
     executable: /bin/bash
+    creates: /usr/local/bin/hauler
   changed_when: false
 
-- name: Download and Unarchive hauler archive from URL
+- name: Download and Unarchive hauler from URL
   ansible.builtin.unarchive:
     src: "https://github.com/rancherfederal/hauler/releases/download/v{{ hauler_version }}/hauler_{{ hauler_version }}_linux_amd64.tar.gz"
     dest: "{{ directory_package }}"

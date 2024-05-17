@@ -11,7 +11,11 @@
     src: rke2.conf
     dest: /etc/sysctl.d/rke2.conf
     mode: '0600'
-  notify: Restart systemd-sysctl
+
+- name: Restart_sysctl
+  ansible.builtin.systemd:
+    state: restarted
+    name: systemd-sysctl
 
 # Prepare Dir
 - name: Ensure data_dir exists

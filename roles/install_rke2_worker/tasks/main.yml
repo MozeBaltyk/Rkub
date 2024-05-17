@@ -27,8 +27,8 @@
     - ansible_facts['services']['firewalld.service']['state'] == "running"
   tags: firewalld
 
-# Start install
-- name: RKE2 common to worker and controler tasks
+# Start install workers
+- name: RKE2 common tasks
   vars:
     caller_role_name: worker
   ansible.builtin.import_role:
@@ -36,19 +36,15 @@
     tasks_from: main
   tags: common
 
+- name: RKE2 config worker before install
+  ansible.builtin.import_tasks: config.yml
+  tags: config
+
 - name: RKE2 Install worker
   ansible.builtin.import_tasks: install.yml
   tags: install
 
-- name: Tasks if SELinux is activated for RKE2 installation
-  vars:
-    caller_role_name: worker
-  ansible.builtin.import_role:
-    name: install_rke2_common
-    tasks_from: selinux
-  when: ansible_selinux['status'] == 'enabled'
-
-- name: RKE2 start worker after Selinux
+- name: RKE2 start worker
   ansible.builtin.import_tasks: start.yml
   tags: start
 

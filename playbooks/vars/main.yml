@@ -36,6 +36,7 @@ global_install_user: "{{ install_user | default('kuberoot') }}"
 global_method_install: "{{ method | default('tarball') }}"
 global_rpm_install: "{{ global_method_install == 'rpm' }}"
 global_tarball_install: "{{ global_method_install == 'tarball' }}"
+global_airgap_install: "{{ airgap | default('true') }}"
 
 # Local
 global_directory_package_build: "{{ dir_build | default('$HOME/rkub') }}"

@@ -1,29 +1,17 @@
 ---
-# As root
-- name: Install RKE2 worker
-  become: true
-  block:
-    # prerequis
-    - name: Create directories
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        recurse: true
-        mode: '0750'
-      with_items:
-        - /etc/rancher/rke2/
-
-    - name: Configure RKE2 config.yaml
-      ansible.builtin.template:
-        src: config.yaml.j2
-        dest: /etc/rancher/rke2/config.yaml
-        mode: "0640"
-
 # Install regarding choosen method
 - name: RKE2 Install tarball method
-  ansible.builtin.import_tasks: tarball_install.yml
+  vars:
+    caller_role_name: worker
+  ansible.builtin.import_role:
+    name: install_rke2_common
+    tasks_from: tarball_install
   when: tarball_install
 
 - name: RKE2 Install rpm method
-  ansible.builtin.import_tasks: rpm_install.yml
+  vars:
+    caller_role_name: worker
+  ansible.builtin.import_role:
+    name: install_rke2_common
+    tasks_from: rpm_install
   when: rpm_install
