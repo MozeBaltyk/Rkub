@@ -50,13 +50,13 @@
           PATH=$PATH:{{ rke2_data_dir }}/bin
         marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
 
-# Install helm / k9s
+# Install helm / k9s non-airgap
 - name: Install admin tools not in Airgap
-  become_user: "{{ admin_user }}"
   become: true
   when:
     - not airgap_install
   block:
+    # helm
     - name: Download Helm command line tool
       ansible.builtin.uri:
         url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
@@ -71,6 +71,7 @@
       environment:
         DESIRED_VERSION: "{{ helm_version | default('') }}"
 
+    # k9s
     - name: Get K9S binary latest release
       ansible.builtin.uri:
         url: "https://api.github.com/repos/derailed/k9s/releases/latest"
@@ -95,8 +96,6 @@
       ansible.builtin.unarchive:
         src: "https://github.com/derailed/k9s/releases/download/v{{ k9s_version }}/k9s_Linux_amd64.tar.gz"
         dest: "/tmp/k9s"
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
         mode: '0750'
         remote_src: true
         validate_certs: false
@@ -104,10 +103,8 @@
     - name: Copy k9s binary file
       ansible.builtin.copy:
         src: "/tmp/k9s/k9s"
-        dest: "$HOME/.local/bin/k9s"
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
-        mode: '0750'
+        dest: "/usr/local/bin/k9s"
+        mode: '0755'
         remote_src: true
 
     - name: Cleanup tmp dir
@@ -117,6 +114,7 @@
       loop:
         - "/tmp/k9s"
 
+# Install helm / k9s airgap
 - name: Install admin tools in Airgap
   become_user: "{{ admin_user }}"
   become: true

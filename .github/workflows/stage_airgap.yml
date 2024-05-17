@@ -13,8 +13,8 @@ env:
   BUCKET: "rkub-github-action-${{ github.run_id }}"
   #BUCKET: "terraform-backend-github"
   CONTROLLER_COUNT: "1"
-  WORKER_COUNT: "2"
-  SIZE: "s-4vcpu-8gb"
+  WORKER_COUNT: "1"
+  SIZE: "s-2vcpu-4gb"
 
 jobs:
   bucket:
