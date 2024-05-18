@@ -33,6 +33,11 @@ variable "do_system" {
   default = "rockylinux-8-x64"
 }
 
+variable "domain" {
+  description = "Domain given to loadbalancer and VMs"
+  default = "rkub.com"
+}
+
 variable "region" {
   description = "Unique bucket name for storing terraform backend data"
   default = "fra1"
