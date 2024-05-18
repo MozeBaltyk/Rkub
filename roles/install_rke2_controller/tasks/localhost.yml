@@ -1,9 +1,10 @@
 ---
 # All tasks on ansible controller
+# kubeconfig to localhost
 - name: Fetch RKE2 kubeconfig to localhost
   ansible.builtin.fetch:
     src: "$HOME/.kube/{{ inventory_hostname }}.yaml"
-    dest: "~/.kube/{{ inventory_hostname }}.yaml"
+    dest: "{{ rkub_local_kubeconfig }}"
     flat: true
     validate_checksum: true
   become_user: "{{ admin_user }}"
@@ -15,7 +16,7 @@
   become: false
   block:
     - name: Check kubecm is installed (part of prerequisites)
-      ansible.builtin.command: type kubecm
+      ansible.builtin.command: which kubecm
       register: is_installed
       changed_when: false
       failed_when: false
@@ -23,22 +24,25 @@
     - name: Add kubeconfig to kubecm
       when: is_installed.rc == 0
       block:
-        - name: Test if default context already exist in your kubeconfig.
-          ansible.builtin.command: "kubecm list default > /dev/null  2>&1"
+        - name: Test if context_name already exist in your kubeconfig.
+          ansible.builtin.command: "kubecm list {{ rkub_context_name }} > /dev/null  2>&1"
+          register: context_name_exist
+          changed_when: false
+          failed_when: false
+
+        - name: Add to kubecm
+          ansible.builtin.command: "kubecm add -cf {{ rkub_local_kubeconfig }} --context-name {{ rkub_context_name }}"
+          changed_when: false
+          when: context_name_exist.rc != 0
+
+        - name: Switch to new cluster
+          ansible.builtin.command: "kubecm switch {{ rkub_context_name }}"
           changed_when: false
 
+      always:
         - name: Message to you
           ansible.builtin.debug:
             msg: "Kubeconfig was added to your kubecm."
-
-      rescue:
-        - name: Add to kubecm
-          ansible.builtin.command: "kubecm add -c --context-name {{ inventory_hostname }} -f ~/.kube/{{ inventory_hostname }}.yaml"
-          changed_when: false
-
-        - name: Switch to default
-          ansible.builtin.command: "kubecm switch default"
-          changed_when: false
 
     - name: No Kubecm
       when: is_installed.rc != 0
@@ -50,7 +54,7 @@
   always:
     - name: Message to you
       ansible.builtin.debug:
-        msg: "Kubeconfig of this cluster was imported in your localhost in ~/.kube/{{ inventory_hostname }}.yaml"
+        msg: "Kubeconfig of this cluster was imported in your localhost in {{ rkub_local_kubeconfig }}"
 
 # Check Flux to Kube API
 - name: Check if flux 6443 is open between localhost and master

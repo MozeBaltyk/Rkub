@@ -21,6 +21,7 @@
     rke2_version: "{{ global_versions['rke2'] }}"
   when: not stable_channel_wanted
 
+# Common
 - name: Display RKE2 version
   ansible.builtin.debug:
     msg:  "RKE2 version to be installed is {{ rke2_version }}"

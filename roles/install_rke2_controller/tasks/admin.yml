@@ -1,54 +1,72 @@
 ---
 # Admin setup on first master
 - name: Admin setup
-  become_user: "{{ admin_user }}"
   become: true
   block:
     - name: Remove old Kubeconfig file
       ansible.builtin.file:
-        path: "$HOME/.kube/{{ inventory_hostname }}.yaml"
+        path: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
         state: absent
 
     - name: Ensure .kube dir exist
       ansible.builtin.file:
-        path: "$HOME/.kube"
+        path: "/home/{{ admin_user }}/.kube"
         state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
         mode: 0700
         recurse: true
 
-    - name: Get Kubernetes config file
-      run_once: true
-      ansible.builtin.slurp:
-        src: "{{ rke2_kubeconfig_file }}"
-      register: kubeconfig_base64
-      become: false
+    - name: Update Admin .bashrc
+      ansible.builtin.blockinfile:
+        path: "/home/{{ admin_user }}/.bashrc"
+        block: |
+          export KUBECONFIG=$HOME/.kube/{{ inventory_hostname }}.yaml
+          export CRI_CONFIG_FILE={{ rke2_data_dir }}/agent/etc/crictl.yaml
+        marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
 
-    - name: Copy kubeconfig in Admin home dir
+    - name: Copy kubeconfig to admin homedir
       ansible.builtin.copy:
-        content: "{{ kubeconfig_base64.content | b64decode | replace('127.0.0.1', control_plane_endpoint) }}"
+        src: "{{ rke2_kubeconfig_file }}"
         dest: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
         force: true
         remote_src: true
         mode: '0600'
-      run_once: true
-      become: false
 
-    - name: Change localhost with master ip in kubeconfig
+    - name: Change localhost with control_plane_endpoint in kubeconfig
       ansible.builtin.lineinfile:
-        path: "$HOME/.kube/{{ inventory_hostname }}.yaml"
+        path: /home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml
         search_string: '127.0.0.1'
-        line: "    server: https://{{ master }}:6443"
+        line: "    server: https://{{ control_plane_endpoint }}:6443"
 
-    - name: Update Admin .bashrc
-      ansible.builtin.blockinfile:
-        path: "$HOME/.bashrc"
-        block: |
-          export KUBECONFIG="~/.kube/{{ inventory_hostname }}.yaml"
-          export CRI_CONFIG_FILE={{ rke2_data_dir }}/agent/etc/crictl.yaml
-          PATH=$PATH:{{ rke2_data_dir }}/bin
-        marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
+# Push kubectl on admin user
+- name: Push Kubectl
+  become: true
+  block:
+    - name: Ensure dir exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: 0750
+        recurse: true
+      loop:
+        - "$HOME/.local"
+        - "$HOME/.local/bin"
+
+    - name: Copy kubectl binary to admin user
+      ansible.builtin.copy:
+        src: "{{ rke2_data_dir }}/bin/kubectl"
+        dest: "/home/{{ admin_user }}/.local/bin/kubectl"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        force: true
+        remote_src: true
+        mode: '0750'
+
 
 # Install helm / k9s non-airgap
 - name: Install admin tools not in Airgap
@@ -103,9 +121,12 @@
     - name: Copy k9s binary file
       ansible.builtin.copy:
         src: "/tmp/k9s/k9s"
-        dest: "/usr/local/bin/k9s"
-        mode: '0755'
+        dest: "/home/{{ admin_user }}/.local/bin/k9s"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        force: true
         remote_src: true
+        mode: '0750'
 
     - name: Cleanup tmp dir
       ansible.builtin.file:
@@ -121,7 +142,7 @@
   when:
     - airgap_install
   block:
-    - name: Ensure .local/bin dir exist
+    - name: Ensure dir exist
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory

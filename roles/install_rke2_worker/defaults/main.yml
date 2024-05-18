@@ -14,7 +14,7 @@ hauler_server: "{{ global_hauler_ip }}"
 rke2_data_dir: "{{ global_rke2_data_dir }}"
 rke2_cluster_cidr: "{{ global_rke2_cluster_cidr }}"
 rke2_service_cidr: "{{ global_rke2_service_cidr }}"
-rke2_profile_activated: "{{ global_rke2_profile_activated }}"
+rke2_profile_activated: "{{ global_rke2_profile_activated | bool }}"
 
 # Firewall rules
 worker_firewalld_rules:

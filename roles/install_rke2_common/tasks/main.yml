@@ -12,6 +12,8 @@
 
 - name: Populate service facts
   ansible.builtin.service_facts: {}
+  when: >
+    ansible_facts['services'] is not defined
   tags: [always]
 
 - name: Specific config for NetworkManager

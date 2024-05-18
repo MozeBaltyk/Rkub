@@ -1,0 +1,27 @@
+---
+# Stable version from URL
+- name: Set Longhorn Versions variables
+  when: stable_channel_wanted
+  block:
+    # export LONGHORN_VERSION=$(curl -s https://api.github.com/repos/longhorn/longhorn/releases/latest | jq -r .tag_name)
+    - name: Get Longhorn latest stable version
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/longhorn/longhorn/releases/latest"
+        method: GET
+        return_content: true
+      register: longhorn_release
+
+    - name: Extract latest stable version
+      ansible.builtin.set_fact:
+        longhorn_version: "{{ longhorn_release.json.tag_name | regex_replace('^v', '') }}"
+
+# Version defined in this Ansible collection
+- name: Set Longhorn Versions variables
+  ansible.builtin.set_fact:
+    longhorn_version: "{{ global_versions['longhorn'] }}"
+  when: not stable_channel_wanted
+
+# Common
+- name: Display Longhorn version
+  ansible.builtin.debug:
+    msg:  "Longhorn version to be installed is {{ longhorn_version }}"

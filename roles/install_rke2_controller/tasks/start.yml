@@ -9,6 +9,7 @@
         name: "rke2-agent.service"
         enabled: false
         masked: true
+      retries: 5
 
     - name: Start and enable rke2-server
       ansible.builtin.systemd:
