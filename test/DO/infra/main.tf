@@ -38,7 +38,21 @@ data "digitalocean_ssh_key" "terraform" {
 resource "digitalocean_vpc" "rkub-project-network" {
   name     = "rkub-${var.GITHUB_RUN_ID}-network"
   region   = var.region
+
+  timeouts {
+    delete = "30m"
+  }
 }
+
+# https://github.com/digitalocean/terraform-provider-digitalocean/issues/446
+resource "time_sleep" "wait_300_seconds_to_destroy" {
+  depends_on = [digitalocean_vpc.rkub-project-network]
+  destroy_duration = "300s"
+}
+resource "null_resource" "placeholder" {
+  depends_on = [time_sleep.wait_300_seconds_to_destroy]
+}
+#
 
 locals {
   cloud_init_config = yamlencode({
