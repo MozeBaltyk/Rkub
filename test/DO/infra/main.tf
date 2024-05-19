@@ -192,7 +192,7 @@ resource "digitalocean_project" "rkub" {
   description = "A CI project to test the Rkub development from github."
   purpose     = "Cluster k8s"
   environment = "Staging"
-  resources = flatten([digitalocean_droplet.controllers.*.urn, digitalocean_droplet.workers.*.urn])
+  resources = flatten([digitalocean_droplet.controllers.*.urn, digitalocean_droplet.workers.*.urn, digitalocean_loadbalancer.www-lb.*.urn, digitalocean_domain.rkub-domain.*.urn ])
 }
 
 ###
