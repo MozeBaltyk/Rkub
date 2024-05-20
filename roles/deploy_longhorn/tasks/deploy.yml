@@ -42,6 +42,7 @@
       ansible.builtin.import_role:
         name: set_versions
         tasks_from: only_longhorn
+      run_once: true
 
     - name: Add longhorn chart repo
       kubernetes.core.helm_repository:
@@ -67,3 +68,8 @@
           persistence:
             defaultClassReplicaCount: "{{ longhorn_replica }}"
         kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+
+# Common
+- name: Display Longhorn URL
+  ansible.builtin.debug:
+    msg:  "Longhorn URL : {{ longhorn_url }}"

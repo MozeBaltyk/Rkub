@@ -1,9 +1,0 @@
----
-# defaults file for deploy_certmanager
-cert_version: "v{{ global_CERT_VERSION }}"
-cert_charts: "cert-manager-{{ cert_version }}.tgz"
-
-# General
-admin_user: "{{ global_install_user }}"
-mount_path: "{{ global_directory_mount }}"
-mount_helm_path: "{{ mount_path }}/helm"

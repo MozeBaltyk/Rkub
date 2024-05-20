@@ -54,8 +54,8 @@
         mode: 0750
         recurse: true
       loop:
-        - "$HOME/.local"
-        - "$HOME/.local/bin"
+        - "/home/{{ admin_user }}/.local"
+        - "/home/{{ admin_user }}/.local/bin"
 
     - name: Copy kubectl binary to admin user
       ansible.builtin.copy:

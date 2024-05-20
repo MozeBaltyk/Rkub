@@ -5,11 +5,13 @@
     gather_subset:
       - "distribution"
       - "distribution_major_version"
+      - "default_ipv4"
       - "!min"
   when: >
     ansible_os_family is not defined
+  tags: [always]
 
-- name: Tasks for RHEL-like OS
+- name: Prerequis needed on all nodes
   ansible.builtin.import_tasks: install.yml
 
 - name: Deploy with the Helm Charts on master

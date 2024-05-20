@@ -249,6 +249,8 @@ Improvments:
 
 - [rancher/RKE2](https://github.com/rancher/rke2)
 
+- [rancher/quickstart](https://github.com/rancher/quickstart)
+
 
 Get the latest stable version:
 

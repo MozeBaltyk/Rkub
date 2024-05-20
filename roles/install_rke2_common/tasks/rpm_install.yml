@@ -26,6 +26,7 @@
       ansible.builtin.import_role:
         name: set_versions
         tasks_from: only_rke2
+      run_once: true
 
     - name: Set Official RKE2 common repo
       ansible.builtin.yum_repository:

@@ -24,6 +24,7 @@
       ansible.builtin.import_role:
         name: set_versions
         tasks_from: only_rke2
+      run_once: true
 
     - name: TARBALL | Install RKE2 node
       ansible.builtin.shell:

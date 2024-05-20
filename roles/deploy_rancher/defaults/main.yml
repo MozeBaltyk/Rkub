@@ -1,7 +1,5 @@
 ---
 # defaults file for deploy_rancher
-rancher_version: "{{ global_RANCHER_VERSION }}"
-rancher_charts: "rancher-{{ rancher_version }}.tgz"
 rancher_servicename: "rancher"
 rancher_domain: "{{ global_domain }}"
 rancher_url: "{{ rancher_servicename }}.{{ rancher_domain }}"
@@ -10,5 +8,4 @@ rancher_password: "{{ global_rancher_password }}"
 # General
 admin_user: "{{ global_install_user }}"
 master: "{{ global_master_ip }}"
-mount_path: "{{ global_directory_mount }}"
-mount_helm_path: "{{ mount_path }}/helm"
+airgap_install: "{{ global_airgap_install | bool }}"
