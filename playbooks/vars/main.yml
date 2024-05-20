@@ -63,7 +63,7 @@ global_rke2_profile_activated: "{{ profile_cis | default('false') }}"
 global_rke2_disable: "{{ disable | default(omit) }}" # Valid items to not deploy: rke2-canal, rke2-coredns, rke2-ingress-nginx, rke2-metrics-server
 
 # Longhorn
-default_longhorn_datapath: "{{ global_directory_package_target }}/longhorn"
+default_longhorn_datapath: "/data/longhorn"
 global_longhorn_datapath: "{{ datapath | default(default_longhorn_datapath) }}"
 global_longhorn_replica: 2
 
