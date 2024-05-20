@@ -1,9 +1,8 @@
 ---
 - name: Install Rancher
-  hosts: RKE2_CONTROLLERS:RKE2_WORKERS
-  gather_facts: true
-  become: true
+  hosts: RKE2_CONTROLLERS
+  gather_facts: false
   vars_files: ../../playbooks/vars/main.yml
-  tags: [ controller, worker ]
+  tags: [ controller ]
   roles:
     - {role: deploy_rancher, tags: rancher}
