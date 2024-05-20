@@ -43,10 +43,15 @@ variable "region" {
   default = "fra1"
 }
 
+variable "airgap" {
+  description = "if airgap true, mount s3 bucket with rkub package"
+  default = "true"
+}
+
 variable "GITHUB_RUN_ID" {
   type    = string
   description = "github run id"
-  default = "test"
+  default = "quickstart"
 }
 
 variable "terraform_backend_bucket_name" {
