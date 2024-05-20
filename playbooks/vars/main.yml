@@ -50,7 +50,7 @@ global_directory_package_target: "{{ dir_target | default('/opt/rkub') }}"
 # Options General
 global_hauler_ip: "{{ hauler_ip | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address']) }}"
 global_master_ip: "{{ master_ip | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address']) }}"
-global_domain:    "{{ domain | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_domain']) }}"
+global_domain:    "{{ domain | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address'] + '.sslip.io') }}"
 
 # Options RKE2
 global_rke2_data_dir: "{{ data_dir | default('/var/lib/rancher/rke2') }}"
