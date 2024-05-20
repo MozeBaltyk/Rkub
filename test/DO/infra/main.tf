@@ -33,42 +33,6 @@ data "digitalocean_ssh_key" "terraform" {
 }
 
 ###
-### LB / Domain / DNS
-###
-
-resource "digitalocean_loadbalancer" "www-lb" {
-  name = "rkub-${var.GITHUB_RUN_ID}-lb"
-  region = var.region
-
-  forwarding_rule {
-    entry_port = 80
-    entry_protocol = "http"
-
-    target_port = 80
-    target_protocol = "http"
-  }
-
-  healthcheck {
-    port = 22
-    protocol = "tcp"
-  }
-
-  droplet_ids = flatten([digitalocean_droplet.controllers.*.id])
-  vpc_uuid = digitalocean_vpc.rkub-project-network.id
-}
-resource "digitalocean_domain" "rkub-domain" {
-   name = var.domain
-   ip_address = digitalocean_loadbalancer.www-lb.ip
-}
-
-resource "digitalocean_record" "wildcard" {
-  domain = "${digitalocean_domain.rkub-domain.name}"
-  type   = "A"
-  name   = "*"
-  value  = digitalocean_loadbalancer.www-lb.ip
-}
-
-###
 ### VPC
 ###
 resource "digitalocean_vpc" "rkub-project-network" {
@@ -143,7 +107,7 @@ resource "digitalocean_project" "rkub" {
   description = "A CI project to test the Rkub development from github."
   purpose     = "Cluster k8s"
   environment = "Staging"
-  resources = flatten([digitalocean_droplet.controllers.*.urn, digitalocean_droplet.workers.*.urn, digitalocean_loadbalancer.www-lb.*.urn, digitalocean_domain.rkub-domain.*.urn ])
+  resources = flatten([digitalocean_droplet.controllers.*.urn, digitalocean_droplet.workers.*.urn ])
 }
 
 ###

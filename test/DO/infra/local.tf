@@ -16,7 +16,7 @@ locals {
 
 # Convert our cloud-init config to userdata
 # Userdata runs at first boot when the droplets are created
-data "cloudinit_config" "server_airgap_config" {
+data "cloudinit_config" "server_config" {
   gzip          = false
   base64_encode = false
   part {

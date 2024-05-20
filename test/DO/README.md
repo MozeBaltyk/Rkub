@@ -61,7 +61,7 @@ terraform init \
 # recommended method
 export AWS_ACCESS_KEY_ID=DOxxxxxxxxxxxxxxxx
 export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxx
-terraform init -backend-config="bucket=terraform-backend-github"
+terraform init -backend-config="bucket=terraform-backend-rkub-quickstart"
 
 # auto-approve (default: size=s-1vcpu-1gb, 1 controller + 2 workers)
 terraform apply -var "GITHUB_RUN_ID=${GITHUB_RUN_ID}" -var "do_token=${DO_PAT}" -auto-approve
