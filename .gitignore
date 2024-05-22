@@ -26,4 +26,5 @@ hosts.ini
 Chart.lock
 .venv/
 __pycache__
+.pytest_cache
 AWS

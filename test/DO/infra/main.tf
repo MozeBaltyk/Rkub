@@ -40,17 +40,17 @@ resource "digitalocean_vpc" "rkub-project-network" {
   region   = var.region
 
   timeouts {
-    delete = "30m"
+    delete = "10m"
   }
 }
 
 # https://github.com/digitalocean/terraform-provider-digitalocean/issues/446
-resource "time_sleep" "wait_300_seconds_to_destroy" {
+resource "time_sleep" "wait_200_seconds_to_destroy" {
   depends_on = [digitalocean_vpc.rkub-project-network]
-  destroy_duration = "300s"
+  destroy_duration = "200s"
 }
 resource "null_resource" "placeholder" {
-  depends_on = [time_sleep.wait_300_seconds_to_destroy]
+  depends_on = [time_sleep.wait_200_seconds_to_destroy]
 }
 #
 

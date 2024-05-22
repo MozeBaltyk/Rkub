@@ -42,33 +42,34 @@ Add-on from my part:
 
 - Some flexibility about path with the possibility to build and install on a choosen path.
 
-- Admin user (by default 'kuberoot') on first controller node with some admin tools (k9s, helm).
+- Admin user (by default 'kuberoot') on first controller node with some admin tools (k9s, helm and kubectl).
+
+- Import kubeconfig on Ansible controller host and add it to kubecm if present (to be able to admin rke2 cluster from localhost).
 
 - Nerdctl as complement of containerd to handle oci-archive.
 
-- K9S on first controller for admin purpose.
-
 - Uninstall playbook to cleanup (and maybe reinstall if needed).
 
-- Collection Released, so possibilty to get back to older versions.
+- Ansible Collection Released, so possibilty to get back to older versions.
 
 ## Use Case
 
 Currently only install:
   - on Rocky8
-  - airgap tarball or rpm
-  - Defined or Stable channels
+  - airgap or online install
+  - tarball or rpm method
+  - Defined versions or versions from Stable channels
   - Canal CNI
   - Digital Ocean
 
 But the target to handle all the usecase below:
 
-| OS     | Versions                | Method         | CNI    | Cloud providers | Extra Install   |
-|--------|-------------------------|----------------|--------|-----------------|-----------------|
-| Rocky8 | Defined in collections  | airgap tarball | Canal  | Digital Ocean   | Kubevip         |
-| Ubuntu | Stable channels         | airgap rpm     |        | AWS             | Longhorn        |
-|        | Custom                  | online         |        | Azure           | Rancher         |
-|        |                         |                |        |                 | Neuvector       |
+| OS     | Versions                    | Method         | CNI    | Cloud providers |  Cluster Arch         | Extra Install   |
+|--------|-----------------------------|----------------|--------|-----------------|-----------------------|-----------------|
+| Rocky8 | Defined in this collection  | airgap tarball | Canal  | Digital Ocean   | Standalone            | Kubevip         |
+| Ubuntu | Stable channels             | airgap rpm     |        | AWS             | One Master, x Workers | Longhorn        |
+|        | Custom                      | online tarball |        | Azure           | 3 Masters, x Workers  | Rancher         |
+|        |                             | online rpm     |        |                 |                       | Neuvector       |
 
 ## Prerequisites
 
