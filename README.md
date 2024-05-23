@@ -36,7 +36,7 @@ This Project is mainly inspired from [Clemenko/rke_airgap_install](https://githu
 
 - OS agnositc: can be launch on any Linux systems (at least for the package build, for the install part, it depends on your participation 😸)
 
-Add-on from my part:
+Add-on from this Ansible collection:
 
 - Some flexibility about path with the possibility to build and install on a choosen path.
 
