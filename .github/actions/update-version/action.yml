@@ -49,17 +49,18 @@ runs:
 
         ### Versions:
 
-          - rke2 version: ${rke2_version}
+        - rke2 version: ${rke2_version}
 
-          - kube-vip: ${kubevip_version}
+        - kube-vip: ${kubevip_version}
 
-          - cert-manager version: ${cert_version}
+        - cert-manager version: ${cert_version}
 
-          - rancher version: ${rancher_version}
+        - rancher version: ${rancher_version}
 
-          - longhorn version: ${longhorn_version}
+        - longhorn version: ${longhorn_version}
           
-          - neuvector version: ${neuvector_version}
+        - neuvector version: ${neuvector_version}
+
         EOF
 
         sed -i -n -e "1,/<\!-- Release -->/ p" -e"/<\!-- End Release -->/,$ p" -e "/<\!-- Release -->/ r version.txt" CHANGELOG.md
