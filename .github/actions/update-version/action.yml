@@ -44,7 +44,6 @@ runs:
         rancher_version=$(yq -r .global_versions.rancher playbooks/vars/main.yml)
         longhorn_version=$(yq -r .global_versions.longhorn playbooks/vars/main.yml)
         neuvector_version=$(yq -r .global_versions.neuvector playbooks/vars/main.yml)
-
         cat << EOF > version.txt
         ## ${rkub_collection} (${date})
 
@@ -59,7 +58,7 @@ runs:
           - rancher version: ${rancher_version}
 
           - longhorn version: ${longhorn_version}
-
+          
           - neuvector version: ${neuvector_version}
         EOF
 
