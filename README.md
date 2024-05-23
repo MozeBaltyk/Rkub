@@ -55,14 +55,20 @@ Add-on from my part:
 ## Use Case
 
 Currently only install:
-  - on Rocky8
-  - airgap or online install
-  - tarball or rpm method
-  - Defined versions or versions from Stable channels
-  - Canal CNI
-  - Digital Ocean
 
-But the target to handle all the usecase below:
+- on Rocky8
+
+- airgap or online install
+
+- tarball or rpm method
+
+- Defined versions or versions from Stable channels
+
+- Canal CNI
+
+- Digital Ocean
+
+But the target would be to handle all the usecase below:
 
 | OS     | Versions                    | Method         | CNI    | Cloud providers |  Cluster Arch         | Extra Install   |
 |--------|-----------------------------|----------------|--------|-----------------|-----------------------|-----------------|
@@ -79,20 +85,44 @@ But the target to handle all the usecase below:
 
 - A minimum of 2 hosts RHEL-like (2 vCPU and 8G of RAM) for the cluster RKE2 with 80G at least on target directory.
 
-## Getting started
+## Quickstart
 
-1. Preparation steps:
+As prerequisities, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` inside API tabs.
 
 - Clone the main branch of this project to a machine with an internet access:
       `git clone -b main https://github.com/MozeBaltyk/Rkub.git`
 
 - Execute `make prerequis` to install all prerequisites defined in meta directory.
 
-- Complete directory inside `./plugins/inventory/hosts.yml`.
+- Export vars and Execute as below:
+
+```bash
+export DO_PAT="xxxxxxxxxx"
+export AWS_ACCESS_KEY_ID="xxxxxxxxxxxx"
+export AWS_SECRET_ACCESS_KEY="xxxxxxxxxxx"
+export WORKERS=2
+
+# Create RKE2 cluster
+make quickstart
+
+# Delete RKE2 cluster
+make quickstart-cleanup
+```
+
+## Global Usage
+
+1. Preparation steps for classic ansible controller:
+
+- Create some SSH keys and deploy it on target hosts.
+
+- Define an ansible.cfg
+
+- Define an inventory (example in `./plugins/inventory/hosts.yml`).
+
+then use it...
 
 2. Build your package by running (works on Debian-like or Redhat-like and targets localhost).
 This step concern only an airgap install. If targeted servers have an internet access then skip and go to step 5:
-
 
 ```sh
 ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments below are not mandatory
@@ -162,17 +192,6 @@ ansible-playbook mozebaltyk.rkub.neuvector.yml     # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-9. Bonus:
-
-With make command, all playbooks above are in the makefile. `make` alone display options and small descriptions.
-
-```bash
-# Example with make
-make install                                       # All arguments below are not mandatory
-ANSIBLE_USER=admin                                 # equal to '-u admin'
-"OPT=-e domain=example.com -Kk"                    # redefine vars or add options to ansible-playbook command
-```
-
 ## Container methode
 
 1. This is a custom script which imitate Execution-Environement:
@@ -186,7 +205,8 @@ All prerequisites are set in folder `meta` and `meta/execution-environment.yml`.
 ## Some details
 
 I favored the tarball installation since it's the most compact and install rely on a archive tar.zst which stay on all nodes.
-The rpm install is much straight forward but match only system with RPM (so mainly Redhat-like).
+The rpm install is much straight forward but match only system with RPM (so mainly Redhat-like) and require a registry.
+But the rpm method with the stable channel is used for the quickstart install.
 
 **build** have for purpose to create a tar.zst with following content using hauler tool:
 
@@ -201,24 +221,33 @@ rkub
     └── index.json
 ```
 
+It will store and build package regarding:
+
+- Chosen install method for rke2 (tarbal or rpm)
+- Chosen components (kube-vip, longhorn, rancher, neuvector)
+- Chosen channels stable or versions defined in this collection
+
 **upload** push the big monster packages (around 7G) and unarchive on first node on chosen targeted path.
 
 **hauler** (by default on first controller but could be on dedicated server)
-  - deploy a registry as systemd service and make it available on port 5000 using hauler.
-  - deploy a fileserver as systemd service and make it available on port 8080 using hauler.
+
+- deploy a registry as systemd service and make it available on port 5000 using hauler.
+- deploy a fileserver as systemd service and make it available on port 8080 using hauler.
 
 **install** RKE2 (currently only one master) with:
-  - Install with tarball method by default or rpm method if given in argument.
-  - An admin user (by default `kuberoot`) on first master with some administation tools like `k9s` `kubectl` or `helm`.
-  - Nerdctl as complement to containerd and allow oci-archive.
-  - Firewalld settings if firewalld running.
-  - Selinux rpm if selinux enabled.
-  - Fetch and add kubeconfig to ansible controller in directory ./kube (and add to kubecm if present).
+
+- Install rke2 with tarball method by default or rpm method if given in argument.
+- An admin user (by default `kuberoot`) on first master with some administation tools like `k9s` `kubectl` or `helm`.
+- Nerdctl as complement to containerd and allow oci-archive.
+- Firewalld settings if firewalld running.
+- Selinux rpm if selinux enabled.
+- Fetch and add kubeconfig to ansible controller in directory ./kube (and add to kubecm if present).
 
 **deploy** keeping this order, *Rancher*, *Longhorn*, *Neuvector*
-  - Those are simple playbooks which deploy with helm charts
-  - It use the default ingress from RKE2 *Nginx-ingress* in https (currently Self-sign certificate)
-  - *Rancher* need *Certmanager*, So it deploy first Certmanager
+
+- Those are simple playbooks which deploy with helm charts either in airgap or online mode.
+- It use the default ingress from RKE2 *Nginx-ingress* in https (currently Self-sign certificate)
+- *Rancher* need *Certmanager*, So it deploy first Certmanager
 
 ## Roadmap
 
@@ -228,21 +257,17 @@ Milestones:
 
 * HA masters with kubevip
 
-* Add a option to chooce by url mode or airgap mode
-
-Improvments:
-
-* Improve collection to run as true collection
+* Allow several providers (currently only DO)
 
 # Acknowledgements
 
 ## Special thanks to 📢
 
-* Clemenko, for the idea [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh).
+* Clemenko, for the idea [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/).
 
-## References:
+## References
 
-- [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/blob/main/air_gap_all_the_things.sh)
+- [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/)
 
 - [rancherfederal/RKE2-ansible](https://github.com/rancherfederal/rke2-ansible)
 
@@ -252,20 +277,10 @@ Improvments:
 
 - [rancher/quickstart](https://github.com/rancher/quickstart)
 
-
-Get the latest stable version:
-
-```bash
-## RKE2
-curl -s https://raw.githubusercontent.com/rancher/rke2/master/channels.yaml | yq -N '.channels[] | select(.name == "stable") | .latest'
-
-## K3S
-curl -s https://raw.githubusercontent.com/k3s-io/k3s/master/channel.yaml | yq -N '.channels[] | select(.name == "stable") | .latest'
-```
-
 ## Repo Activity
+
 ![Alt](https://repobeats.axiom.co/api/embed/2664e49768529526895630ae70e2a366a70de78f.svg "Repobeats analytics image")
 
-
 ## Project status
+
 Still on developement
