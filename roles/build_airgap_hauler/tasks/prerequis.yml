@@ -1,0 +1,50 @@
+---
+# NB: Collection's Prerequisites are defined in ./meta but I put some here to make the playbook works on a target server and not only localhost.
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset:
+      - "distribution"
+      - "distribution_major_version"
+      - "!min"
+  when: >
+    ansible_os_family is not defined
+
+# for RHEL-like
+- name: Install zstd and jq
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zstd
+    - jq
+  when:
+    - ansible_os_family == "RedHat"
+  become: true
+
+# for Debian-like
+- name: Install zstd and jq
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zstd
+    - jq
+  when:
+    - ansible_os_family == "Debian"
+  become: true
+
+# check command and install if not present
+- name: Ensure Helm 3 is present
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      command -v helm || curl -s https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    executable: /bin/bash
+  changed_when: false
+
+# Dir
+- name: Ensure package directory exists
+  ansible.builtin.file:
+    path: "{{ directory_package }}"
+    state: directory
+    recurse: true

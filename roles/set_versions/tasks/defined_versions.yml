@@ -1,0 +1,25 @@
+---
+- name: Set Versions variables
+  ansible.builtin.set_fact:
+    rke2_version: "{{ global_versions['rke2'] }}"
+    kubevip_version: "{{ global_versions['kubevip'] }}"
+    longhorn_version: "{{ global_versions['longhorn'] }}"
+    cert_manager_version: "{{ global_versions['cert_manager'] }}"
+    rancher_version: "{{ global_versions['rancher'] }}"
+    neuvector_version: "{{ global_versions['neuvector'] }}"
+    helm_version: "{{ global_versions['helm'] }}"
+    nerdctl_version: "{{ global_versions['nerdctl'] }}"
+    k9s_version: "{{ global_versions['k9s'] }}"
+
+- name: Display
+  ansible.builtin.debug:
+    msg:
+      - "Defined RKE2 version in this ansible collection is {{ rke2_version }}"
+      - "Defined Helm version in this ansible collection is {{ helm_version }}"
+      - "Defined Nerdctl version in this ansible collection is {{ nerdctl_version }}"
+      - "Defined k9s version in this ansible collection is {{ k9s_version }}"
+      - "{% if kubevip_wanted %}Defined Kube-vip version in this ansible collection is {{ kubevip_version }}{% endif %}"
+      - "{% if longhorn_wanted %}Defined Longhorn version in this ansible collection is {{ longhorn_version }}{% endif %}"
+      - "{% if rancher_wanted %}Defined Cert-manager version in this ansible collection is {{ cert_manager_version }}{% endif %}"
+      - "{% if rancher_wanted %}Defined Rancher version in this ansible collection is {{ rancher_version }}{% endif %}"
+      - "{% if neuvector_wanted %}Defined Neuvector version in this ansible collection is {{ neuvector_version }}{% endif %}"

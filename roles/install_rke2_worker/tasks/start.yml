@@ -1,0 +1,22 @@
+---
+# As root
+- name: Start RKE2 worker
+  become: true
+  block:
+    # Start
+    - name: Mask RKE2 server service on the first server
+      ansible.builtin.systemd:
+        name: "rke2-server.service"
+        enabled: false
+        masked: true
+      retries: 5
+
+    - name: Start and enable rke2-agent
+      ansible.builtin.systemd:
+        name: rke2-agent.service
+        state: started
+        enabled: true
+      notify: "Service (re)started"
+      register: rke2_service
+      until: rke2_service is succeeded
+      retries: 5

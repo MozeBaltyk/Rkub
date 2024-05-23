@@ -1,3 +1,4 @@
+---
 # for RHEL-like
 - name: Install zstd and skopeo
   ansible.builtin.dnf:
@@ -8,6 +9,7 @@
     - skopeo
   when:
     - ansible_os_family == "RedHat"
+  become: true
 
 # for Debian-like
 - name: Install zstd and skopeo
@@ -19,6 +21,7 @@
     - skopeo
   when:
     - ansible_os_family == "Debian"
+  become: true
 
 - name: Create package directories
   ansible.builtin.file:

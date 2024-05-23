@@ -1,7 +1,5 @@
 ---
 # defaults file for deploy_neuvector
-neuvector_version: "{{ global_NEU_VERSION }}"
-neuvector_charts: "core-{{ neuvector_version }}.tgz"
 neuvector_servicename: "neuvector"
 neuvector_domain: "{{ global_domain }}"
 neuvector_url: "{{ neuvector_servicename }}.{{ neuvector_domain }}"
@@ -9,5 +7,4 @@ neuvector_url: "{{ neuvector_servicename }}.{{ neuvector_domain }}"
 # General
 admin_user: "{{ global_install_user }}"
 master: "{{ global_master_ip }}"
-mount_path: "{{ global_directory_mount }}"
-mount_helm_path: "{{ mount_path }}/helm"
+airgap_install: "{{ global_airgap_install | bool }}"

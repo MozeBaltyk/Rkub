@@ -1,0 +1,64 @@
+---
+# As root
+- name: Controller install as root
+  become: true
+  block:
+    # prerequis
+    - name: Create etcd group
+      ansible.builtin.group:
+        name: etcd
+        state: present
+
+    - name: Create etcd user
+      ansible.builtin.user:
+        name: etcd
+        comment: "etcd user"
+        shell: /sbin/nologin
+        system: true
+        createhome: false
+
+    - name: Create directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        recurse: true
+        mode: '0750'
+      with_items:
+        - /etc/rancher/rke2/
+        - "{{ rke2_data_dir }}/server/manifests/"
+        - "{{ rke2_data_dir }}/agent/images"
+
+    # Config
+    - name: Configure RKE2 config.yaml
+      ansible.builtin.template:
+        src: config.yaml.j2
+        dest: /etc/rancher/rke2/config.yaml
+        mode: "0640"
+
+    - name: Set up audit policy file
+      ansible.builtin.copy:
+        content: |
+          apiVersion: audit.k8s.io/v1
+          kind: Policy
+          rules:
+          - level: RequestResponse
+        dest: /etc/rancher/rke2/audit-policy.yaml
+        mode: "0640"
+
+    - name: Set up ssl passthrough for nginx
+      ansible.builtin.copy:
+        content: |
+          apiVersion: helm.cattle.io/v1
+          kind: HelmChartConfig
+          metadata:
+            name: rke2-ingress-nginx
+            namespace: kube-system
+          spec:
+            valuesContent: |-
+              controller:
+                config:
+                  use-forwarded-headers: true
+                extraArgs:
+                  enable-ssl-passthrough: true
+        dest: /var/lib/rancher/rke2/server/manifests/rke2-ingress-nginx-config.yaml
+        mode: "0640"

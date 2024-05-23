@@ -1,41 +1,71 @@
-# Version products
-global_rke2_version: "1.26.11"
-global_helm_version: "3.11.3"
-global_CERT_VERSION: "1.13.3"    
-global_RANCHER_VERSION: "2.8.0" 
-global_LONGHORN_VERSION: "1.5.3"
-global_NEU_VERSION: "2.6.6"     
+---
+# OLD Version products
+global_rke2_version: "1.27.12"
+global_kubevip_version: "0.7.0"
+global_helm_version: "3.14.0"
+global_CERT_VERSION: "1.14.1"
+global_RANCHER_VERSION: "2.8.1"
+global_LONGHORN_VERSION: "1.6.0"
+global_NEU_VERSION: "2.7.2"
 
-# extras RPM
-global_rke2_common_repo_version: "v{{ rke2_version }}%2Brke2r1"           #.stable.0
-global_rke2_common_rpm_version: "rke2-common-{{ rke2_version }}.rke2r1-0" #.el{{ ansible_distribution_major_version }}.x86_64.rpm
-global_rke2_selinux_repo_version: "v0.17.stable.1"
-global_rke2_selinux_rpm_version: "rke2-selinux-0.17-1"                    #.el{{ ansible_distribution_major_version }}.noarch.rpm
+# Version products
+global_stable_channel: "{{ stable | default('false') }}"
+global_all_wanted: "{{ all | default('false') }}"
+global_extras_components:
+  kubevip: "{{ kubevip | default(global_all_wanted) }}"
+  rancher: "{{ rancher | default(global_all_wanted) }}"
+  longhorn: "{{ longhorn | default(global_all_wanted) }}"
+  neuvector: "{{ neuvector | default(global_all_wanted) }}"
+
+global_versions:
+  rke2: "1.27.12"
+  kubevip: "0.8.0"
+  cert_manager: "1.14.1"
+  rancher: "2.8.1"
+  longhorn: "1.6.0"
+  neuvector: "2.7.2"
+  helm: "3.14.0"
+  nerdctl: "1.7.6"
+  k9s: "0.32.4"
+  hauler: "1.0.3"
+
+global_rhel_version: "{{ el }}"
 
 # General
 global_install_user: "{{ install_user | default('kuberoot') }}"
-global_directory_package_build: "{{ dir_build | default('$HOME/rkub') }}"
+global_method_install: "{{ method | default('tarball') }}"
+global_rpm_install: "{{ global_method_install == 'rpm' }}"
+global_tarball_install: "{{ global_method_install == 'tarball' }}"
+global_airgap_install: "{{ airgap | default('true') }}"
 
 # Local
-global_package_name: "{{ package_name | default('rke2_rancher_longhorn.zst') }}"
+global_directory_package_build: "{{ dir_build | default('$HOME/rkub') }}"
+global_archive_tar_zst_bool: "{{ archive | default('true') | bool }}"
+global_package_name: "{{ package_name | default('rkub.zst') }}"
 global_path_to_package_zst: "{{ global_directory_package_build }}/../{{ global_package_name }}"
 
 # Target
-global_directory_package_target: "{{ dir_target | default('/opt') }}"
-global_directory_mount: "{{ dir_mount | default('/mnt/rkub') }}"
+global_directory_package_target: "{{ dir_target | default('/opt/rkub') }}"
+
+# Options General
+global_hauler_ip: "{{ hauler_ip | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address']) }}"
+global_master_ip: "{{ master_ip | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address']) }}"
+global_domain:    "{{ domain | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address'] + '.sslip.io') }}"
 
 # Options RKE2
-global_master_ip: "{{ master_ip | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_default_ipv4']['address']) }}"
-global_domain:    "{{ domain | default(hostvars[groups['RKE2_CONTROLLERS'][0]]['ansible_domain']) }}"
+global_rke2_data_dir: "{{ data_dir | default('/var/lib/rancher/rke2') }}"
+global_rke2_ha_mode: false
+global_rke2_api_ip: "{{ vip | default(global_master_ip) }}"
+global_rke2_cluster_cidr: "10.42.0.0/16" #Default Value
+global_rke2_service_cidr: "10.43.0.0/16" #Default Value
+global_rke2_cni: "canal"
+global_rke2_profile_activated: "{{ profile_cis | default('false') }}"
+global_rke2_disable: "{{ disable | default(omit) }}" # Valid items to not deploy: rke2-canal, rke2-coredns, rke2-ingress-nginx, rke2-metrics-server
 
-# Options - Not used yet
-global_data_dir:  "/rke2"
-global_cluster_cidr: "10.42.0.0/16" #Default Value
-global_service_cidr: "10.43.0.0/16" #Default Value
-
-# Longhorn 
-default_longhorn_datapath: "{{ global_directory_package_target }}/longhorn"
+# Longhorn
+default_longhorn_datapath: "/data/longhorn"
 global_longhorn_datapath: "{{ datapath | default(default_longhorn_datapath) }}"
+global_longhorn_replica: 2
 
 # Rancher
 global_rancher_password: "{{ password | default('BootStrapAllTheThings') }}"

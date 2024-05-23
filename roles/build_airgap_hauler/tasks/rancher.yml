@@ -1,0 +1,55 @@
+---
+# for i in $(helm template jetstack/cert-manager --version $CERT_VERSION | awk '$1 ~ /image:/ {print $2}' | sed 's/\"//g'); do echo "    - name: "$i >> airgap_hauler.yaml; done
+- name: Add jetstack helm repo
+  kubernetes.core.helm_repository:
+    name: jetstack
+    repo_url: "https://charts.jetstack.io"
+    force_update: true
+
+- name: Cert-manager List - helm template
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      helm template jetstack/cert-manager --version {{ cert_manager_version }} | awk '$1 ~ /image:/ {print $2}' | sed s/\"//g
+    executable: /bin/bash
+  changed_when: false
+  register: certmanager_images
+
+- name: Create a list from output
+  ansible.builtin.set_fact:
+    list_images_certmanager: "{{ certmanager_images['stdout'].splitlines() }}"
+
+# Rancher
+- name: Get Rancher images from URL
+  ansible.builtin.uri:
+    url: "https://github.com/rancher/rancher/releases/download/v{{ rancher_version }}/rancher-images.txt"
+    method: GET
+    return_content: true
+  register: rancher_images
+
+- name: Create a list and Exclude images not needed for Rancher
+  ansible.builtin.set_fact:
+    list_images_rancher: "{{ rancher_images['content'].splitlines() | select('match', '^(?!.*(neuvector|minio|gke|aks|eks|sriov|harvester|mirrored|longhorn|thanos|tekton|istio|hyper|jenkins|windows)).*$') }}"
+
+- name: Add back needed images to list_images_rancher variable
+  ansible.builtin.set_fact:
+    list_images_rancher: "{{ list_images_rancher + rancher_images['content'].splitlines() | select('match', '^(.*(cluster-api|kubectl)).*$') }}"
+
+- name: Keep only the latest version of each image
+  ansible.builtin.set_fact:
+    latest_images: "{{ latest_images | default({}) | combine({item.split(':')[0]: item.split(':')[1]}) }}"
+  loop: "{{ list_images_rancher }}"
+  when: item.split(':')[0] not in latest_images or item.split(':')[1] is ansible.builtin.version(latest_images[item.split(':')[0]], '>')
+  vars:
+    latest_images: {}
+
+- name: Convert dictionary to list of "name:version" strings
+  ansible.builtin.set_fact:
+    list_images_rancher_latest: "{{ list_images_rancher_latest | default([]) + [item.key + ':' + item.value] }}"
+  loop: "{{ latest_images | dict2items }}"
+  vars:
+    list_images_rancher_latest: []
+
+- name: Kubectl fix
+  ansible.builtin.set_fact:
+    list_images_rancher_latest: "{{ list_images_rancher_latest | default([]) + ['rancher/kubectl:v1.20.2'] }}"

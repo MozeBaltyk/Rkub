@@ -1,0 +1,60 @@
+---
+# Prerequisites
+- name: Ensure admin_user exist
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    comment: "rke2 user for administration"
+    createhome: true
+
+- name: Create sysctl.conf from template
+  ansible.builtin.template:
+    src: rke2.conf
+    dest: /etc/sysctl.d/rke2.conf
+    mode: '0600'
+
+- name: Restart_sysctl
+  ansible.builtin.systemd:
+    state: restarted
+    name: systemd-sysctl
+
+# Prepare Dir
+- name: Ensure data_dir exists
+  ansible.builtin.file:
+    path: "{{ rke2_data_dir }}"
+    state: directory
+    mode: "0640"
+
+- name: Ensure dir /var/lib/rancher exists
+  ansible.builtin.file:
+    path: "/var/lib/rancher"
+    state: directory
+    mode: "0640"
+
+- name: Create Symlink between rke2_data_dir and /var/lib/rancher/rke2
+  ansible.builtin.file:
+    src: "{{ rke2_data_dir }}"
+    dest: /var/lib/rancher/rke2
+    state: link
+  when: rke2_data_dir != "/var/lib/rancher/rke2"
+
+# Common packages on all nodes
+- name: Install packages common
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zstd
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 8
+
+- name: Install packages common
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zstd
+  become: true
+  when:
+    - ansible_os_family == "Debian"

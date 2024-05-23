@@ -1,0 +1,6 @@
+---
+# https://kube-vip.io/docs/installation/daemonset/#generating-a-manifest
+- name: Create a list for Kube-VIP
+  ansible.builtin.set_fact:
+    list_images_kubevip:
+      - "ghcr.io/kube-vip/kube-vip:v{{ kubevip_version }}"

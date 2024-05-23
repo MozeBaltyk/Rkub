@@ -6,6 +6,7 @@
       - "distribution"
       - "distribution_major_version"
       - "default_ipv4"
+      - "selinux"
       - "!all,!min"
   when: >
     ansible_os_family is not defined
@@ -26,23 +27,8 @@
     - ansible_facts['services']['firewalld.service']['state'] == "running"
   tags: firewalld
 
-# Here, we start export NFS on first controler and mounting on all other controlers
-- name: Set NFS export on first node
-  ansible.builtin.import_role:
-    name: set_nfs_export
-    tasks_from: main
-  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
-  tags: nfs_export
-
-- name: Set NFS mount on other nodes
-  ansible.builtin.import_role:
-    name: set_nfs_mount
-    tasks_from: main
-  when: inventory_hostname in groups['RKE2_CONTROLLERS'][1:]
-  tags: nfs_mount
-
 # Start install
-- name: RKE2 common to worker and controler tasks
+- name: RKE2 common tasks
   vars:
     caller_role_name: controller
   ansible.builtin.import_role:
@@ -50,21 +36,26 @@
     tasks_from: main
   tags: common
 
+# Install first node
+- name: RKE2 config controler before install
+  ansible.builtin.import_tasks: config.yml
+  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
+  tags: config
+
 - name: RKE2 Install controler
   ansible.builtin.import_tasks: install.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: install
 
+- name: RKE2 start controller
+  ansible.builtin.import_tasks: start.yml
+  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
+  tags: start
+
 - name: RKE2 Get Token
   ansible.builtin.import_tasks: token.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: token
-
-# Admin setup
-- name: Arkade utils push in admin user
-  ansible.builtin.import_tasks: arkade.yml
-  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
-  tags: arkade
 
 - name: Admin user setup
   ansible.builtin.import_tasks: admin.yml
@@ -76,16 +67,10 @@
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
   tags: localhost
 
-# Utils
-- name: Install registry on first node
-  vars:
-    caller_role_name: controller
-  ansible.builtin.import_role:
-    name: install_utils_registry
-    tasks_from: main
-  when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]
-  tags: registry
+# Install other controllers
+# ...
 
+# Utils
 - name: RKE2 install nerdctl
   vars:
     caller_role_name: controller

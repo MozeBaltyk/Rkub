@@ -1,0 +1,37 @@
+---
+# tasks file for deploy_hauler
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset:
+      - "distribution"
+      - "distribution_major_version"
+      - "default_ipv4"
+      - "!all,!min"
+  when: >
+    ansible_os_family is not defined
+  tags: [always]
+
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
+
+- name: Hauler firewalld
+  vars:
+    firewalld_rules: "{{ hauler_firewalld_rules }}"
+  ansible.builtin.import_role:
+    name: set_firewalld
+    tasks_from: main
+  when:
+    - ansible_facts['services']['firewalld.service'] is defined
+    - ansible_facts['services']['firewalld.service']['state'] == "running"
+  tags: firewalld
+
+- name: Hauler Install and settings for RHEL-like OS
+  ansible.builtin.import_tasks: rhel.yml
+  when: ansible_os_family == "RedHat"
+
+- name: Send fail message if not a Redhat-like OS
+  ansible.builtin.fail:
+    msg: >
+      "deploy_hauler role currently apply only on Redhat-like OS"
+  when: ansible_os_family != "RedHat"

@@ -1,9 +1,10 @@
+---
 - name: Remove admin user (if different from root)
   ansible.builtin.user:
     name: "{{ admin_user }}"
     state: absent
-    remove: yes
+    remove: true
   failed_when: false
-  when: 
-    - admin_user is defined 
-    - admin_user != "root" 
+  when:
+    - admin_user is defined
+    - admin_user != "root"

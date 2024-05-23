@@ -1,41 +1,200 @@
-# Admin setup
-- block:
-  - name: Remove old Kubeconfig file
-    ansible.builtin.file:
-      path: "$HOME/.kube/{{ inventory_hostname }}.yaml"
-      state: absent
-    become_user: "{{ admin_user }}"
+---
+# Admin setup on first master
+- name: Admin setup
+  become: true
+  block:
+    - name: Remove old Kubeconfig file
+      ansible.builtin.file:
+        path: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+        state: absent
 
-  - name: Ensure .kube dir exist
-    ansible.builtin.file:
-      path: "$HOME/.kube"
-      state: directory
-      mode: 0700
-      recurse: yes
-    become_user: "{{ admin_user }}"
-    
-  - name: Copy kubeconfig in Admin home dir
-    ansible.builtin.copy:
-      src: "/etc/rancher/rke2/rke2.yaml"
-      dest: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
-      owner: "{{ admin_user }}"
-      group: "{{ admin_user }}"
-      force: true
-      remote_src: true
-      mode: '0600'
-    become: true
+    - name: Ensure .kube dir exist
+      ansible.builtin.file:
+        path: "/home/{{ admin_user }}/.kube"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: 0700
+        recurse: true
 
-  - name: Change localhost with master ip in kubeconfig
-    ansible.builtin.lineinfile:
-      path: "$HOME/.kube/{{ inventory_hostname }}.yaml"
-      search_string: '127.0.0.1'
-      line: "    server: https://{{ master }}:6443"
-    become_user: "{{ admin_user }}"
+    - name: Update Admin .bashrc
+      ansible.builtin.blockinfile:
+        path: "/home/{{ admin_user }}/.bashrc"
+        block: |
+          export KUBECONFIG=$HOME/.kube/{{ inventory_hostname }}.yaml
+          export CRI_CONFIG_FILE={{ rke2_data_dir }}/agent/etc/crictl.yaml
+        marker: "# {mark} ANSIBLE setup Kubeconfig and RKE2"
 
-  - name: Update Admin .bashrc
-    ansible.builtin.blockinfile:
-      path: "$HOME/.bashrc"
-      block: |
-        export KUBECONFIG="~/.kube/{{ inventory_hostname }}.yaml"
-      marker: "# {mark} ANSIBLE setup Kubeconfig"      
-    become_user: "{{ admin_user }}"
+    - name: Copy kubeconfig to admin homedir
+      ansible.builtin.copy:
+        src: "{{ rke2_kubeconfig_file }}"
+        dest: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        force: true
+        remote_src: true
+        mode: '0600'
+
+    - name: Change localhost with control_plane_endpoint in kubeconfig
+      ansible.builtin.lineinfile:
+        path: /home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml
+        search_string: '127.0.0.1'
+        line: "    server: https://{{ control_plane_endpoint }}:6443"
+
+# Push kubectl on admin user
+- name: Push Kubectl
+  become: true
+  block:
+    - name: Ensure dir exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: 0750
+        recurse: true
+      loop:
+        - "/home/{{ admin_user }}/.local"
+        - "/home/{{ admin_user }}/.local/bin"
+
+    - name: Copy kubectl binary to admin user
+      ansible.builtin.copy:
+        src: "{{ rke2_data_dir }}/bin/kubectl"
+        dest: "/home/{{ admin_user }}/.local/bin/kubectl"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        force: true
+        remote_src: true
+        mode: '0750'
+
+
+# Install helm / k9s non-airgap
+- name: Install admin tools not in Airgap
+  become: true
+  when:
+    - not airgap_install
+  block:
+    # helm
+    - name: Download Helm command line tool
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        return_content: true
+      register: helm_installer
+
+    - name: Install Helm
+      ansible.builtin.command:
+        cmd: bash
+        stdin: "{{ helm_installer.content }}"
+        creates: /usr/local/bin/helm
+      environment:
+        DESIRED_VERSION: "{{ helm_version | default('') }}"
+
+    # k9s
+    - name: Get K9S binary latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/derailed/k9s/releases/latest"
+        method: GET
+        return_content: true
+      register: k9s_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        k9s_version: "{{ k9s_release.json.tag_name | regex_replace('^v', '') }}"
+
+    - name: Ensure .local/bin dir exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0700
+        recurse: true
+      loop:
+        - "/tmp/k9s"
+
+    - name: Download k9s bin to .local/bin
+      ansible.builtin.unarchive:
+        src: "https://github.com/derailed/k9s/releases/download/v{{ k9s_version }}/k9s_Linux_amd64.tar.gz"
+        dest: "/tmp/k9s"
+        mode: '0750'
+        remote_src: true
+        validate_certs: false
+
+    - name: Copy k9s binary file
+      ansible.builtin.copy:
+        src: "/tmp/k9s/k9s"
+        dest: "/home/{{ admin_user }}/.local/bin/k9s"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        force: true
+        remote_src: true
+        mode: '0750'
+
+    - name: Cleanup tmp dir
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/k9s"
+
+# Install helm / k9s airgap
+- name: Install admin tools in Airgap
+  become_user: "{{ admin_user }}"
+  become: true
+  when:
+    - airgap_install
+  block:
+    - name: Ensure dir exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0700
+        recurse: true
+      loop:
+        - "/tmp/helm"
+        - "/tmp/k9s"
+        - "$HOME/.local/bin"
+
+    - name: Download helm bin to .local/bin
+      ansible.builtin.unarchive:
+        src: "http://{{ hauler_server }}:8080/helm.tar.gz"
+        dest: "/tmp/helm"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+        validate_certs: false
+
+    - name: Copy helm binary file
+      ansible.builtin.copy:
+        src: "/tmp/helm/linux-amd64/helm"
+        dest: "$HOME/.local/bin/helm"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+
+    - name: Download k9s bin to .local/bin
+      ansible.builtin.unarchive:
+        src: "http://{{ hauler_server }}:8080/k9s.tar.gz"
+        dest: "/tmp/k9s"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+        validate_certs: false
+
+    - name: Copy k9s binary file
+      ansible.builtin.copy:
+        src: "/tmp/k9s/k9s"
+        dest: "$HOME/.local/bin/k9s"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0750'
+        remote_src: true
+
+    - name: Cleanup tmp dir
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/tmp/helm"
+        - "/tmp/k9s"

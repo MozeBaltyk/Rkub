@@ -1,0 +1,9 @@
+---
+- name: Install Neuvector
+  hosts: RKE2_CONTROLLERS:RKE2_WORKERS
+  gather_facts: true
+  become: true
+  vars_files: ../vars/main.yml
+  tags: [ controller, worker ]
+  roles:
+    - {role: mozebaltyk.rkub.deploy_neuvector, tags: neuvector}

@@ -6,6 +6,7 @@
       - "distribution"
       - "distribution_major_version"
       - "default_ipv4"
+      - "selinux"
       - "!all,!min"
   when: >
     ansible_os_family is not defined
@@ -26,15 +27,8 @@
     - ansible_facts['services']['firewalld.service']['state'] == "running"
   tags: firewalld
 
-# NFS share
-- name: Set NFS mount on other nodes
-  ansible.builtin.import_role:
-    name: set_nfs_mount
-    tasks_from: main
-  tags: nfs_mount
-
-# Start install
-- name: RKE2 common to worker and controler tasks
+# Start install workers
+- name: RKE2 common tasks
   vars:
     caller_role_name: worker
   ansible.builtin.import_role:
@@ -42,19 +36,19 @@
     tasks_from: main
   tags: common
 
+- name: RKE2 config worker before install
+  ansible.builtin.import_tasks: config.yml
+  tags: config
+
 - name: RKE2 Install worker
   ansible.builtin.import_tasks: install.yml
   tags: install
 
-# Utils
-- name: Install registry on worker
-  vars:
-    caller_role_name: worker
-  ansible.builtin.import_role:
-    name: install_utils_registry
-    tasks_from: main
-  tags: registry
+- name: RKE2 start worker
+  ansible.builtin.import_tasks: start.yml
+  tags: start
 
+# Utils
 - name: RKE2 install nerdctl
   vars:
     caller_role_name: worker

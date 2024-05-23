@@ -7,8 +7,8 @@
       - "distribution_major_version"
       - "default_ipv4"
       - "!all,!min"
-  when: >
-    ansible_os_family is not defined
+  when:
+    - ansible_os_family is not defined
   tags: [always]
 
 - name: Populate service facts
@@ -23,9 +23,6 @@
 
 - name: Admin Uninstall
   ansible.builtin.import_tasks: admin.yml
-
-- name: NFS Uninstall
-  ansible.builtin.import_tasks: nfs.yml
 
 - name: RKE2 firewalld remove
   vars:

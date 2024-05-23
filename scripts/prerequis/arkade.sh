@@ -2,6 +2,11 @@
 set -eo pipefail
 
 find_home_profile(){
+  if [[ -z "$HOME" ]]; then
+    export user=$(whoami)
+    export HOME=$(awk -F":" -v v="$user" '{if ($1==v) print $6}' /etc/passwd)
+  fi
+
   if [[ "$SHELL" == *"/zsh" ]]; then
     HOME_PROFILE="$HOME/.zshrc"
   elif [[ "$SHELL" == *"/bash" ]]; then
@@ -41,7 +46,7 @@ install_arkade(){
       printf "\e[1;34m[INFO]\e[m Checking for updates...\n"
       if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
           printf "\e[1;33m[CHANGE]\e[m New version of arkade found, current: $CURRENT_VERSION. Updating...\n"
-          curl -L "${DOWNLOAD_URL}"/"${LATEST_VERSION}"/arkade --output $HOME/.arkade/new_arkade > /dev/null 2>&1:
+          curl -L "${DOWNLOAD_URL}"/"${LATEST_VERSION}"/arkade --output $HOME/.arkade/new_arkade > /dev/null 2>&1
           mv $HOME/.arkade/new_arkade $HOME/.arkade/bin/arkade
           chmod +x $HOME/.arkade/bin/arkade
           printf "\e[1;32m[OK]\e[m arkade has been updated to version $CURRENT_VERSION.\n"

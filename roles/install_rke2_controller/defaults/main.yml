@@ -1,25 +1,36 @@
 ---
 # defaults file for install_controler
-rke2_version: "{{ global_rke2_version }}"
 admin_user: "{{ global_install_user }}"
 master: "{{ global_master_ip }}"
+control_plane_endpoint: "{{ global_rke2_api_ip }}"
+rpm_install: "{{ global_rpm_install | bool }}"
+tarball_install: "{{ global_tarball_install | bool }}"
+airgap_install: "{{ global_airgap_install | bool }}"
 
-# Mount share
-mount_path: "{{ global_directory_mount }}"
-mount_rke2_path: "{{ mount_path }}/rke2_{{ rke2_version }}"
-mount_utils_path: "{{ mount_path }}/utils"
-mount_rke2_common_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_common_rpm_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
-mount_rke2_selinux_rpm_path: "{{ mount_rke2_path }}/{{ global_rke2_selinux_rpm_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
+# Fileserver
+hauler_server: "{{ global_hauler_ip }}"
+
+# RKE2 config
+rke2_kubeconfig_file: "/etc/rancher/rke2/rke2.yaml"
+rkub_local_kubeconfig: "~/.kube/rkub-{{ inventory_hostname }}.yaml"
+rkub_context_name: "rkub-{{ inventory_hostname }}"
+
+# Controller options
+rke2_data_dir: "{{ global_rke2_data_dir }}"
+rke2_cluster_cidr: "{{ global_rke2_cluster_cidr }}"
+rke2_service_cidr: "{{ global_rke2_service_cidr }}"
+rke2_cni: "{{ global_rke2_cni }}"
+rke2_profile_activated: "{{ global_rke2_profile_activated | bool }}"
 
 # Firewall rules
-controller_firewalld_rules: 
+controller_firewalld_rules:
   inbound:
-  - name: rke2
-    zone: public
-    ports:
-    - {port: 443, protocol: tcp}
-    - {port: 6443, protocol: tcp}
-    - {port: 2379, protocol: tcp}
-    - {port: 9345, protocol: tcp}
-    - {port: 10250, protocol: tcp}
-    - {port: 8472, protocol: udp}
+    - name: rke2
+      zone: public
+      ports:
+        - {port: 443, protocol: tcp}
+        - {port: 6443, protocol: tcp}
+        - {port: 2379, protocol: tcp}
+        - {port: 9345, protocol: tcp}
+        - {port: 10250, protocol: tcp}
+        - {port: 8472, protocol: udp}

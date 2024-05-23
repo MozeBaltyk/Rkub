@@ -1,25 +1,75 @@
+---
+# Airgap
 - name: "Deploy Longhorn"
   run_once: true
   become: true
   become_user: "{{ admin_user }}"
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_flags: "-i"
-  block: 
+  when: airgap_install
+  block:
+    - name: Deploy helm charts
+      kubernetes.core.helm:
+        atomic: true
+        name: "longhorn"
+        chart_ref: "oci://{{ master }}:5000/hauler/longhorn"
+        release_namespace: "longhorn-system"
+        create_namespace: true
+        values:
+          global:
+            cattle:
+              systemDefaultRegistry: "{{ master }}:5000"
+          ingress:
+            enabled: true
+            host: "{{ longhorn_url }}"
+          defaultSettings:
+            defaultDataPath: "{{ longhorn_datapath }}"
+            nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+          persistence:
+            defaultClassReplicaCount: "{{ longhorn_replica }}"
+        kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
 
-  - name: Deploy helm charts
-    kubernetes.core.helm:
-      atomic: true
-      name: "longhorn"
-      chart_ref: "{{ mount_helm_path }}/{{ longhorn_charts }}"
-      release_namespace: "longhorn-system"
-      create_namespace: true
-      values:
-        global:
-          cattle:
-            systemDefaultRegistry: "localhost:5000"
-        ingress:
-          enabled: true
-          host: "{{ longhorn_url }}"
-        defaultSettings:
-          defaultDataPath: "{{ longhorn_datapath }}"
-      kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+# Non-Airgap
+- name: "Deploy Longhorn"
+  run_once: true
+  become: true
+  become_user: "{{ admin_user }}"
+  become_method: ansible.builtin.sudo
+  become_flags: "-i"
+  when: not airgap_install
+  block:
+    - name: Longhorn Versions needed
+      ansible.builtin.import_role:
+        name: set_versions
+        tasks_from: only_longhorn
+      run_once: true
+
+    - name: Add longhorn chart repo
+      kubernetes.core.helm_repository:
+        name: longhorn
+        repo_url: "https://charts.longhorn.io"
+        force_update: true
+
+    - name: Deploy helm charts
+      kubernetes.core.helm:
+        atomic: true
+        name: "longhorn"
+        chart_ref: "longhorn/longhorn"
+        chart_version: "{{ longhorn_version }}"
+        release_namespace: "longhorn-system"
+        create_namespace: true
+        values:
+          ingress:
+            enabled: true
+            host: "{{ longhorn_url }}"
+          defaultSettings:
+            defaultDataPath: "{{ longhorn_datapath }}"
+            nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+          persistence:
+            defaultClassReplicaCount: "{{ longhorn_replica }}"
+        kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+
+# Common
+- name: Display Longhorn URL
+  ansible.builtin.debug:
+    msg:  "Longhorn URL : {{ longhorn_url }}"

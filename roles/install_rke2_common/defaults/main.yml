@@ -1,3 +1,2 @@
 ---
 # defaults file for install_common
-admin_user: "{{ global_install_user }}"

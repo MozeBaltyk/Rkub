@@ -1,0 +1,8 @@
+---
+- name: Install Longhorn
+  hosts: RKE2_CONTROLLERS:RKE2_WORKERS
+  gather_facts: false
+  vars_files: ../../playbooks/vars/main.yml
+  tags: [ controller, worker ]
+  roles:
+    - {role: deploy_longhorn, tags: longhorn}

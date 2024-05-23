@@ -1,36 +1,123 @@
-- name: Create the NERDCTL directory
-  ansible.builtin.file:
-    path: /etc/nerdctl
-    state: directory
-    mode: '0754'
+---
+# Non-airgap
+- name: Install Nerdctl in non-Airgap
+  become: true
+  when:
+    - not airgap_install
+  block:
+    - name: Create the NERDCTL directory
+      ansible.builtin.file:
+        path: /etc/nerdctl
+        state: directory
+        mode: '0754'
 
-- name: Check if file does exist
-  ansible.builtin.stat:
-    path: /usr/local/bin/nerdctl
-  register: file_data
+    - name: Check if file does exist
+      ansible.builtin.stat:
+        path: /usr/local/bin/nerdctl
+      register: file_data
 
-- name: Copy Nerdctl bin into /usr/local/bin
-  ansible.builtin.copy:
-    src: "{{ mount_pkg_nerdctl }}"
-    dest: /usr/local/bin/
-    owner: "{{ admin_user }}"
-    group: "{{ admin_user }}"
-    mode: '0750'
-    remote_src: true
-  when: not file_data.stat.exists
+    - name: Download and install nerdctl when not already here
+      when: not file_data.stat.exists
+      block:
+        - name: Get Nerdctl binary latest release
+          ansible.builtin.uri:
+            url: "https://api.github.com/repos/containerd/nerdctl/releases/latest"
+            method: GET
+            return_content: true
+          register: nerdctl_release
 
-- name: Copy NERDCTL configuration file
-  ansible.builtin.template:
-    src: nerdctl.toml
-    dest: /etc/nerdctl
-    owner: "{{ admin_user }}"
-    group: "{{ admin_user }}"
-    mode: '0644'
+        - name: Extract latest release tag
+          ansible.builtin.set_fact:
+            nerdctl_version: "{{ nerdctl_release.json.tag_name | regex_replace('^v', '') }}"
 
-- name: Copy SUDO configuration
-  ansible.builtin.template:
-    src: secure-path
-    dest: /etc/sudoers.d
-    owner: "root"
-    group: "root"
-    mode: '0440'
+        - name: Create tmp dir
+          ansible.builtin.file:
+            path: /tmp/nerdctl
+            state: directory
+            mode: '0750'
+
+        - name: Download Nerdctl bin into /usr/local/bin
+          ansible.builtin.unarchive:
+            src: "https://github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz"
+            dest: "/tmp/nerdctl"
+            mode: '0750'
+            remote_src: true
+            validate_certs: false
+
+        - name: Copy nerdctl binary file
+          ansible.builtin.copy:
+            src: "/tmp/nerdctl/nerdctl"
+            dest: "/usr/local/bin/nerdctl"
+            mode: '0750'
+            remote_src: true
+
+        - name: Cleanup tmp dir
+          ansible.builtin.file:
+            path: /tmp/nerdctl
+            state: absent
+
+# Airgap
+- name: Install Nerdctl in Airgap
+  become: true
+  when:
+    - airgap_install
+  block:
+    - name: Create the NERDCTL directory
+      ansible.builtin.file:
+        path: /etc/nerdctl
+        state: directory
+        mode: '0754'
+
+    - name: Check if file does exist
+      ansible.builtin.stat:
+        path: /usr/local/bin/nerdctl
+      register: file_data
+
+    - name: Push nerdctl when not already here
+      when: not file_data.stat.exists
+      block:
+        - name: Create tmp dir
+          ansible.builtin.file:
+            path: /tmp/nerdctl
+            state: directory
+            mode: '0750'
+
+        - name: Download Nerdctl bin into /usr/local/bin
+          ansible.builtin.unarchive:
+            src: "http://{{ hauler_server }}:8080/nerdctl.tar.gz"
+            dest: "/tmp/nerdctl"
+            mode: '0750'
+            remote_src: true
+            validate_certs: false
+
+        - name: Copy nerdctl binary file
+          ansible.builtin.copy:
+            src: "/tmp/nerdctl/nerdctl"
+            dest: "/usr/local/bin/nerdctl"
+            mode: '0750'
+            remote_src: true
+
+        - name: Cleanup tmp dir
+          ansible.builtin.file:
+            path: /tmp/nerdctl
+            state: absent
+
+# Common
+- name: Config Nerdctl
+  become: true
+  block:
+    - name: Copy NERDCTL configuration file
+      ansible.builtin.template:
+        src: nerdctl.toml
+        dest: /etc/nerdctl
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0644'
+
+    - name: Copy SUDO configuration
+      ansible.builtin.template:
+        src: secure-path
+        dest: /etc/sudoers.d
+        owner: "root"
+        group: "root"
+        mode: '0440'

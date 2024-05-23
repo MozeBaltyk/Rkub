@@ -1,16 +1,22 @@
-## Get Token if one exist
-- name: Check if token already exist
-  ansible.builtin.stat:
-    path: "{{ mount_path }}/token"
-  register: token
+---
+## Get Token if one exist from Hauler
+- name: Get token from URL if exist
+  ansible.builtin.uri:
+    url: "http://{{ hauler_server }}:8080/token"
+    method: GET
+    validate_certs: false
+    return_content: true
+  register: token_response
+  failed_when: false
 
-- block: 
-  - name: Read node-token from NFS share
-    ansible.builtin.slurp:
-      src: "{{ mount_path }}/token"
-    register: node_token
+- name: Set variable with token
+  ansible.builtin.set_fact:
+    rke2_config_token: "{{ token_response['content'] }}"
+  when: token_response.status == 200
 
-  - name: Store Master node-token
-    ansible.builtin.set_fact:
-      rke2_config_token: "{{ node_token['content'] | b64decode | regex_replace('\n', '') }}"
-  when: token['stat'].exists
+## Get Token from first master
+- name: Set token from first master for other nodes
+  ansible.builtin.set_fact:
+    rke2_config_token: "{{ hostvars[groups['RKE2_CONTROLLERS'][0]].rke2_config_token }}"
+  when:
+    - inventory_hostname not in groups['RKE2_CONTROLLERS'][0]

@@ -1,0 +1,5 @@
+---
+# tasks file for install_utils_kubevip
+- name: Install in airgap mode
+  ansible.builtin.import_tasks: install_airgap.yml
+  when: caller_role_name == "controller"

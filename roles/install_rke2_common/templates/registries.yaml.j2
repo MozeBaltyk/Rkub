@@ -1,0 +1,7 @@
+mirrors:
+  docker.io:
+    endpoint:
+      - http://{{ hauler_server }}:5000
+  {{ hauler_server }}:5000:
+    endpoint:
+      - http://{{ hauler_server }}:5000

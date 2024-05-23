@@ -1,0 +1,13 @@
+---
+# defaults file for deploy_hauler
+deploy_hauler_directory: "{{ global_directory_package_target }}"
+deploy_hauler_server: "{{ global_hauler_ip }}"
+
+# Firewall rules
+hauler_firewalld_rules:
+  inbound:
+    - name: hauler
+      zone: public
+      ports:
+        - {port: 5000, protocol: tcp}
+        - {port: 8080, protocol: tcp}

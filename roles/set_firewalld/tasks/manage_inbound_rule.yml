@@ -1,19 +1,21 @@
-- name: Manage {{ rule['name'] }} firewalld service definition
-  template:
+---
+- name: Manage firewalld service definition {{ rule['name'] }}
+  ansible.builtin.template:
     src: service.xml.j2
     dest: "{{ firewalld_path }}/services/{{ rule['name'] }}.xml"
     owner: root
     group: root
     mode: "0644"
-    force: yes
-  notify: restart firewalld
+    force: true
+  notify: Restart firewalld
 
-- meta: flush_handlers
+- name: Flush handlers now
+  ansible.builtin.meta: flush_handlers
 
-- name: Manage {{ rule['name'] }} firewalld service
-  firewalld:
+- name: Manage firewalld service {{ rule['name'] }}
+  ansible.posix.firewalld:
     service: "{{ rule['name'] }}"
-    permanent: yes
-    immediate: yes
-    zone: "{{ rule['zone'] | default( firewalld_default_zone ) }}"
+    permanent: true
+    immediate: true
+    zone: "{{ rule['zone'] | default(firewalld_default_zone) }}"
     state: enabled

@@ -1,0 +1,63 @@
+---
+- name: Append lists together
+  ansible.builtin.set_fact:
+    list_images: "{{ list_images_longhorn | default([]) + list_images_certmanager | default([]) + list_images_rancher_latest | default([]) + list_images_neuvector | default([]) + list_images_kubevip | default([]) }}"
+
+- name: Append lists for RPM install with custom registry
+  ansible.builtin.set_fact:
+    list_images: "{{ list_images | default([]) + list_images_rke2 }}"
+  when: rpm_install
+
+- name: Install Hauler if not present
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      curl -sfL https://get.hauler.dev | HAULER_VERSION={{ hauler_version }} bash
+    executable: /bin/bash
+    creates: /usr/local/bin/hauler
+  changed_when: false
+
+- name: Download and Unarchive hauler from URL
+  ansible.builtin.unarchive:
+    src: "https://github.com/rancherfederal/hauler/releases/download/v{{ hauler_version }}/hauler_{{ hauler_version }}_linux_amd64.tar.gz"
+    dest: "{{ directory_package }}"
+    remote_src: true
+
+- name: Clean up files
+  ansible.builtin.file:
+    path: "{{ directory_package }}/{{ item }}"
+    state: absent
+  loop:
+    - "LICENSE"
+    - "README.md"
+
+- name: Push template
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ directory_package }}/{{ item | basename | regex_replace('.j2$', '') }}"
+    mode: 0660
+  loop:
+    - "airgap_hauler.yaml.j2"
+
+# Hauler Store
+- name: Display Info
+  ansible.builtin.debug:
+    msg: "Start Hauler store - this step may take some times..."
+
+- name: Hauler store the all things
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      hauler store sync -f {{ directory_package }}/airgap_hauler.yaml
+    executable: /bin/bash
+  args:
+    chdir: "{{ directory_package }}"
+  changed_when: false
+
+- name: Compress files using zstd and create an archive
+  ansible.builtin.command:
+    "hauler store save -f ../{{ tar_zst_name }}"
+  args:
+    chdir: "{{ directory_package }}"
+  changed_when: false
+  when: archive_wanted

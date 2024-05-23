@@ -1,0 +1,74 @@
+{% if list_images|length > 0 %}
+# images
+apiVersion: content.hauler.cattle.io/v1alpha1
+kind: Images
+metadata:
+  name: rancher-images
+  annotations:
+    hauler.dev/platform: linux/amd64
+spec:
+  images:
+{% for item in list_images %}
+    - name: {{ item }}
+{% endfor %}
+{% endif %}
+{% if rancher_wanted or longhorn_wanted or neuvector_wanted %}
+# Helm Charts
+---
+apiVersion: content.hauler.cattle.io/v1alpha1
+kind: Charts
+metadata:
+  name: rancher-charts
+spec:
+  charts:
+{% if rancher_wanted %}
+    - name: rancher
+      repoURL: https://releases.rancher.com/server-charts/latest
+      version: {{ rancher_version }}
+    - name: cert-manager
+      repoURL: https://charts.jetstack.io
+      version: {{ cert_manager_version }}
+{% endif %}
+{% if longhorn_wanted %}
+    - name: longhorn
+      repoURL: https://charts.longhorn.io
+      version: {{ longhorn_version }}
+{% endif %}
+{% if neuvector_wanted %}
+    - name: core
+      repoURL: https://neuvector.github.io/neuvector-helm/
+      version: {{ neuvector_version }}
+{% endif %}
+{% endif %}
+# Files and RPM
+---
+apiVersion: content.hauler.cattle.io/v1alpha1
+kind: Files
+metadata:
+  name: rancher-files
+spec:
+  files:
+    # RPM Common to both method
+    - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-common-{{ rke2_version }}.rke2r1-0.el{{ rhel_version }}.x86_64.rpm
+    - path: https://github.com/rancher/rke2-selinux/releases/download/v0.17.stable.1/rke2-selinux-0.17-1.el{{ rhel_version }}.noarch.rpm
+    - path: https://rpm.rancher.io/public.key
+    {% if rpm_install -%}
+    # RPM method
+    - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-agent-{{ rke2_version }}.rke2r1-0.el{{ rhel_version }}.x86_64.rpm
+    - path: https://github.com/rancher/rke2-packaging/releases/download/v{{ rke2_version }}%2Brke2r1.stable.0/rke2-server-{{ rke2_version }}.rke2r1-0.el{{ rhel_version }}.x86_64.rpm
+    {% endif -%}
+    {% if tarball_install -%}
+    # Tarball method
+    - path: https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/rke2-images.linux-amd64.tar.zst
+    - path: https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/rke2.linux-amd64.tar.gz
+    - path: https://github.com/rancher/rke2/releases/download/v{{ rke2_version }}%2Brke2r1/sha256sum-amd64.txt
+    - name: install.sh
+      path: https://get.rke2.io
+    {% endif -%}
+    # Addons
+    - name: helm.tar.gz
+      path: https://get.helm.sh/helm-v{{ helm_version }}-linux-amd64.tar.gz
+    - name: nerdctl.tar.gz
+      path: https://github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
+    - name: k9s.tar.gz
+      path: https://github.com/derailed/k9s/releases/download/v{{ k9s_version }}/k9s_Linux_amd64.tar.gz

@@ -1,26 +1,120 @@
+---
+# Airgap
+- name: "Deploy Cert-manager and Rancher"
+  run_once: true
+  become: true
+  become_user: "{{ admin_user }}"
+  become_method: ansible.builtin.sudo
+  become_flags: "-i"
+  when: airgap_install
+  block:
+    # Cert-manager
+    - name: Deploy helm charts
+      kubernetes.core.helm:
+        atomic: true
+        name: "cert-manager"
+        chart_ref: "oci://{{ master }}:5000/hauler/cert-manager"
+        release_namespace: "cert-manager"
+        create_namespace: true
+        values:
+          installCRDs: true
+          image:
+            repository: "{{ master }}:5000/cert/cert-manager-controller"
+          webhook:
+            image:
+              repository: "{{ master }}:5000/cert/cert-manager-webhook"
+          cainjector:
+            image:
+              repository: "{{ master }}:5000/cert/cert-manager-cainjector"
+          startupapicheck:
+            image:
+              repository: "{{ master }}:5000/cert/cert-manager-ctl"
+        kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+
+    # Rancher
+    - name: Deploy helm charts
+      kubernetes.core.helm:
+        atomic: true
+        name: "rancher"
+        chart_ref: "oci://{{ master }}:5000/hauler/rancher"
+        release_namespace: "cattle-system"
+        create_namespace: true
+        values:
+          useBundledSystemChart: true
+          bootstrapPassword: "{{ rancher_password }}"
+          replicas: 1
+          systemDefaultRegistry: "{{ master }}:5000"
+          rancherImage: "{{ master }}:5000/rancher/rancher"
+          hostname: "{{ rancher_url }}"
+          auditLog:
+            level: 2
+            destination: hostPath
+        kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+
+# Non-Airgap
 - name: "Deploy Rancher"
   run_once: true
   become: true
   become_user: "{{ admin_user }}"
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_flags: "-i"
+  when: not airgap_install
   block:
+    # Get Versions
+    - name: Rancher Versions needed
+      ansible.builtin.import_role:
+        name: set_versions
+        tasks_from: only_rancher
+      run_once: true
 
-  - name: Deploy helm charts
-    kubernetes.core.helm:
-      atomic: true
-      name: "rancher"
-      chart_ref: "{{ mount_helm_path }}/{{ rancher_charts }}"
-      release_namespace: "cattle-system"
-      create_namespace: true
-      values:
-        useBundledSystemChart: true
-        bootstrapPassword: "{{ rancher_password }}"
-        replicas: 1
-        systemDefaultRegistry: localhost:5000
-        rancherImage: localhost:5000/rancher/rancher
-        hostname: "{{ rancher_url }}"
-        auditLog:
-          level: 2 
-          destination: hostPath
-      kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+    # Cert-manager
+    - name: Add Cert-Manager chart repo
+      kubernetes.core.helm_repository:
+        name: jetstack
+        repo_url: "https://charts.jetstack.io"
+        force_update: true
+
+    - name: Deploy helm charts
+      kubernetes.core.helm:
+        atomic: true
+        name: "cert-manager"
+        chart_ref: "jetstack/cert-manager"
+        chart_version: "{{ cert_manager_version }}"
+        release_namespace: "cert-manager"
+        create_namespace: true
+        values:
+          installCRDs: true
+        kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+
+    # Rancher
+    - name: Add Rancher chart repo
+      kubernetes.core.helm_repository:
+        name: rancher
+        repo_url: "https://releases.rancher.com/server-charts/latest"
+        force_update: true
+
+
+    - name: Deploy helm charts
+      kubernetes.core.helm:
+        atomic: true
+        name: "rancher"
+        chart_ref: "rancher/rancher"
+        chart_version: "{{ rancher_version }}"
+        release_namespace: "cattle-system"
+        create_namespace: true
+        values:
+          useBundledSystemChart: true
+          bootstrapPassword: "{{ rancher_password }}"
+          replicas: 1
+          #systemDefaultRegistry: "{{ master }}:5000"
+          #rancherImage: "{{ master }}:5000/rancher/rancher"
+          hostname: "{{ rancher_url }}"
+          auditLog:
+            level: 2
+            destination: hostPath
+        kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
+
+# Common
+- name: Display Rancher URL
+  ansible.builtin.debug:
+    msg:  "Rancher URL : {{ rancher_url }}"

@@ -1,17 +1,19 @@
 ---
 # tasks file for deploy_longhorn
 - name: Gather facts
-  setup:
+  ansible.builtin.setup:
     gather_subset:
       - "distribution"
       - "distribution_major_version"
+      - "default_ipv4"
       - "!min"
   when: >
     ansible_os_family is not defined
+  tags: [always]
 
-- name: Tasks for RHEL-like OS
-  import_tasks: install.yml
+- name: Prerequis needed on all nodes
+  ansible.builtin.import_tasks: install.yml
 
 - name: Deploy with the Helm Charts on master
-  import_tasks: deploy.yml
+  ansible.builtin.import_tasks: deploy.yml
   when: inventory_hostname in groups['RKE2_CONTROLLERS'][0]

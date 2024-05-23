@@ -1,0 +1,27 @@
+---
+# Stable version from URL
+- name: Set Neuvector Versions variables
+  when: stable_channel_wanted
+  block:
+    # export NEU_VERSION=$(curl -s https://api.github.com/repos/neuvector/neuvector-helm/releases/latest | jq -r .tag_name)
+    - name: Get Neuvector latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/neuvector/neuvector-helm/releases/latest"
+        method: GET
+        return_content: true
+      register: neuvector_release
+
+    - name: Extract latest release tag
+      ansible.builtin.set_fact:
+        neuvector_version: "{{ neuvector_release.json.tag_name | regex_replace('^v', '') }}"
+
+# Version defined in this Ansible collection
+- name: Set Neuvector Versions variables
+  ansible.builtin.set_fact:
+    neuvector_version: "{{ global_versions['neuvector'] }}"
+  when: not stable_channel_wanted
+
+# Common
+- name: Display Neuvector version
+  ansible.builtin.debug:
+    msg:  "Neuvector version to be installed is {{ neuvector_version }}"
