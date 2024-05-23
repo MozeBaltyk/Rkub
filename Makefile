@@ -30,7 +30,7 @@ quickstart:
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/backend && terraform apply "terraform.tfplan"
 	# Create infra with Terrafrom
-	@cd ./test/DO/infra && terraform init
+	@cd ./test/DO/infra && terraform init -backend-config="bucket=terraform-backend-rkub-quickstart"
 	@cd ./test/DO/infra && terraform plan -out=terraform.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
@@ -40,7 +40,7 @@ quickstart:
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Run playbooks
-	@sleep 10
+	@sleep 30
 	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u root
 
 .PHONY: quickstart-cleanup
@@ -51,7 +51,7 @@ quickstart-cleanup:
     eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
     done
 	# Delete infra with Terrafrom
-	@cd ./test/DO/infra && terraform init
+	@cd ./test/DO/infra && terraform init -backend-config="bucket=terraform-backend-rkub-quickstart"
 	@cd ./test/DO/infra && terraform plan -destroy -out=terraform.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
