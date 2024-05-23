@@ -4,7 +4,8 @@ Ansible Collection to deploy and test Rancher stacks (RKE2, Rancher, Longhorn an
 
 [![Releases](https://img.shields.io/github/release/MozeBaltyk/rkub)](https://github.com/MozeBaltyk/rkub/releases)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0/)
-[![Stage airgap](https://github.com/MozeBaltyk/Rkub/actions/workflows/stage.yml/badge.svg)](https://github.com/MozeBaltyk/Rkub/actions/workflows/stage.yml)
+[![Stage airgap](https://github.com/MozeBaltyk/Rkub/actions/workflows/stage_airgap.yml/badge.svg)](https://github.com/MozeBaltyk/Rkub/actions/workflows/stage_airgap.yml)
+[![Stage online](https://github.com/MozeBaltyk/Rkub/actions/workflows/stage_online.yml/badge.svg)](https://github.com/MozeBaltyk/Rkub/actions/workflows/stage_online.yml)
 
 ## Description
 
