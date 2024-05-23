@@ -87,7 +87,9 @@ But the target would be to handle all the usecase below:
 
 ## Quickstart
 
-As prerequisities, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` inside API tabs.
+As prerequisities, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` in Digital Ocean's API tabs.
+
+Then perform those followings steps:
 
 - Clone the main branch of this project to a machine with an internet access:
       `git clone -b main https://github.com/MozeBaltyk/Rkub.git`
@@ -109,9 +111,12 @@ make quickstart
 make quickstart-cleanup
 ```
 
+NB: Quickstart is meant to deploy in DO a quick RKE2 cluster for testing purpose, and without taking into account airgap problematics.
+Airgap actions are adressed in below procedure.
+
 ## Global Usage
 
-1. Preparation steps for classic ansible controller:
+1. Preparatory steps for a normal ansible controller:
 
 - Create some SSH keys and deploy it on target hosts.
 
@@ -192,7 +197,7 @@ ansible-playbook mozebaltyk.rkub.neuvector.yml     # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-## Container methode
+## Ansible collection in Container
 
 1. This is a custom script which imitate Execution-Environement:
 
@@ -202,11 +207,11 @@ ansible-playbook mozebaltyk.rkub.neuvector.yml     # All arguments below are not
 
 All prerequisites are set in folder `meta` and `meta/execution-environment.yml`. So it's possible to use ansible-builder (though not tested yet).
 
-## Some details
+## TLDR; few interesting details
 
 I favored the tarball installation since it's the most compact and install rely on a archive tar.zst which stay on all nodes.
-The rpm install is much straight forward but match only system with RPM (so mainly Redhat-like) and require a registry.
-But the rpm method with the stable channel is used for the quickstart install.
+The rpm install is much straight forward and a bit faster but match only system with RPM (so mainly Redhat-like) and require a registry.
+So because of this point, the rpm method with the rke2 stable channel is used for the quickstart install.
 
 **build** have for purpose to create a tar.zst with following content using hauler tool:
 

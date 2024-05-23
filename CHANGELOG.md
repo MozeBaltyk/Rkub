@@ -16,6 +16,7 @@
 - longhorn version: 1.6.0
 
 - neuvector version: 2.7.2
+
 <!-- End Release -->
 
 <!-- Features -->
