@@ -28,10 +28,7 @@ This Ansible collection will install in airgap environnement RKE2 (one controler
 
 <!-- END -->
 
-This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/).
-I tried it and like the idea but I was frustrated with Shell scripting limitations. So I decided to rewrite it in Ansible.
-
-With Ansible:
+This Project is mainly inspired from [Clemenko/rke_airgap_install](https://github.com/clemenko/rke_airgap_install/) but Shell scripting brings limitations. So Let's rewrite it in Ansible which comes with below benefices:
 
 - Idempotency: can be relaunch multiple time.
 
@@ -52,6 +49,8 @@ Add-on from my part:
 - Uninstall playbook to cleanup (and maybe reinstall if needed).
 
 - Ansible Collection Released, so possibilty to get back to older versions.
+
+- Quickstart script to triggers an RKE2 cluster in Digital Ocean and delete it once required.
 
 ## Use Case
 
