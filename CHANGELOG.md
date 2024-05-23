@@ -31,19 +31,19 @@
   - [x] Deploy Neuvector.
   - [x] Script to containerize in an Execution-Env.
   - [x] Script to uninstall everything
-  - [ ] More install customization and options 🚧
-  - [ ] Improve collection to run as true collection 🚧
-  - [ ] CI 🚧
+  - [x] More install customization and options
+  - [x] Improve collection to run as true collection
+  - [x] CI workflows
+  - [x] Quickstart script
 
 Use case:
   - [x] airgap
-  - [ ] non-airgap 🚧
-  - [ ] standalone 🚧
+  - [x] non-airgap
+  - [x] standalone
   - [x] one-master-and-x-workers
   - [ ] masters-HA 🚧
   - [ ] update/upgrade 🚧
   - [ ] change-config 🚧
-
 <!-- End Features -->
 
 <!-- Fix -->
