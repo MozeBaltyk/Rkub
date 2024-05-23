@@ -60,6 +60,7 @@ runs:
         - longhorn version: ${longhorn_version}
           
         - neuvector version: ${neuvector_version}
+
         EOF
 
         sed -i -n -e "1,/<\!-- Release -->/ p" -e"/<\!-- End Release -->/,$ p" -e "/<\!-- Release -->/ r version.txt" CHANGELOG.md
