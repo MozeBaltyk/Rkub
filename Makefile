@@ -1,10 +1,6 @@
 # Rkub Makefile
-
-export INVENTORY       ?= ./plugins/inventory
-export ANSIBLE_USER    ?= admin
-export EXTRA_VARS      := $(shell for n in $$INSTALL_VARS; do echo "-e $$n "; done )
-export OPT             ?=
-export ANSIBLE_ARGS     = -i $(INVENTORY) -u $(ANSIBLE_USER) $(EXTRA_VARS) $(OPT)
+export WORKERS         ?= 0
+export MASTERS         ?= 1
 
 export REGISTRY        ?= localhost:5000
 export EE_IMAGE        ?= ee-rkub
@@ -26,24 +22,25 @@ quickstart:
     eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
     done
 	# S3 bucket for Backend
-	cd ./test/DO/backend && terraform init
-	cd ./test/DO/backend && terraform plan -out=terraform.tfplan \
-	  -var "do_token=$(DO_PAT)" \
+	@cd ./test/DO/backend && terraform init
+	@cd ./test/DO/backend && terraform plan -out=terraform.tfplan \
+	  -var "token=$(DO_PAT)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	cd ./test/DO/backend && terraform apply "terraform.tfplan"
+	@cd ./test/DO/backend && terraform apply "terraform.tfplan"
 	# Create infra with Terrafrom
-	cd ./test/DO/infra && terraform init
-	cd ./test/DO/infra && terraform plan -out=terraform.tfplan \
-	  -var "do_token=$(DO_PAT)" \
-	  -var "do_worker_count=0" \
-	  -var "do_controller_count=1" \
-	  -var "do_instance_size=s-2vcpu-4gb" \
+	@cd ./test/DO/infra && terraform init
+	@cd ./test/DO/infra && terraform plan -out=terraform.tfplan \
+	  -var "token=$(DO_PAT)" \
+	  -var "worker_count=$(WORKERS)" \
+	  -var "controller_count=$(MASTERS)" \
+	  -var "instance_size=s-2vcpu-4gb" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	cd ./test/DO/infra && terraform apply "terraform.tfplan"
+	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Run playbooks
-	cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" --private-key DO/.key -u root
+	@sleep 10
+	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u root
 
 .PHONY: quickstart-cleanup
 ## Remove RKE2 cluster from quickstart on Digital Ocean
@@ -55,17 +52,17 @@ quickstart-cleanup:
 	# Delete infra with Terrafrom
 	cd ./test/DO/infra && terraform init
 	cd ./test/DO/infra && terraform plan -destroy -out=terraform.tfplan \
-	  -var "do_token=$(DO_PAT)" \
-	  -var "do_worker_count=0" \
-	  -var "do_controller_count=1" \
-	  -var "do_instance_size=s-2vcpu-4gb" \
+	  -var "token=$(DO_PAT)" \
+	  -var "worker_count=$(WORKERS)" \
+	  -var "controller_count=$(MASTERS)" \
+	  -var "instance_size=s-2vcpu-4gb" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Remove S3 bucket for Backend
 	cd ./test/DO/backend && terraform init
 	cd ./test/DO/backend && terraform plan -destroy -out=terraform.tfplan \
-	  -var "do_token=$(DO_PAT)" \
+	  -var "token=$(DO_PAT)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	cd ./test/DO/backend && terraform apply "terraform.tfplan"
@@ -73,7 +70,7 @@ quickstart-cleanup:
 .PHONY: build
 ## Run playbook to build rkub zst package on localhost.
 build:
-	ansible-playbook ./playbooks/tasks/build.yml
+	ansible-playbook ./playbooks/build.yml
 
 .PHONY: ee-container
 ## Create an execution-env container with all dependencies inside

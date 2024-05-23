@@ -1,35 +1,30 @@
 ###
-### Provider part
+### SSH
 ###
-terraform {
-  required_providers {
-    digitalocean = {
-      source = "digitalocean/digitalocean"
-      version = "~> 2.0"
-    }
-  }
-  backend "s3" {
-    skip_region_validation      = true
-    skip_credentials_validation = true
-    skip_metadata_api_check     = true
-    skip_requesting_account_id  = true
-    use_path_style              = true
-    skip_s3_checksum            = true
-    endpoints = {
-      s3 = "https://fra1.digitaloceanspaces.com"
-    }
-    region                      = "fra1"
-    // bucket                   = "terraform-backend-github"
-    key                         = "terraform.tfstate"
-  }
+
+# Generate an SSH key pair
+resource "tls_private_key" "global_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
-provider "digitalocean" {
-  token = var.do_token
+# Save the public key to a local file
+resource "local_file" "ssh_public_key" {
+  filename = "${path.module}/.key.pub"
+  content  = tls_private_key.global_key.public_key_openssh
 }
 
-data "digitalocean_ssh_key" "terraform" {
-  name = "terraform"
+# Save the private key to a local file
+resource "local_sensitive_file" "ssh_private_key" {
+  filename        = "${path.module}/.key.private"
+  content         = tls_private_key.global_key.private_key_pem
+  file_permission = "0600"
+}
+
+# Upload the public key to DigitalOcean
+resource "digitalocean_ssh_key" "ssh_key" {
+  name       = "rkub-${var.GITHUB_RUN_ID}-ssh"
+  public_key = tls_private_key.global_key.public_key_openssh
 }
 
 ###
@@ -60,19 +55,19 @@ resource "null_resource" "placeholder" {
 
 # Droplet Instance for RKE2 Cluster - Manager
 resource "digitalocean_droplet" "controllers" {
-    count = var.do_controller_count
+    count = var.controller_count
     image = var.do_system
     name = "controller${count.index}.${var.domain}"
     region = var.region
-    size = var.do_instance_size
+    size = var.instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
       "controller",
       "${var.do_system}_controllers",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
-    ssh_keys = [ data.digitalocean_ssh_key.terraform.id ]
-    #user_data = data.cloudinit_config.server_config.rendered
+    ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
+    # if airgap, S3 bucket is mounted on master to get the resources
     user_data = var.airgap ? data.cloudinit_config.server_airgap_config.rendered : null
 }
 
@@ -83,20 +78,18 @@ output "ip_address_controllers" {
 
 # Droplet Instance for RKE2 Cluster - Workers
 resource "digitalocean_droplet" "workers" {
-    count = var.do_worker_count
+    count = var.worker_count
     image = var.do_system
     name = "worker${count.index}.${var.domain}"
     region = var.region
-    size = var.do_instance_size
+    size = var.instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
       "worker",
       "${var.do_system}_workers",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
-    ssh_keys = [
-      data.digitalocean_ssh_key.terraform.id
-    ]
+    ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
 }
 
 ###
@@ -121,12 +114,4 @@ resource "local_file" "ansible_inventory" {
     }
   )
   filename = "../../inventory/hosts.ini"
-}
-
-###
-### Display
-###
-output "ip_address_workers" {
-  value = digitalocean_droplet.workers[*].ipv4_address
-  description = "The public IP address of your rke2 workers."
 }

@@ -1,21 +1,21 @@
-variable "do_token" {
+variable "token" {
   description = "Digital Ocean API Token"
 }
 
 ### s-2vcpu-4gb
-variable "do_instance_size" {
+variable "instance_size" {
   type = string
   description = "VM size"
   default = "s-2vcpu-4gb"
 }
 
-variable "do_controller_count" {
+variable "controller_count" {
   type    = number
   description = "number of controllers"
   default = "1"
 }
 
-variable "do_worker_count" {
+variable "worker_count" {
   type    = number
   description = "number of workers"
   default = "2"

@@ -22,7 +22,7 @@ node_modules
 package*.json
 *.tfstate
 hosts.ini
-.key
+.key*
 Chart.lock
 .venv/
 __pycache__

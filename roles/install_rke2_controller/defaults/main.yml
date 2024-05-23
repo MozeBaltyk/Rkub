@@ -12,7 +12,7 @@ hauler_server: "{{ global_hauler_ip }}"
 
 # RKE2 config
 rke2_kubeconfig_file: "/etc/rancher/rke2/rke2.yaml"
-rkub_local_kubeconfig: "~/.kube/rkub.yaml"
+rkub_local_kubeconfig: "~/.kube/rkub-{{ inventory_hostname }}.yaml"
 rkub_context_name: "rkub-{{ inventory_hostname }}"
 
 # Controller options

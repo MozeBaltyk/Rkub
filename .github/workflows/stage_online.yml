@@ -75,10 +75,10 @@ jobs:
           cd ./DO/infra
           terraform plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
-          -var "do_token=${DO_PAT}" \
-          -var "do_worker_count=${WORKER_COUNT}" \
-          -var "do_controller_count=${CONTROLLER_COUNT}" \
-          -var "do_instance_size=${SIZE}" \
+          -var "token=${DO_PAT}" \
+          -var "worker_count=${WORKER_COUNT}" \
+          -var "controller_count=${CONTROLLER_COUNT}" \
+          -var "instance_size=${SIZE}" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}" \
@@ -156,11 +156,11 @@ jobs:
 
       - name: Test if reachable
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m ping -u root -vv --private-key .key
+          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m ping -u root
 
       - name: Wait for cloud-init to finish
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v --private-key .key
+          ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
 
   install:
     name: Install
@@ -198,19 +198,19 @@ jobs:
 
       - name: Run playbook install.yml
         run: |
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/install.yml -e "airgap=false" -e "method=tarball"
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root playbooks/install.yml -e "airgap=false" -e "method=tarball"
 
       #- name: Run playbook rancher.yml
       #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/rancher.yml
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root playbooks/rancher.yml
 
       #- name: Run playbook longhorn.yml
       #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/longhorn.yml
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root playbooks/longhorn.yml
 
       #- name: Run playbook neuvector.yml
       #  run: |
-      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root --private-key .key playbooks/neuvector.yml
+      #    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root playbooks/neuvector.yml
 
   test:
     name: Test
@@ -305,10 +305,10 @@ jobs:
         run: |
           terraform plan -destroy -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
-          -var "do_token=${DO_PAT}" \
-          -var "do_worker_count=${WORKER_COUNT}" \
-          -var "do_controller_count=${CONTROLLER_COUNT}" \
-          -var "do_instance_size=${SIZE}" \
+          -var "token=${DO_PAT}" \
+          -var "worker_count=${WORKER_COUNT}" \
+          -var "controller_count=${CONTROLLER_COUNT}" \
+          -var "instance_size=${SIZE}" \
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}" \
