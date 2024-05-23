@@ -1,6 +1,7 @@
 # Rkub Makefile
 export WORKERS         ?= 0
 export MASTERS         ?= 1
+export SIZE_MATTERS    ?= "s-2vcpu-4gb"
 
 export REGISTRY        ?= localhost:5000
 export EE_IMAGE        ?= ee-rkub
@@ -34,7 +35,7 @@ quickstart:
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
 	  -var "controller_count=$(MASTERS)" \
-	  -var "instance_size=s-2vcpu-4gb" \
+	  -var "instance_size=$(SIZE_MATTERS)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
@@ -50,22 +51,22 @@ quickstart-cleanup:
     eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
     done
 	# Delete infra with Terrafrom
-	cd ./test/DO/infra && terraform init
-	cd ./test/DO/infra && terraform plan -destroy -out=terraform.tfplan \
+	@cd ./test/DO/infra && terraform init
+	@cd ./test/DO/infra && terraform plan -destroy -out=terraform.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
 	  -var "controller_count=$(MASTERS)" \
-	  -var "instance_size=s-2vcpu-4gb" \
+	  -var "instance_size=$(SIZE_MATTERS)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	cd ./test/DO/infra && terraform apply "terraform.tfplan"
+	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Remove S3 bucket for Backend
-	cd ./test/DO/backend && terraform init
-	cd ./test/DO/backend && terraform plan -destroy -out=terraform.tfplan \
+	@cd ./test/DO/backend && terraform init
+	@cd ./test/DO/backend && terraform plan -destroy -out=terraform.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	cd ./test/DO/backend && terraform apply "terraform.tfplan"
+	@cd ./test/DO/backend && terraform apply "terraform.tfplan"
 
 .PHONY: build
 ## Run playbook to build rkub zst package on localhost.
