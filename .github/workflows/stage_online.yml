@@ -282,18 +282,6 @@ jobs:
         with:
           terraform_version: "1.7.3"
 
-      - name: Download inventory
-        uses: actions/download-artifact@v4
-        with:
-          name: inventory
-
-      - name: Get key and hosts.ini
-        run: |
-          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/.key.private  ${{ github.workspace }}/DO/infra/.key.private
-          cp ${{ github.workspace }}/.key.pub  ${{ github.workspace }}/DO/infra/.key.pub
-        shell: bash
-
       - name: Terraform Init
         id: init
         run: |
