@@ -13,7 +13,7 @@ env:
   BUCKET: "rkub-github-action-${{ github.run_id }}"
   #BUCKET: "terraform-backend-github"
   CONTROLLER_COUNT: "1"
-  WORKER_COUNT: "0"
+  WORKER_COUNT: "1"
   SIZE: "s-2vcpu-4gb"
   AIRGAP: "false"
 
@@ -96,16 +96,6 @@ jobs:
           cd ./DO/infra
           terraform apply terraform.tfplan
 
-      # No relative path allowed
-      - name: Inventory artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: inventory
-          path: |
-            ${{ github.workspace }}/test/inventory/hosts.ini
-          if-no-files-found: error
-          retention-days: 1
-
       # Save Artifacts
       - name: Install s3fs-fuse on Ubuntu
         run: |
@@ -146,11 +136,6 @@ jobs:
         uses: actions/checkout@v4
 
       # Get Artifacts 
-      - name: Download inventory
-        uses: actions/download-artifact@v4
-        with:
-          name: inventory
-
       - name: Install s3fs-fuse on Ubuntu
         run: |
           sudo apt-get install automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
@@ -173,8 +158,6 @@ jobs:
         run: |
           cp ${MOUNT_POINT}/hosts.ini ${{ github.workspace }}/test/inventory/hosts.ini
           cp ${MOUNT_POINT}/.key.private ${{ github.workspace }}/test/DO/infra/.key.private
-          ls -l ${{ github.workspace }}/test/inventory/hosts.ini
-          ls -l ${{ github.workspace }}/test/DO/infra/.key.private
 
       # Test
       - name: Set up Python
@@ -217,18 +200,31 @@ jobs:
           cd ..
           make prerequis
 
-      - name: Download inventory
-        uses: actions/download-artifact@v4
-        with:
-          name: inventory
-
-      - name: Get key and hosts.ini
+      # Get Artifacts 
+      - name: Install s3fs-fuse on Ubuntu
         run: |
-          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/.key.private DO/infra/.key.private
-          cp ${{ github.workspace }}/.key.pub  DO/infra/.key.pub
-        shell: bash
+          sudo apt-get install automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
+          git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+          cd s3fs-fuse
+          ./autogen.sh
+          ./configure
+          make
+          sudo make install
 
+      - name: Mount Space Bucket
+        run: |
+          echo "${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}:${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" > ./passwd-s3fs
+          chmod 600 ./passwd-s3fs
+          mkdir -p ${MOUNT_POINT}
+          s3fs ${BUCKET} ${MOUNT_POINT} -o url=https://${REGION}.digitaloceanspaces.com -o passwd_file=./passwd-s3fs
+          df -Th ${MOUNT_POINT}
+
+      - name: Get Artificats
+        run: |
+          cp ${MOUNT_POINT}/hosts.ini ${{ github.workspace }}/test/inventory/hosts.ini
+          cp ${MOUNT_POINT}/.key.private ${{ github.workspace }}/test/DO/infra/.key.private
+
+      # Install
       - name: Run playbook install.yml
         run: |
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root playbooks/install.yml -e "airgap=false" -e "method=tarball"
@@ -260,18 +256,31 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Download inventory
-        uses: actions/download-artifact@v4
-        with:
-          name: inventory
-
-      - name: Get key and hosts.ini
+      # Get Artifacts 
+      - name: Install s3fs-fuse on Ubuntu
         run: |
-          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/.key.private DO/infra/.key.private
-          cp ${{ github.workspace }}/.key.pub DO/infra/.key.pub
-        shell: bash
+          sudo apt-get install automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
+          git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+          cd s3fs-fuse
+          ./autogen.sh
+          ./configure
+          make
+          sudo make install
 
+      - name: Mount Space Bucket
+        run: |
+          echo "${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}:${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" > ./passwd-s3fs
+          chmod 600 ./passwd-s3fs
+          mkdir -p ${MOUNT_POINT}
+          s3fs ${BUCKET} ${MOUNT_POINT} -o url=https://${REGION}.digitaloceanspaces.com -o passwd_file=./passwd-s3fs
+          df -Th ${MOUNT_POINT}
+
+      - name: Get Artificats
+        run: |
+          cp ${MOUNT_POINT}/hosts.ini ${{ github.workspace }}/test/inventory/hosts.ini
+          cp ${MOUNT_POINT}/.key.private ${{ github.workspace }}/test/DO/infra/.key.private
+
+      # Test
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
