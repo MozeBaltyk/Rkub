@@ -98,8 +98,8 @@ jobs:
       - name: Display and Checks
         run: |
           ls -la ${{ github.workspace }}/test/inventory/
-          ls -la ${{ github.workspace }}/DO/infra/
-          ls -la ${{ github.workspace }}/DO/infra/
+          ls -la ${{ github.workspace }}/test/DO/infra/
+          ls -la ${{ github.workspace }}/test/DO/infra/
           cat inventory/hosts.ini
 
       # No relative path allowed
@@ -109,8 +109,8 @@ jobs:
           name: inventory
           path: |
             ${{ github.workspace }}/test/inventory/hosts.ini
-            ${{ github.workspace }}/DO/infra/.key.private
-            ${{ github.workspace }}/DO/infra/.key.pub
+            ${{ github.workspace }}/test/DO/infra/.key.private
+            ${{ github.workspace }}/test/DO/infra/.key.pub
           if-no-files-found: error
 
   reachable:
@@ -137,14 +137,14 @@ jobs:
         run: |
           ls -la ${{ github.workspace }}
           ls -la ${{ github.workspace }}/test/inventory/
-          ls -la ${{ github.workspace }}/DO/infra/
+          ls -la ${{ github.workspace }}/test/DO/infra/
           cat ${{ github.workspace }}/hosts.ini
 
       - name: Get key and hosts.ini
         run: |
           cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/.key.private  ${{ github.workspace }}/DO/infra/.key.private
-          cp ${{ github.workspace }}/.key.pub  ${{ github.workspace }}/DO/infra/.key.pub
+          cp ${{ github.workspace }}/.key.private  DO/infra/.key.private
+          cp ${{ github.workspace }}/.key.pub  DO/infra/.key.pub
         shell: bash
 
       - name: Set up Python
@@ -195,8 +195,8 @@ jobs:
       - name: Get key and hosts.ini
         run: |
           cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/.key.private  ${{ github.workspace }}/DO/infra/.key.private
-          cp ${{ github.workspace }}/.key.pub  ${{ github.workspace }}/DO/infra/.key.pub
+          cp ${{ github.workspace }}/.key.private DO/infra/.key.private
+          cp ${{ github.workspace }}/.key.pub  DO/infra/.key.pub
         shell: bash
 
       - name: Run playbook install.yml
@@ -238,8 +238,8 @@ jobs:
       - name: Get key and hosts.ini
         run: |
           cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/.key.private  ${{ github.workspace }}/DO/infra/.key.private
-          cp ${{ github.workspace }}/.key.pub  ${{ github.workspace }}/DO/infra/.key.pub
+          cp ${{ github.workspace }}/.key.private DO/infra/.key.private
+          cp ${{ github.workspace }}/.key.pub DO/infra/.key.pub
         shell: bash
 
       - name: Install dependencies
