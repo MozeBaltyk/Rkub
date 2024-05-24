@@ -95,13 +95,6 @@ jobs:
           cd ./DO/infra
           terraform apply terraform.tfplan
 
-      - name: Display and Checks
-        run: |
-          ls -la ${{ github.workspace }}/test/inventory/
-          ls -la ${{ github.workspace }}/test/DO/infra/
-          ls -la ${{ github.workspace }}/test/DO/infra/
-          cat inventory/hosts.ini
-
       # No relative path allowed
       - name: Inventory artifacts
         uses: actions/upload-artifact@v4
@@ -136,15 +129,17 @@ jobs:
       - name: Check if inventory present
         run: |
           ls -la ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/test
+          ls -la ${{ github.workspace }}/test/DO
           ls -la ${{ github.workspace }}/test/inventory/
           ls -la ${{ github.workspace }}/test/DO/infra/
-          cat ${{ github.workspace }}/hosts.ini
+          cat ${{ github.workspace }}/test/hosts.ini
 
       - name: Get key and hosts.ini
         run: |
-          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/.key.private  DO/infra/.key.private
-          cp ${{ github.workspace }}/.key.pub  DO/infra/.key.pub
+          cp ${{ github.workspace }}/test/hosts.ini inventory/hosts.ini
+          cp ${{ github.workspace }}/test/.key.private  DO/infra/.key.private
+          cp ${{ github.workspace }}/test/.key.pub  DO/infra/.key.pub
         shell: bash
 
       - name: Set up Python
