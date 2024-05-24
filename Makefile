@@ -1,7 +1,7 @@
 # Rkub Makefile
 export WORKERS         ?= 0
 export MASTERS         ?= 1
-export SIZE_MATTERS    ?= "s-2vcpu-4gb"
+export SIZE_MATTERS    ?= "s-4vcpu-8gb"
 
 export REGISTRY        ?= localhost:5000
 export EE_IMAGE        ?= ee-rkub

@@ -234,6 +234,13 @@ jobs:
         run: |
           cd ..
           make prerequis
+          ansible --version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install ansible
+          ansible --version
 
       # Get Artifacts 
       - name: Install s3fs-fuse on Ubuntu
