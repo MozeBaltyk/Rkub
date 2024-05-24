@@ -26,7 +26,7 @@ resource "digitalocean_ssh_key" "ssh_key" {
   name       = "rkub-${var.GITHUB_RUN_ID}-ssh"
   public_key = tls_private_key.global_key.public_key_openssh
 }
-
+ 
 ###
 ### VPC
 ###

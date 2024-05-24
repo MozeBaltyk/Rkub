@@ -15,6 +15,7 @@ env:
   CONTROLLER_COUNT: "1"
   WORKER_COUNT: "1"
   SIZE: "s-2vcpu-4gb"
+  AIRGAP: "false"
 
 jobs:
   bucket:
@@ -82,7 +83,7 @@ jobs:
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}" \
-          -var "airgap=false" \
+          -var "airgap=${AIRGAP}" \
           -var "terraform_backend_bucket_name=${BUCKET}"
         continue-on-error: true
 
@@ -102,9 +103,13 @@ jobs:
           name: inventory
           path: |
             ${{ github.workspace }}/test/inventory/hosts.ini
-            ${{ github.workspace }}/test/DO/infra/.key.private
-            ${{ github.workspace }}/test/DO/infra/.key.pub
           if-no-files-found: error
+          retention-days: 1
+
+      - name: Save Secret
+        id: save_secret
+        run: |
+          echo "SSH_PRIVATE_KEY=$( cat ${{ github.workspace }}/test/DO/infra/.key.private )" >> $GITHUB_ENV
 
   reachable:
     name: Reachable
@@ -130,16 +135,13 @@ jobs:
         run: |
           ls -la ${{ github.workspace }}/inventory
           ls -la ${{ github.workspace }}/test
-          ls -la ${{ github.workspace }}/test/DO
-          ls -la ${{ github.workspace }}/test/inventory/
-          ls -la ${{ github.workspace }}/test/DO/infra/
-          cat ${{ github.workspace }}/inventory/hosts.ini
+          ls -la ${{ github.workspace }}/
+          cat ${{ github.workspace }}/hosts.ini
 
       - name: Get key and hosts.ini
         run: |
-          cp ${{ github.workspace }}/inventory/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/inventory/.key.private  DO/infra/.key.private
-          cp ${{ github.workspace }}/inventory/.key.pub  DO/infra/.key.pub
+          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+          echo "${{ env.SSH_PRIVATE_KEY }}"" > DO/infra/.key.private
         shell: bash
 
       - name: Set up Python
