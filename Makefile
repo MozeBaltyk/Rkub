@@ -43,9 +43,9 @@ quickstart:
 	@sleep 30
 	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u root
 
-.PHONY: quickstart-cleanup
+.PHONY: cleanup
 ## Remove RKE2 cluster from quickstart on Digital Ocean
-quickstart-cleanup:
+cleanup:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
     eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
@@ -67,6 +67,21 @@ quickstart-cleanup:
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/backend && terraform apply "terraform.tfplan"
+
+.PHONY: longhorn
+## Install longhorn after quickstart on Digital Ocean
+longhorn:
+	@cd ./test && ansible-playbook playbooks/longhorn.yml -e "stable=true" -e "airgap=false" -u root
+
+.PHONY: rancher
+## Install rancher after quickstart on Digital Ocean
+rancher:
+	@cd ./test && ansible-playbook playbooks/rancher.yml -e "stable=true" -e "airgap=false" -u root
+
+.PHONY: neuvector
+## Install neuvector after quickstart on Digital Ocean
+neuvector:
+	@cd ./test && ansible-playbook playbooks/neuvector.yml -e "stable=true" -e "airgap=false" -u root
 
 .PHONY: build
 ## Run playbook to build rkub zst package on localhost.
