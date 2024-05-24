@@ -70,6 +70,7 @@ resource "digitalocean_droplet" "controllers" {
     ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
     # if airgap, S3 bucket is mounted on master to get the resources
     user_data = var.airgap ? data.cloudinit_config.server_airgap_config.rendered : null
+    depends_on = [ null_resource.placeholder, digitalocean_ssh_key.ssh_key ] # Ensure VPC and SSH key are created first
 }
 
 output "ip_address_controllers" {
@@ -91,6 +92,7 @@ resource "digitalocean_droplet" "workers" {
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
+    depends_on = [ null_resource.placeholder, digitalocean_ssh_key.ssh_key ] # Ensure VPC and SSH key are created first
 }
 
 ###
