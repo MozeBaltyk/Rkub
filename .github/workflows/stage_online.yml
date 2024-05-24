@@ -97,9 +97,9 @@ jobs:
 
       - name: Display and Checks
         run: |
-          ls -l ${{ github.workspace }}/test/inventory/hosts.ini
-          ls -l ${{ github.workspace }}/DO/infra/.key.private
-          ls -l ${{ github.workspace }}/DO/infra/.key.pub
+          ls -la ${{ github.workspace }}/test/inventory/
+          ls -la ${{ github.workspace }}/DO/infra/
+          ls -la ${{ github.workspace }}/DO/infra/
           cat inventory/hosts.ini
 
       # No relative path allowed
@@ -135,9 +135,9 @@ jobs:
 
       - name: Check if inventory present
         run: |
-          ls -l ${{ github.workspace }}
-          ls -l ${{ github.workspace }}/test/inventory/
-          ls -l ${{ github.workspace }}/DO/infra/
+          ls -la ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/test/inventory/
+          ls -la ${{ github.workspace }}/DO/infra/
           cat ${{ github.workspace }}/hosts.ini
 
       - name: Get key and hosts.ini
