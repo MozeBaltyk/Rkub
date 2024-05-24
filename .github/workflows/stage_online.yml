@@ -13,7 +13,7 @@ env:
   BUCKET: "rkub-github-action-${{ github.run_id }}"
   #BUCKET: "terraform-backend-github"
   CONTROLLER_COUNT: "1"
-  WORKER_COUNT: "1"
+  WORKER_COUNT: "0"
   SIZE: "s-2vcpu-4gb"
   AIRGAP: "false"
 
@@ -302,7 +302,7 @@ jobs:
           -var "spaces_access_key_id=${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}" \
           -var "spaces_access_key_secret=${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" \
           -var "mount_point=${MOUNT_POINT}" \
-          -var "airgap=false" \
+          -var "airgap=${AIRGAP}" \
           -var "terraform_backend_bucket_name=${BUCKET}"
         continue-on-error: true
 
