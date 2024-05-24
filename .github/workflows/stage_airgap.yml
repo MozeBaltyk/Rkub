@@ -290,10 +290,10 @@ jobs:
     if: always()
 
     steps:
-      - name: Delay half an hour
+      - name: Delay 10min
         uses: whatnick/wait-action@master
         with:
-          time: '1800s'
+          time: '600s'
 
   cleanup:
     name: Cleanup

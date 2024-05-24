@@ -40,12 +40,13 @@ resource "digitalocean_vpc" "rkub-project-network" {
 }
 
 # https://github.com/digitalocean/terraform-provider-digitalocean/issues/446
-resource "time_sleep" "wait_200_seconds_to_destroy" {
+resource "time_sleep" "wait_for_vpc" {
   depends_on = [digitalocean_vpc.rkub-project-network]
-  destroy_duration = "200s"
+  destroy_duration = "200s" # Adjust duration as needed
+  create_duration = "30s"  # Adjust duration as needed
 }
 resource "null_resource" "placeholder" {
-  depends_on = [time_sleep.wait_200_seconds_to_destroy]
+  depends_on = [time_sleep.wait_for_vpc]
 }
 #
 
