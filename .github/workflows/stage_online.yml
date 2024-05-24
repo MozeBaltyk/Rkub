@@ -95,9 +95,11 @@ jobs:
           cd ./DO/infra
           terraform apply terraform.tfplan
 
-      - name: Display inventory
+      - name: Display and Checks
         run: |
           ls -l ${{ github.workspace }}/test/inventory/hosts.ini
+          ls -l ${{ github.workspace }}/DO/infra/.key.private
+          ls -l ${{ github.workspace }}/DO/infra/.key.pub
           cat inventory/hosts.ini
 
       # No relative path allowed
@@ -134,6 +136,8 @@ jobs:
       - name: Check if inventory present
         run: |
           ls -l ${{ github.workspace }}
+          ls -l ${{ github.workspace }}/test/inventory/
+          ls -l ${{ github.workspace }}/DO/infra/
           cat ${{ github.workspace }}/hosts.ini
 
       - name: Get key and hosts.ini
