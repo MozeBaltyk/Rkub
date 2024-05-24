@@ -109,7 +109,7 @@ jobs:
       - name: Save Secret
         id: save_secret
         run: |
-          echo "SSH_PRIVATE_KEY=$( cat ${{ github.workspace }}/test/DO/infra/.key.private )" >> $GITHUB_ENV
+          echo "SSH_PRIVATE_KEY=\"$( cat ${{ github.workspace }}/test/DO/infra/.key.private )\"" >> $GITHUB_ENV
 
   reachable:
     name: Reachable
