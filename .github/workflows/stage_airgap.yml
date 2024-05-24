@@ -69,7 +69,7 @@ jobs:
         run: |
           cd ./test
           if [[ $BUCKET != "terraform-backend-github" ]]; then \
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/hauler_build.yml -e dir_build="${MOUNT_POINT}" -e longhorn="true" -e archive="false"; \
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/hauler_build.yml -e dir_build="${MOUNT_POINT}" -e archive="false"; \
           fi
 
   deploy:
@@ -136,6 +136,8 @@ jobs:
           name: inventory
           path: |
             ${{ github.workspace }}/test/inventory/hosts.ini
+            ${{ github.workspace }}/DO/infra/.key.private
+            ${{ github.workspace }}/DO/infra/.key.pub
           if-no-files-found: error
 
   reachable:
@@ -160,6 +162,7 @@ jobs:
 
       - name: Check if inventory present
         run: |
+          ls -l /hosts.ini
           cat ${{ github.workspace }}/hosts.ini
 
       - name: Set up Python
@@ -176,12 +179,10 @@ jobs:
 
       - name: Get key and hosts.ini
         run: |
-          echo "$SSH_KEY" > .key
-          chmod 400 .key
           cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+          cp ${{ github.workspace }}/.key.private  ${{ github.workspace }}/DO/infra/.key.private
+          cp ${{ github.workspace }}/.key.pub  ${{ github.workspace }}/DO/infra/.key.pub
         shell: bash
-        env:
-          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
       - name: Test if reachable
         run: |
@@ -218,12 +219,10 @@ jobs:
 
       - name: Get key and hosts.ini
         run: |
-          echo "$SSH_KEY" > .key
-          chmod 400 .key
           cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+          cp ${{ github.workspace }}/.key.private  ${{ github.workspace }}/DO/infra/.key.private
+          cp ${{ github.workspace }}/.key.pub  ${{ github.workspace }}/DO/infra/.key.pub
         shell: bash
-        env:
-          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
       - name: Run playbook hauler_server.yml
         run: |
@@ -267,12 +266,10 @@ jobs:
 
       - name: Get key and hosts.ini
         run: |
-          echo "$SSH_KEY" > .key
-          chmod 400 .key
           cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
+          cp ${{ github.workspace }}/.key.private  ${{ github.workspace }}/DO/infra/.key.private
+          cp ${{ github.workspace }}/.key.pub  ${{ github.workspace }}/DO/infra/.key.pub
         shell: bash
-        env:
-          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
       - name: Install dependencies
         run: |
@@ -318,14 +315,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.3"
-
-      - name: Get key
-        run: |
-          echo "$SSH_KEY" > .key
-          chmod 400 .key
-        shell: bash
-        env:
-          SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
       - name: Terraform Init
         id: init
