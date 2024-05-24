@@ -106,10 +106,29 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - name: Save Secret
-        id: save_secret
+      # Save Artifacts
+      - name: Install s3fs-fuse on Ubuntu
         run: |
-          echo "SSH_PRIVATE_KEY=Test" >> $GITHUB_ENV
+          sudo apt-get install automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
+          git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+          cd s3fs-fuse
+          ./autogen.sh
+          ./configure
+          make
+          sudo make install
+
+      - name: Mount Space Bucket
+        run: |
+          echo "${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}:${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" > ./passwd-s3fs
+          chmod 600 ./passwd-s3fs
+          mkdir -p ${MOUNT_POINT}
+          s3fs ${BUCKET} ${MOUNT_POINT} -o url=https://${REGION}.digitaloceanspaces.com -o passwd_file=./passwd-s3fs
+          df -Th ${MOUNT_POINT}
+
+      - name: Save files
+        run: |
+          cp ${{ github.workspace }}/test/inventory/hosts.ini ${MOUNT_POINT}/hosts.ini
+          cp ${{ github.workspace }}/test/DO/infra/.key.private ${MOUNT_POINT}/.key.private
 
   reachable:
     name: Reachable
@@ -126,24 +145,38 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
+      # Get Artifacts 
       - name: Download inventory
         uses: actions/download-artifact@v4
         with:
           name: inventory
 
-      - name: Check if inventory present
+      - name: Install s3fs-fuse on Ubuntu
         run: |
-          ls -la ${{ github.workspace }}/inventory
-          ls -la ${{ github.workspace }}/test
-          ls -la ${{ github.workspace }}/
-          cat ${{ github.workspace }}/hosts.ini
+          sudo apt-get install automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
+          git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+          cd s3fs-fuse
+          ./autogen.sh
+          ./configure
+          make
+          sudo make install
 
-      - name: Get key and hosts.ini
+      - name: Mount Space Bucket
         run: |
-          cp ${{ github.workspace }}/hosts.ini inventory/hosts.ini
-          echo "${{ env.SSH_PRIVATE_KEY }}"" > DO/infra/.key.private
-        shell: bash
+          echo "${{secrets.DIGITALOCEAN_SPACES_ACCESS_TOKEN}}:${{secrets.DIGITALOCEAN_SPACES_SECRET_KEY}}" > ./passwd-s3fs
+          chmod 600 ./passwd-s3fs
+          mkdir -p ${MOUNT_POINT}
+          s3fs ${BUCKET} ${MOUNT_POINT} -o url=https://${REGION}.digitaloceanspaces.com -o passwd_file=./passwd-s3fs
+          df -Th ${MOUNT_POINT}
 
+      - name: Get Artificats
+        run: |
+          cp ${MOUNT_POINT}/hosts.ini ${{ github.workspace }}/test/inventory/hosts.ini
+          cp ${MOUNT_POINT}/.key.private ${{ github.workspace }}/test/DO/infra/.key.private
+          ls -l ${{ github.workspace }}/test/inventory/hosts.ini
+          ls -l ${{ github.workspace }}/test/DO/infra/.key.private
+
+      # Test
       - name: Set up Python
         id: setup_python
         uses: actions/setup-python@v5
