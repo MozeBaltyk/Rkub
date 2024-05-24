@@ -128,18 +128,18 @@ jobs:
 
       - name: Check if inventory present
         run: |
-          ls -la ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/inventory
           ls -la ${{ github.workspace }}/test
           ls -la ${{ github.workspace }}/test/DO
           ls -la ${{ github.workspace }}/test/inventory/
           ls -la ${{ github.workspace }}/test/DO/infra/
-          cat ${{ github.workspace }}/test/hosts.ini
+          cat ${{ github.workspace }}/inventory/hosts.ini
 
       - name: Get key and hosts.ini
         run: |
-          cp ${{ github.workspace }}/test/hosts.ini inventory/hosts.ini
-          cp ${{ github.workspace }}/test/.key.private  DO/infra/.key.private
-          cp ${{ github.workspace }}/test/.key.pub  DO/infra/.key.pub
+          cp ${{ github.workspace }}/inventory/hosts.ini inventory/hosts.ini
+          cp ${{ github.workspace }}/inventory/.key.private  DO/infra/.key.private
+          cp ${{ github.workspace }}/inventory/.key.pub  DO/infra/.key.pub
         shell: bash
 
       - name: Set up Python
