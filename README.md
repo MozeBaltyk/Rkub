@@ -101,13 +101,19 @@ Then perform those followings steps:
 export DO_PAT="xxxxxxxxxx"
 export AWS_ACCESS_KEY_ID="xxxxxxxxxxxx"
 export AWS_SECRET_ACCESS_KEY="xxxxxxxxxxx"
-export WORKERS=2
+export WORKERS=2 # Default 0
+export MASTERS=3 # Default 1
 
 # Create RKE2 cluster
 make quickstart
 
 # Delete RKE2 cluster
-make quickstart-cleanup
+make cleanup
+
+# Other components
+make longhorn
+make rancher
+make neuvector
 ```
 
 NB: Quickstart is meant to deploy in DO a quick RKE2 cluster for testing purpose, and without taking into account airgap problematics.

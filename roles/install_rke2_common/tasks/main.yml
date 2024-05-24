@@ -27,6 +27,7 @@
 
 - name: Get Token if one exist
   ansible.builtin.import_tasks: token.yml
+  when: caller_role_name != "first_controller"
 
 - name: RKE2 Install specific for RHEL-like OS
   ansible.builtin.import_tasks: rhel.yml
