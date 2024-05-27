@@ -1,7 +1,7 @@
 # Rkub Makefile
 export WORKERS         ?= 0
 export MASTERS         ?= 1
-export SIZE_MATTERS    ?= "s-4vcpu-8gb"
+export PROVIDER        ?= DO
 
 export REGISTRY        ?= localhost:5000
 export EE_IMAGE        ?= ee-rkub
@@ -10,14 +10,50 @@ export EE_IMAGE_PATH   ?= $$HOME/$(EE_IMAGE)-$(EE_TAG)
 export EE_PACKAGE_NAME ?= rke2_rancher_longhorn.zst
 export EE_PACKAGE_PATH ?= $$HOME/$(EE_PACKAGE_NAME)
 
+ifeq ($(PROVIDER), DO)
+    USER_PRIVILEGED := root
+    KEY_PATH := ./DO/infra/.key.private
+    DO_SIZE_MATTERS ?= s-4vcpu-8gb
+else ifeq ($(PROVIDER), AZ)
+    USER_PRIVILEGED := terraform
+    KEY_PATH := ./Azure/infra/.key.private
+    AZ_SIZE_MATTERS ?= standard_d8s_v5
+else
+    $(error PROVIDER should be chosen between AZ or DO)
+endif
+
 .PHONY: prerequis
 ## Install required Ansible Collections
 prerequis:
 	$(MAKE) -C ./scripts/prerequis all
 
 .PHONY: quickstart
-## Create a RKE2 cluster on Digital Ocean
+## Create a RKE2 cluster on choosen cloud provider
 quickstart:
+ifeq ($(PROVIDER), DO)
+	@$(MAKE) do_quickstart
+else ifeq ($(PROVIDER), AZ)
+	@$(MAKE) az_quickstart
+else
+	@echo "PROVIDER should be chosen between AZ or DO"
+	@exit 1
+endif
+
+.PHONY: cleanup
+## Cleanup RKE2 and VM from choosen cloud provider
+cleanup:
+ifeq ($(PROVIDER), DO)
+	@$(MAKE) do_cleanup
+else ifeq ($(PROVIDER), AZ)
+	@$(MAKE) az_cleanup
+else
+	@echo "PROVIDER should be chosen between AZ or DO"
+	@exit 1
+endif
+
+.PHONY: do_quickstart
+## Create a RKE2 cluster on Digital Ocean
+do_quickstart:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
     eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
@@ -35,17 +71,38 @@ quickstart:
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
 	  -var "controller_count=$(MASTERS)" \
-	  -var "instance_size=$(SIZE_MATTERS)" \
+	  -var "instance_size=$(DO_SIZE_MATTERS)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Run playbooks
 	@sleep 30
-	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u root
+	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u root -i ./DO/infra/.key.private
 
-.PHONY: cleanup
-## Remove RKE2 cluster from quickstart on Digital Ocean
-cleanup:
+.PHONY: az_quickstart
+## Create a RKE2 cluster on Azure
+az_quickstart:
+	# Checks vars settings
+	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
+    eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
+    done
+	# Create infra with Terrafrom
+	@cd ./test/Azure/infra && terraform init
+	@cd ./test/Azure/infra && terraform plan -out=terraform.tfplan \                                                                                                                            ⏎ ✹ ✭
+	  -var "azure_subscription_id=${AZ_SUBS_ID}" \
+	  -var "azure_client_id=${AZ_CLIENT_ID}" \
+	  -var "azure_client_secret=${AZ_CLIENT_SECRET}" \
+	  -var "azure_tenant_id=${AZ_TENANT_ID}" \
+	  -var "instance_size=$(AZ_SIZE_MATTERS)"
+	@cd ./test/Azure/infra && terraform apply "terraform.tfplan"
+	# Run playbooks
+	@sleep 30
+	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u terraform -i ./Azure/infra/.key.private
+
+
+.PHONY: do_cleanup
+## Remove RKE2 cluster from Digital Ocean
+do_cleanup:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
     eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
@@ -56,7 +113,7 @@ cleanup:
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
 	  -var "controller_count=$(MASTERS)" \
-	  -var "instance_size=$(SIZE_MATTERS)" \
+	  -var "instance_size=$(DO_SIZE_MATTERS)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
@@ -68,20 +125,37 @@ cleanup:
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/backend && terraform apply "terraform.tfplan"
 
+.PHONY: az_cleanup
+## Remove RKE2 cluster from Azure
+az_cleanup:
+	# Checks vars settings
+	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
+    eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
+    done
+	# Create infra with Terrafrom
+	@cd ./test/Azure/infra && terraform init
+	@cd ./test/Azure/infra && terraform plan -destroy -out=terraform.tfplan \                                                                                                                            ⏎ ✹ ✭
+	  -var "azure_subscription_id=${AZ_SUBS_ID}" \
+	  -var "azure_client_id=${AZ_CLIENT_ID}" \
+	  -var "azure_client_secret=${AZ_CLIENT_SECRET}" \
+	  -var "azure_tenant_id=${AZ_TENANT_ID}" \
+	  -var "instance_size=$(AZ_SIZE_MATTERS)"
+	@cd ./test/Azure/infra && terraform apply "terraform.tfplan"
+
 .PHONY: longhorn
 ## Install longhorn after quickstart on Digital Ocean
 longhorn:
-	@cd ./test && ansible-playbook playbooks/longhorn.yml -e "stable=true" -e "airgap=false" -u root
+	@cd ./test && ansible-playbook playbooks/longhorn.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) -i $(KEY_PATH)
 
 .PHONY: rancher
 ## Install rancher after quickstart on Digital Ocean
 rancher:
-	@cd ./test && ansible-playbook playbooks/rancher.yml -e "stable=true" -e "airgap=false" -u root
+	@cd ./test && ansible-playbook playbooks/rancher.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) -i $(KEY_PATH)
 
 .PHONY: neuvector
 ## Install neuvector after quickstart on Digital Ocean
 neuvector:
-	@cd ./test && ansible-playbook playbooks/neuvector.yml -e "stable=true" -e "airgap=false" -u root
+	@cd ./test && ansible-playbook playbooks/neuvector.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) -i $(KEY_PATH)
 
 .PHONY: build
 ## Run playbook to build rkub zst package on localhost.
