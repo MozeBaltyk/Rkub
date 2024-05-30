@@ -1,4 +1,19 @@
 ---
+# Common
+- name: "Deploy Neuvector"
+  run_once: true
+  become: true
+  become_user: "{{ admin_user }}"
+  become_method: ansible.builtin.sudo
+  become_flags: "-i"
+  block:
+    - name: Create an Label namespace
+      ansible.builtin.shell: >
+        export KUBECONFIG=/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml;
+        kubectl create namespace neuvector;
+        kubectl label  namespace neuvector "pod-security.kubernetes.io/enforce=privileged";
+      changed_when: false
+
 # Airgap
 - name: "Deploy Neuvector"
   run_once: true
