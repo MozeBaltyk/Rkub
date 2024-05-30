@@ -3,16 +3,20 @@
 ###
 ### SSH
 ###
+
+# Generate an SSH key pair
 resource "tls_private_key" "global_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
+# Save the public key to a local file
 resource "local_file" "ssh_public_key_openssh" {
   filename = "${path.module}/.key.pub"
   content  = tls_private_key.global_key.public_key_openssh
 }
 
+# Save the private key to a local file
 resource "local_sensitive_file" "ssh_private_key_pem" {
   filename        = "${path.module}/.key.private"
   content         = tls_private_key.global_key.private_key_pem
@@ -38,7 +42,7 @@ resource "azurerm_resource_group" "rkub-project" {
 ###
 
 # Azure virtual network space
-resource "azurerm_virtual_network" "rkub-project" {
+resource "azurerm_virtual_network" "rkub-project-network" {
   name                = "${var.prefix}-network"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.rkub-project.location
@@ -49,11 +53,20 @@ resource "azurerm_virtual_network" "rkub-project" {
   }
 }
 
+resource "time_sleep" "wait_for_vpc" {
+  depends_on = [azurerm_virtual_network.rkub-project-network]
+  destroy_duration = "100s" # Adjust duration as needed
+  create_duration = "20s"  # Adjust duration as needed
+}
+resource "null_resource" "placeholder" {
+  depends_on = [time_sleep.wait_for_vpc]
+}
+
 # Azure internal subnet
 resource "azurerm_subnet" "rkub-project-internal" {
   name                 = "rkub-project-internal"
   resource_group_name  = azurerm_resource_group.rkub-project.name
-  virtual_network_name = azurerm_virtual_network.rkub-project.name
+  virtual_network_name = azurerm_virtual_network.rkub-project-network.name
   address_prefixes     = ["10.0.0.0/16"]
 }
 
@@ -126,6 +139,48 @@ resource "azurerm_network_interface" "worker-interfaces" {
 }
 
 
+# Network Security Group
+resource "azurerm_network_security_group" "rkub-project-nsg" {
+  name                = "${var.prefix}-nsg"
+  location            = azurerm_resource_group.rkub-project.location
+  resource_group_name = azurerm_resource_group.rkub-project.name
+
+  security_rule {
+    name                       = "Allow_6443"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "6443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow_SSH"
+    priority                   = 101
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  tags = {
+    Creator = "rkub-${var.GITHUB_RUN_ID}"
+  }
+}
+
+# Associate NSG with Subnet
+resource "azurerm_subnet_network_security_group_association" "rkub-project-subnet-nsg-association" {
+  subnet_id                 = azurerm_subnet.rkub-project-internal.id
+  network_security_group_id = azurerm_network_security_group.rkub-project-nsg.id
+}
+
+
 ###
 ### Azure INSTANCES
 ###
@@ -180,7 +235,7 @@ resource "azurerm_linux_virtual_machine" "controllers" {
     }
   }
 
-  depends_on = [azurerm_public_ip.controller-pip, azurerm_network_interface.controller-interfaces]
+  depends_on = [null_resource.placeholder, azurerm_public_ip.controller-pip, azurerm_network_interface.controller-interfaces]
 }
 
 # Azure linux virtual machine for creating a single node RKE cluster and installing the Rancher Server
@@ -233,5 +288,5 @@ resource "azurerm_linux_virtual_machine" "workers" {
     }
   }
 
-  depends_on = [azurerm_public_ip.worker-pip, azurerm_network_interface.worker-interfaces]
+  depends_on = [null_resource.placeholder, azurerm_public_ip.worker-pip, azurerm_network_interface.worker-interfaces]
 }
