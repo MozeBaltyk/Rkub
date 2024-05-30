@@ -77,7 +77,11 @@ do_quickstart:
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Run playbooks
 	@sleep 30
-	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u root -i ./DO/infra/.key.private
+	@cd ./test && ansible-playbook playbooks/install.yml \
+	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
+	  -e "stable=true" \
+	  -e "airgap=false" \
+	  -e "method=rpm"
 
 .PHONY: az_quickstart
 ## Create a RKE2 cluster on Azure
@@ -87,17 +91,26 @@ az_quickstart:
     eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
     done
 	# Create infra with Terrafrom
-	@cd ./test/Azure/infra && terraform init
-	@cd ./test/Azure/infra && terraform plan -out=terraform.tfplan \                                                                                                                            ⏎ ✹ ✭
-	  -var "azure_subscription_id=${AZ_SUBS_ID}" \
-	  -var "azure_client_id=${AZ_CLIENT_ID}" \
-	  -var "azure_client_secret=${AZ_CLIENT_SECRET}" \
-	  -var "azure_tenant_id=${AZ_TENANT_ID}" \
-	  -var "instance_size=$(AZ_SIZE_MATTERS)"
-	@cd ./test/Azure/infra && terraform apply "terraform.tfplan"
+	@for i in {1..2}; do \
+	echo "Running command $$i time(s)"; \
+	cd ./test/Azure/infra; \
+	terraform init; \
+	terraform plan -out=terraform.tfplan \
+	  -var "azure_subscription_id=$(AZ_SUBS_ID)" \
+	  -var "azure_client_id=$(AZ_CLIENT_ID)" \
+	  -var "azure_client_secret=$(AZ_CLIENT_SECRET)" \
+	  -var "azure_tenant_id=$(AZ_TENANT_ID)" \
+	  -var "instance_size=$(AZ_SIZE_MATTERS)"; \
+	terraform apply "terraform.tfplan"; \
+	cd -; \
+	done
 	# Run playbooks
-	@sleep 30
-	@cd ./test && ansible-playbook playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -u terraform -i ./Azure/infra/.key.private
+	@sleep 120
+	@cd ./test && ansible-playbook playbooks/install.yml \
+	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
+	  -e "stable=true" \
+	  -e "airgap=false" \
+	  -e "method=rpm"
 
 
 .PHONY: do_cleanup
@@ -134,7 +147,7 @@ az_cleanup:
     done
 	# Create infra with Terrafrom
 	@cd ./test/Azure/infra && terraform init
-	@cd ./test/Azure/infra && terraform plan -destroy -out=terraform.tfplan \                                                                                                                            ⏎ ✹ ✭
+	@cd ./test/Azure/infra && terraform plan -destroy -out=terraform.tfplan \
 	  -var "azure_subscription_id=${AZ_SUBS_ID}" \
 	  -var "azure_client_id=${AZ_CLIENT_ID}" \
 	  -var "azure_client_secret=${AZ_CLIENT_SECRET}" \
@@ -145,17 +158,17 @@ az_cleanup:
 .PHONY: longhorn
 ## Install longhorn after quickstart on Digital Ocean
 longhorn:
-	@cd ./test && ansible-playbook playbooks/longhorn.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) -i $(KEY_PATH)
+	@cd ./test && ansible-playbook playbooks/longhorn.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) --private-key $(KEY_PATH)
 
 .PHONY: rancher
 ## Install rancher after quickstart on Digital Ocean
 rancher:
-	@cd ./test && ansible-playbook playbooks/rancher.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) -i $(KEY_PATH)
+	@cd ./test && ansible-playbook playbooks/rancher.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) --private-key $(KEY_PATH)
 
 .PHONY: neuvector
 ## Install neuvector after quickstart on Digital Ocean
 neuvector:
-	@cd ./test && ansible-playbook playbooks/neuvector.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) -i $(KEY_PATH)
+	@cd ./test && ansible-playbook playbooks/neuvector.yml -e "stable=true" -e "airgap=false" -u $(USER_PRIVILEGED) --private-key $(KEY_PATH)
 
 .PHONY: build
 ## Run playbook to build rkub zst package on localhost.
