@@ -17,8 +17,10 @@
         state: started
         enabled: true
       notify: "Service (re)started"
-      async: 600
-      poll: 60
+      register: rke2_server_status
+      until: rke2_server_status is succeeded
+      retries: 10
+      delay: 30
 
     - name: Wait for k8s apiserver
       ansible.builtin.wait_for:
