@@ -11,7 +11,7 @@ global_extras_components:
 global_versions:
   rke2: "1.28.10"
   kubevip: "0.8.0"
-  cert_manager: "1.14.1"
+  cert_manager: "1.15.0"
   rancher: "2.8.2"
   longhorn: "1.6.2"
   neuvector: "2.7.2"
