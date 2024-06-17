@@ -61,7 +61,7 @@ resource "null_resource" "placeholder" {
 resource "digitalocean_droplet" "controllers" {
     count = var.controller_count
     image = var.do_system
-    name = "${format("%s-%2s%02d", controller, count.index + 1, var.domain)}"
+    name = "${format("%s%02d.%3s", "controller", count.index + 1, var.domain)}"
     region = var.region
     size = var.instance_size
     tags   = [
@@ -81,7 +81,7 @@ resource "digitalocean_droplet" "controllers" {
 resource "digitalocean_droplet" "workers" {
     count = var.worker_count
     image = var.do_system
-    name = "${format("%s-%2s%02d", worker, count.index + 1, var.domain)}"
+    name = "${format("%s%02d.%3s", "worker", count.index + 1, var.domain)}"
     region = var.region
     size = var.instance_size
     tags   = [
