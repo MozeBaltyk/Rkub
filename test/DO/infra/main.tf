@@ -57,38 +57,41 @@ resource "null_resource" "placeholder" {
 ###
 
 # Droplet Instance for RKE2 Cluster - Manager
+# name = "controller${count.index}.${var.domain}"
 resource "digitalocean_droplet" "controllers" {
     count = var.controller_count
     image = var.do_system
-    name = "controller${count.index}.${var.domain}"
+    name = "${format("%s-%2s%02d", controller, count.index + 1, var.domain)}"
     region = var.region
     size = var.instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
       "controller",
-      "${var.do_system}_controllers",
+      "${var.do_system}",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
     # if airgap, S3 bucket is mounted on master to get the resources
-    user_data = var.airgap ? data.cloudinit_config.server_airgap_config.rendered : null
+    user_data = var.airgap ? data.cloudinit_config.server_airgap_config.rendered : data.cloudinit_config.server_config.rendered
     depends_on = [ null_resource.placeholder, digitalocean_ssh_key.ssh_key ] # Ensure VPC and SSH key are created first
 }
 
 # Droplet Instance for RKE2 Cluster - Workers
+# name = "worker${count.index}.${var.domain}"
 resource "digitalocean_droplet" "workers" {
     count = var.worker_count
     image = var.do_system
-    name = "worker${count.index}.${var.domain}"
+    name = "${format("%s-%2s%02d", worker, count.index + 1, var.domain)}"
     region = var.region
     size = var.instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
       "worker",
-      "${var.do_system}_workers",
+      "${var.do_system}",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
+    user_data = data.cloudinit_config.server_config.rendered
     depends_on = [ null_resource.placeholder, digitalocean_ssh_key.ssh_key ] # Ensure VPC and SSH key are created first
 }
 
