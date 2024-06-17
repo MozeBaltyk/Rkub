@@ -76,7 +76,7 @@ do_quickstart:
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Run playbooks
-	@sleep 30
+	@sleep 120
 	@cd ./test && ansible-playbook playbooks/install.yml \
 	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
 	  -e "stable=true" \
