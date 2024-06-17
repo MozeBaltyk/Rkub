@@ -56,8 +56,8 @@ endif
 do_quickstart:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
-    eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
-    done
+	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
+	done
 	# S3 bucket for Backend
 	@cd ./test/DO/backend && terraform init
 	@cd ./test/DO/backend && terraform plan -out=terraform.tfplan \
@@ -75,9 +75,10 @@ do_quickstart:
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
+	# Wait cloud-init to finish
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
 	# Run playbooks
-	@sleep 120
-	@cd ./test && ansible-playbook playbooks/install.yml \
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
 	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
 	  -e "stable=true" \
 	  -e "airgap=false" \
@@ -88,8 +89,8 @@ do_quickstart:
 az_quickstart:
 	# Checks vars settings
 	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
-    eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
-    done
+	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
+	done
 	# Create infra with Terrafrom
 	@for i in {1..2}; do \
 	echo "Running command $$i time(s)"; \
@@ -104,9 +105,10 @@ az_quickstart:
 	terraform apply "terraform.tfplan"; \
 	cd -; \
 	done
+	# Wait cloud-init to finish
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
 	# Run playbooks
-	@sleep 120
-	@cd ./test && ansible-playbook playbooks/install.yml \
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
 	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
 	  -e "stable=true" \
 	  -e "airgap=false" \
@@ -118,8 +120,8 @@ az_quickstart:
 do_cleanup:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
-    eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
-    done
+	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
+	done
 	# Delete infra with Terrafrom
 	@cd ./test/DO/infra && terraform init -backend-config="bucket=terraform-backend-rkub-quickstart"
 	@cd ./test/DO/infra && terraform plan -destroy -out=terraform.tfplan \
@@ -143,8 +145,8 @@ do_cleanup:
 az_cleanup:
 	# Checks vars settings
 	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
-    eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
-    done
+	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
+	done
 	# Create infra with Terrafrom
 	@cd ./test/Azure/infra && terraform init
 	@cd ./test/Azure/infra && terraform plan -destroy -out=terraform.tfplan \
