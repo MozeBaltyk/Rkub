@@ -12,7 +12,7 @@ global_versions:
   rke2: "1.28.10"
   kubevip: "0.8.0"
   cert_manager: "1.14.1"
-  rancher: "2.8.1"
+  rancher: "2.8.2"
   longhorn: "1.6.2"
   neuvector: "2.7.2"
   helm: "3.14.0"
