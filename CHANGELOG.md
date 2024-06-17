@@ -13,7 +13,7 @@
 
 - rancher version: 2.8.1
 
-- longhorn version: 1.6.0
+- longhorn version: 1.6.2
   
 - neuvector version: 2.7.2
 
