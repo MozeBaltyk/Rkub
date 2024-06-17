@@ -76,6 +76,7 @@ do_quickstart:
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
 	# Wait cloud-init to finish
+	@sleep 60
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
 	# Run playbooks
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
@@ -106,6 +107,7 @@ az_quickstart:
 	cd -; \
 	done
 	# Wait cloud-init to finish
+	@sleep 60
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
 	# Run playbooks
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
