@@ -231,11 +231,6 @@ jobs:
           cp ${MOUNT_POINT}/hosts.ini ${{ github.workspace }}/test/inventory/hosts.ini
           cp ${MOUNT_POINT}/.key.private ${{ github.workspace }}/test/DO/infra/.key.private
 
-      - name: Delay 2min
-        uses: whatnick/wait-action@master
-        with:
-          time: '120s'
-
       # Install
       - name: Run playbook install.yml
         run: |
