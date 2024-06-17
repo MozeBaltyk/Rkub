@@ -168,8 +168,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip3 install ansible
+          python3 -m pip install --upgrade pip
+          python3 -m pip install "ansible>=2.15,<2.17"
           ansible --version
 
       - name: Test if reachable
@@ -203,8 +203,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip3 install ansible
+          python3 -m pip install --upgrade pip
+          python3 -m pip install "ansible>=2.15,<2.17"
           ansible --version
 
       # Get Artifacts 
@@ -296,7 +296,8 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install -U pytest-testinfra ansible pytest-sugar pytest
+          python3 -m pip install "ansible>=2.15,<2.17"
+          python3 -m pip install -U pytest-testinfra pytest-sugar pytest
           ansible --version
 
       - name: Run Python Tests
