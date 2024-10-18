@@ -13,7 +13,7 @@ global_versions:
   kubevip: "0.8.0"
   cert_manager: "1.15.0"
   rancher: "2.8.2"
-  longhorn: "1.6.2"
+  longhorn: "1.7.2"
   neuvector: "2.7.7"
   helm: "3.14.0"
   nerdctl: "1.7.6"
