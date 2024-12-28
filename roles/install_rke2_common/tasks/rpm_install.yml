@@ -38,8 +38,8 @@
 
     - name: Set Official RKE2 version repo
       ansible.builtin.yum_repository:
-        name: rancher-rke2-latest
-        description: "Rancher RKE2 Latest"
+        name: "rancher-rke2-{{ rke2_version.split('.')[:2] | join('.') }}"
+        description: "Rancher RKE2 {{ rke2_version.split('.')[:2] | join('.') }}"
         baseurl: "https://rpm.rancher.io/rke2/latest/{{ rke2_version.split('.')[:2] | join('.') }}/centos/{{ ansible_distribution_major_version }}/x86_64"
         gpgcheck: true
         gpgkey: "https://rpm.rancher.io/public.key"
