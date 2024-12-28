@@ -15,7 +15,7 @@
 
 - longhorn version: 1.7.2
   
-- neuvector version: 2.7.7
+- neuvector version: 2.8.3
 
 <!-- End Release -->
 
