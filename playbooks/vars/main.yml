@@ -9,7 +9,7 @@ global_extras_components:
   neuvector: "{{ neuvector | default(global_all_wanted) }}"
 
 global_versions:
-  rke2: "1.28.10"
+  rke2: "1.31.4"
   kubevip: "0.8.0"
   cert_manager: "1.15.0"
   rancher: "2.8.2"
