@@ -9,7 +9,7 @@
 
 - kube-vip: 0.8.0
 
-- cert-manager version: 1.15.0
+- cert-manager version: 1.16.2
 
 - rancher version: 2.8.2
 
