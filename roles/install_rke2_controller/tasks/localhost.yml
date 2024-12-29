@@ -29,14 +29,14 @@
           register: context_name_exist
           changed_when: false
           failed_when: false
-        
+
         - name: Ensure .kube/config file exist
-          stat:
+          ansible.builtin.stat:
             path: "$HOME/.kube/config"
           register: stat_result
 
         - name: Create kube/config, if it doesnt exist already
-          file:
+          ansible.builtin.file:
             path: "$HOME/.kube/config"
             state: touch
           when: not stat_result.stat.exists
