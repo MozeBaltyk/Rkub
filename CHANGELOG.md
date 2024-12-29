@@ -1,13 +1,13 @@
 # CHANGELOG.md
 
 <!-- Release -->
-## 1.0.4 (2024-06-17)
+## 1.0.5 (2024-12-29)
 
 ### Versions:
 
 - rke2 version: 1.31.4
 
-- kube-vip version: 0.8.0
+- kube-vip: 0.8.7
 
 - cert-manager version: 1.16.2
 
