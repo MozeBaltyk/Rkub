@@ -61,11 +61,13 @@ Currently only install:
 
 - tarball or rpm method
 
-- Defined versions or versions from Stable channels
+- Defined versions or versions from [Stable channels](https://update.rke2.io/v1-release/channels)
 
 - Canal CNI
 
 - Digital Ocean
+
+- Standalone or x Masters / x Workers
 
 But the target would be to handle all the usecase below:
 
@@ -86,7 +88,9 @@ But the target would be to handle all the usecase below:
 
 ## Quickstart
 
-As prerequisities, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` in Digital Ocean's API tabs.
+As prerequisities, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` in Digital Ocean's API tabs. You can use my referrals links below, it helps a lot:
+
+<a href="https://www.digitalocean.com/?refcode=fb9479b3dbef&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%203.svg" alt="DigitalOcean Referral Badge" /></a>
 
 Then perform those followings steps:
 
@@ -107,13 +111,13 @@ export MASTERS=3 # Default 1
 # Create RKE2 cluster
 make quickstart
 
-# Delete RKE2 cluster
-make cleanup
-
 # Other components
 make longhorn
 make rancher
 make neuvector
+
+# Delete RKE2 cluster
+make cleanup
 ```
 
 NB: Quickstart is meant to deploy in DO a quick RKE2 cluster for testing purpose, and without taking into account airgap problematics.
@@ -121,7 +125,15 @@ Airgap actions are adressed in below procedure.
 
 ## Global Usage
 
-1. Preparatory steps for a normal ansible controller:
+1. From an host with internet accces 
+
+- Install this collection: `ansible-galaxy collection install mozebaltyk.rkub`
+
+- Clone this repository: `git clone -b main https://github.com/MozeBaltyk/Rkub.git`
+
+- Install prerequisites: `cd Rkub && make prerequis`
+
+2. Preparatory steps for a normal ansible controller:
 
 - Create some SSH keys and deploy it on target hosts.
 
@@ -131,7 +143,7 @@ Airgap actions are adressed in below procedure.
 
 then use it...
 
-2. Build your package by running (works on Debian-like or Redhat-like and targets localhost).
+3. Build your package by running (works on Debian-like or Redhat-like and targets localhost).
 This step concern only an airgap install. If targeted servers have an internet access then skip and go to step 5:
 
 ```sh
@@ -147,7 +159,7 @@ ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments be
 -u admin -Kk                                                  # Other Ansible Arguments (like -vvv)
 ```
 
-3. Push your package to first controler:
+4. Push your package to first controler:
 
 ```sh
 ansible-playbook mozebaltyk.rkub.upload.yml        # All arguments below are not mandatory
@@ -156,7 +168,7 @@ ansible-playbook mozebaltyk.rkub.upload.yml        # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-4. Deploy Hauler services:
+5. Deploy Hauler services:
 
 ```sh
 ansible-playbook mozebaltyk.rkub.hauler.yml        # All arguments below are not mandatory
@@ -164,7 +176,7 @@ ansible-playbook mozebaltyk.rkub.hauler.yml        # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-5. Start installation:
+6. Start installation:
 
 ```sh
 ansible-playbook mozebaltyk.rkub.install.yml       # All arguments below are not mandatory
@@ -175,7 +187,7 @@ ansible-playbook mozebaltyk.rkub.install.yml       # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-6. Deploy Rancher:
+7. Deploy Rancher:
 
 ```sh
 ansible-playbook mozebaltyk.rkub.rancher.yml       # All arguments below are not mandatory
@@ -184,7 +196,7 @@ ansible-playbook mozebaltyk.rkub.rancher.yml       # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-7. Deploy Longhorn:
+8. Deploy Longhorn:
 
 ```sh
 ansible-playbook mozebaltyk.rkub.longhorn.yml      # All arguments below are not mandatory
@@ -194,7 +206,7 @@ ansible-playbook mozebaltyk.rkub.longhorn.yml      # All arguments below are not
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
 ```
 
-8. Deploy Neuvector
+9. Deploy Neuvector
 
 ```sh
 ansible-playbook mozebaltyk.rkub.neuvector.yml     # All arguments below are not mandatory
@@ -290,7 +302,3 @@ Milestones:
 ## Repo Activity
 
 ![Alt](https://repobeats.axiom.co/api/embed/2664e49768529526895630ae70e2a366a70de78f.svg "Repobeats analytics image")
-
-## Project status
-
-Still on developement
