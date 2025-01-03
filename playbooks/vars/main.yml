@@ -53,6 +53,24 @@ global_rke2_cni: "canal"
 global_rke2_profile_activated: "{{ profile_cis | default('false') }}"
 global_rke2_disable: "{{ disable | default(omit) }}" # Valid items to not deploy: rke2-canal, rke2-coredns, rke2-ingress-nginx, rke2-metrics-server
 
+# Etcd backup/restore
+global_rke2_etcd_snapshot_backup_dir: "{{ backup_dir | default('etcd_snapshots')}}"
+global_rke2_etcd_snapshot_file: "{{ backup_file | default('') }}"
+
+# Etcd snapshot s3 options
+# Set either all these values or `rke2_etcd_snapshot_file` and `rke2_etcd_snapshot_source_dir`
+
+# rke2_etcd_snapshot_s3_options:
+  # s3_endpoint: "" # required
+  # access_key: "" # required
+  # secret_key: "" # required
+  # bucket: "" # required
+  # snapshot_name: "" # required.
+  # skip_ssl_verify: false # optional
+  # endpoint_ca: "" # optional. Can skip if using defaults
+  # region: "" # optional - defaults to us-east-1
+  # folder: "" # optional - defaults to top level of bucket
+
 # Longhorn
 default_longhorn_datapath: "/data/longhorn"
 global_longhorn_datapath: "{{ datapath | default(default_longhorn_datapath) }}"

@@ -1,0 +1,81 @@
+---
+# tasks file for do_etcd_restore
+
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
+
+- name: Register if we need to do a etcd restore from file
+  ansible.builtin.set_fact:
+    do_etcd_restore: true
+  when: 
+    - rke2_etcd_snapshot_file
+    - ((ansible_facts.services['rke2-server.service'] is not defined) or (ansible_facts.services['rke2-server.service']['status'] == 'disabled'))
+
+- name: Register if we need to do a etcd restore from s3
+  ansible.builtin.set_fact:
+    do_etcd_restore_from_s3: true
+  when:
+    - not rke2_etcd_snapshot_file
+    - rke2_etcd_snapshot_s3_options is defined
+    - rke2_etcd_snapshot_s3_options.access_key
+    - rke2_etcd_snapshot_s3_options.secret_key
+    - rke2_etcd_snapshot_s3_options.bucket
+    - rke2_etcd_snapshot_s3_options.snapshot_name
+
+- name: Restore etcd from file
+  ansible.builtin.import_tasks: from_file.yml
+  when: do_etcd_restore is defined
+  tags: file
+
+- name: Restore Etcd from s3
+  ansible.builtin.import_tasks: from_s3.yml
+  when: do_etcd_restore_from_s3 is defined
+  tags: s3
+
+- name: Start RKE2 service on the first server
+  ansible.builtin.systemd:
+    name: "rke2-server.service"
+    state: started
+    enabled: true
+  environment:
+    RKE2_TOKEN: "{{ rke2_token }}"
+  notify: "Service (re)started"
+
+- name: Restore etcd
+  when: do_etcd_restore is defined or do_etcd_restore_from_s3 is defined
+  block:
+    - name: Get registered nodes
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          {{ rke2_data_path }}/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml \
+          get nodes --no-headers | awk '{print $1}'
+      args:
+        executable: /bin/bash
+      changed_when: false
+      register: registered_node_names
+
+    - name: Get all node names
+      ansible.builtin.set_fact:
+        node_names: "{{ hostvars | dict2items | map(attribute='value.rke2_node_name') }}"
+      run_once: true
+      register: node_names
+
+    - name: Remove old <node>.node-password.rke2 secrets
+      ansible.builtin.shell: |
+        {{ rke2_data_path }}/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml \
+        delete secret {{ item }}.node-password.rke2 -n kube-system 2>&1 || true
+      args:
+        executable: /bin/bash
+      with_items: "{{ registered_node_names.stdout_lines | difference(node_names) }}"
+      changed_when: false
+
+    - name: Remove old nodes
+      ansible.builtin.shell: |
+        {{ rke2_data_path }}/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml \
+        delete node {{ item }} 2>&1 || true
+      args:
+        executable: /bin/bash
+      with_items: "{{ registered_node_names.stdout_lines | difference(node_names) }}"
+      changed_when: false
