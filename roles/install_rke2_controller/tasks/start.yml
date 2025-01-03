@@ -10,6 +10,8 @@
         enabled: false
         masked: true
       retries: 5
+      failed_when: false
+      changed_when: false
 
     - name: Start and enable rke2-server
       ansible.builtin.systemd:

@@ -1,21 +1,21 @@
 # CHANGELOG.md
 
 <!-- Release -->
-## 1.0.4 (2024-06-17)
+## 1.0.5 (2024-12-29)
 
 ### Versions:
 
-- rke2 version: 1.28.10
+- rke2 version: 1.31.4
 
-- kube-vip: 0.8.0
+- kube-vip version: 0.8.7
 
-- cert-manager version: 1.15.0
+- cert-manager version: 1.16.2
 
-- rancher version: 2.8.2
+- rancher version: 2.9.2
 
-- longhorn version: 1.6.2
+- longhorn version: 1.7.2
   
-- neuvector version: 2.7.7
+- neuvector version: 2.8.3
 
 <!-- End Release -->
 
