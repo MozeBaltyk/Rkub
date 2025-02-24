@@ -1,6 +1,6 @@
 #cloud-config
 
-#### cloud-init 24.4 (good for Fedora 41)
+#### cloud-init 24.4 (suitable for Fedora 41)
 
 timezone: ${timezone}
 
@@ -78,7 +78,7 @@ rh_subscription:
 ansible:
   install_method: pip
   package_name: ansible
-  # run_user は install_method: pip の場合のみ有効
+  # run_user is only valid when install_method is pip
   run_user: ansible
   setup_controller:
     repositories:

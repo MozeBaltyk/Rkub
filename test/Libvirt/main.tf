@@ -1,4 +1,4 @@
-# OSイメージをローカルストレージから取得
+# Fetch the OS image from local storage
 resource "libvirt_volume" "os_image" {
   name   = "${var.hostname}-${var.selected_version}-os_image"
   pool   = var.pool
@@ -6,7 +6,7 @@ resource "libvirt_volume" "os_image" {
   format = "qcow2"
 }
 
-# CloudInit ISOを使用してSSHキーをインスタンスに追加
+# Use CloudInit ISO to add SSH key to the instances
 resource "libvirt_cloudinit_disk" "commoninit" {
   count          = var.masters_number + var.workers_number
   name           = "${var.hostname}-${var.selected_version}-commoninit-${count.index}.iso"
@@ -15,7 +15,7 @@ resource "libvirt_cloudinit_disk" "commoninit" {
   network_config = data.template_file.network_config.rendered
 }
 
-# Libvirtネットワークの定義
+# Define Libvirt network
 resource "libvirt_network" "network" {
   name      = var.network_name
   mode      = "nat"
@@ -29,7 +29,7 @@ resource "libvirt_network" "network" {
   }
 }
 
-# ユーザーデータのテンプレート
+# Template for user data
 data "template_file" "user_data" {
   template = file("${path.module}/24.4/cloud_init.cfg.tftpl")
   vars = {
@@ -54,7 +54,7 @@ data "template_file" "user_data" {
   }
 }
 
-# Cloud-init構成
+# Cloud-init configuration
 data "template_cloudinit_config" "config" {
   gzip          = false
   base64_encode = false
@@ -66,17 +66,17 @@ data "template_cloudinit_config" "config" {
   }
 }
 
-# ネットワーク構成のテンプレート
+# Template for network configuration
 data "template_file" "network_config" {
   template = file("${path.module}/24.4/network_config_${var.ip_type}.cfg")
 }
 
-# マスターVMの作成
+# Create Master VMs
 resource "libvirt_domain" "masters" {
-  count    = var.masters_number
-  name     = local.master_details[count.index].name
-  memory   = var.memoryMB
-  vcpu     = var.cpu
+  count     = var.masters_number
+  name      = local.master_details[count.index].name
+  memory    = var.memoryMB
+  vcpu      = var.cpu
   autostart = true
   qemu_agent = true
 
@@ -85,10 +85,10 @@ resource "libvirt_domain" "masters" {
   }
 
   network_interface {
-    network_id      = libvirt_network.network.id
-    mac             = local.master_details[count.index].mac
-    addresses       = [local.master_details[count.index].ip]
-    wait_for_lease  = true
+    network_id     = libvirt_network.network.id
+    mac            = local.master_details[count.index].mac
+    addresses      = [local.master_details[count.index].ip]
+    wait_for_lease = true
   }
 
   cloudinit = libvirt_cloudinit_disk.commoninit[count.index].id
@@ -110,12 +110,12 @@ resource "libvirt_domain" "masters" {
   }
 }
 
-# ワーカーVMの作成
+# Create Worker VMs
 resource "libvirt_domain" "workers" {
-  count    = var.workers_number
-  name     = local.worker_details[count.index].name
-  memory   = var.memoryMB
-  vcpu     = var.cpu
+  count     = var.workers_number
+  name      = local.worker_details[count.index].name
+  memory    = var.memoryMB
+  vcpu      = var.cpu
   autostart = true
   qemu_agent = true
 
@@ -124,10 +124,10 @@ resource "libvirt_domain" "workers" {
   }
 
   network_interface {
-    network_id      = libvirt_network.network.id
-    mac             = local.worker_details[count.index].mac
-    addresses       = [local.worker_details[count.index].ip]
-    wait_for_lease  = true
+    network_id     = libvirt_network.network.id
+    mac            = local.worker_details[count.index].mac
+    addresses      = [local.worker_details[count.index].ip]
+    wait_for_lease = true
   }
 
   cloudinit = libvirt_cloudinit_disk.commoninit[var.masters_number + count.index].id

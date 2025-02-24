@@ -1,10 +1,10 @@
-# バージョン選択
+# Version Selection
 variable "selected_version" {
-  description = "選択されたOSバージョン"
-  default     = "fedora40_local"  # 必要に応じて "fedora41" に変更可能
+  description = "Selected OS version"
+  default     = "fedora40_local"  # Can be changed to "fedora41" as needed
 }
 
-# バージョンマッピング
+# Version Mapping
 variable "Versionning" {
   type = map(object({
     os_name            = string
@@ -52,95 +52,90 @@ variable "Versionning" {
   }
 }
 
-# VM構成変数
+# VM Configuration Variables
 variable "hostname" {
-  description = "VMの基本ホストネーム"
+  description = "Base hostname for the VMs"
   default     = "node"
 }
 
 variable "rh_username" {
-  description = "Red Hatのユーザー名"
+  description = "Red Hat username"
   default     = "rhel"
 }
 
 variable "rh_password" {
-  description = "Red Hatのパスワード"
+  description = "Red Hat password"
   default     = "redhat"
 }
 
 variable "pool" {
-  description = "Libvirtストレージプール名"
+  description = "Libvirt storage pool name"
   default     = "default"
 }
 
 variable "clusterid" {
-  description = "クラスタID"
+  description = "Cluster ID"
   default     = "ocp4"
 }
 
 variable "domain" {
-  description = "クラスタのドメイン"
+  description = "Domain for the cluster"
   default     = "local"
 }
 
 variable "ip_type" {
-  description = "IP割り当てのタイプ（例: dhcp）"
-  default     = "dhcp"  # 他の有効なタイプは 'static' など
+  description = "Type of IP assignment (e.g., dhcp)"
+  default     = "dhcp"  # Other valid types are 'static', etc.
 }
 
 variable "network_name" {
-  description = "Libvirtネットワーク名"
+  description = "Libvirt network name"
   default     = "openshift4"
 }
 
 variable "network_cidr" {
-  description = "LibvirtネットワークのCIDR"
+  description = "CIDR for the Libvirt network"
   default     = "192.168.100.0/24"
 }
 
-variable "helper_mac_address" {
-  description = "ヘルパーVMのMACアドレス"
-  default     = "52:54:00:36:14:e5"
-}
-
 variable "memoryMB" {
-  description = "各VMのメモリ（MB）"
+  description = "Memory for each VM in MB"
   default     = 4096
 }
 
 variable "cpu" {
-  description = "各VMのCPU数"
+  description = "Number of CPUs for each VM"
   default     = 2
 }
 
 variable "timezone" {
-  description = "VMのタイムゾーン"
+  description = "Timezone for the VMs"
   default     = "Europe/Paris"
 }
 
 variable "masters_number" {
-  description = "マスターノードの数"
+  description = "Number of master nodes"
   default     = 3
 }
 
 variable "workers_number" {
-  description = "ワーカーノードの数"
+  description = "Number of worker nodes"
   default     = 2
 }
 
 variable "masters_mac_addresses" {
-  description = "マスターノードのMACアドレスリスト"
+  description = "List of MAC addresses for master nodes"
   type        = list(string)
   default     = ["52:54:00:36:14:e5", "52:54:00:36:14:e6", "52:54:00:36:14:e7"]
 }
 
 variable "workers_mac_addresses" {
-  description = "ワーカーノードのMACアドレスリスト"
+  description = "List of MAC addresses for worker nodes"
   type        = list(string)
   default     = ["52:54:00:c8:7a:7a", "52:54:00:90:44:86"]
 }
 
-# ローカル設定
+# Local Settings
 locals {
   qcow2_image         = lookup(var.Versionning[var.selected_version], "os_URL", "")
   cloud_init_version  = lookup(var.Versionning[var.selected_version], "cloud_init_version", 0)
