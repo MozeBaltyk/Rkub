@@ -135,6 +135,16 @@ variable "workers_mac_addresses" {
   default     = ["52:54:00:c8:7a:7a", "52:54:00:90:44:86"]
 }
 
+variable "product" {
+  description = "Name of the product"
+  default     = "rkub"
+}
+
+variable "release_version" {
+  description = "Release version of the product"
+  default     = "v1.0"
+}
+
 # Local Settings
 locals {
   qcow2_image         = lookup(var.Versionning[var.selected_version], "os_URL", "")
@@ -147,8 +157,8 @@ locals {
   poolend             = cidrhost(var.network_cidr, -2)
   ipid                = cidrhost(var.network_cidr, 0)
   os_name             = lookup(var.Versionning[var.selected_version], "os_name", "")
-  rkub_pool_path      = "/srv/${var.pool}/pool"
-
+  rkub_pool_path      = "/var/lib/libvirt/images/${var.pool}"
+  
   master_details = tolist([
     for a in range(var.masters_number) : {
       name = format("master%02d", a + 1)
