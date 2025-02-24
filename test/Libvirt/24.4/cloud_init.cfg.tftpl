@@ -80,7 +80,7 @@ rh_subscription:
 ansible:
   install_method: pip
   package_name: ansible
-  #run_user only with install_method: pip
+  # run_user は install_method: pip の場合のみ有効
   run_user: ansible
   setup_controller:
     repositories:

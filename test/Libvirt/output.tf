@@ -1,23 +1,39 @@
 ###
-### Generate the hosts.ini file
+### hosts.iniファイルの生成
 ###
 resource "local_file" "ansible_inventory" {
   content = templatefile("../inventory/hosts.tpl",
     {
-      helper_ips = libvirt_domain.helper.*.network_interface.0.addresses.0,
+      helper_ips      = libvirt_domain.helper.*.network_interface.0.addresses[0],
+      master_ips      = libvirt_domain.masters.*.network_interface.0.addresses[0],
+      worker_ips      = libvirt_domain.workers.*.network_interface.0.addresses[0],
       helper_hostname = var.hostname,
-      master_details = local.master_details,
-      worker_details = local.worker_details,
+      master_details  = local.master_details,
+      worker_details  = local.worker_details,
     }
   )
   filename = "../inventory/hosts.ini"
 
-  depends_on = [libvirt_domain.helper]
+  depends_on = [
+    libvirt_domain.helper,
+    libvirt_domain.masters,
+    libvirt_domain.workers
+  ]
 }
 
-output "ips" {
-  # show IP, run 'tofu refresh && tofu output ips' if not populated
-  value = libvirt_domain.helper.*.network_interface.0.addresses
+output "helper_ips" {
+  description = "ヘルパーVMのIPアドレス。"
+  value       = libvirt_domain.helper.*.network_interface.0.addresses
+}
+
+output "master_ips" {
+  description = "マスターノードのIPアドレス。"
+  value       = libvirt_domain.masters.*.network_interface.0.addresses
+}
+
+output "worker_ips" {
+  description = "ワーカーノードのIPアドレス。"
+  value       = libvirt_domain.workers.*.network_interface.0.addresses
 }
 
 # output "rendered_cloud_init" {
