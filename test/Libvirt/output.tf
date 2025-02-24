@@ -4,27 +4,25 @@
 resource "local_file" "ansible_inventory" {
   content = templatefile("../inventory/hosts.tpl",
     {
-      helper_ips      = libvirt_domain.helper.*.network_interface.0.addresses[0],
-      master_ips      = libvirt_domain.masters.*.network_interface.0.addresses[0],
-      worker_ips      = libvirt_domain.workers.*.network_interface.0.addresses[0],
-      helper_hostname = var.hostname,
-      master_details  = local.master_details,
-      worker_details  = local.worker_details,
+      controller_ips = libvirt_domain.masters.*.network_interface.0.addresses[0],
+      worker_ips     = libvirt_domain.workers.*.network_interface.0.addresses[0],
+      master_details = local.master_details,
+      worker_details = local.worker_details,
     }
   )
   filename = "../inventory/hosts.ini"
 
   depends_on = [
-    libvirt_domain.helper,
     libvirt_domain.masters,
     libvirt_domain.workers
   ]
 }
 
-output "helper_ips" {
-  description = "ヘルパーVMのIPアドレス。"
-  value       = libvirt_domain.helper.*.network_interface.0.addresses
-}
+# Removed helper_ips output as helper VM is not defined
+# output "helper_ips" {
+#   description = "ヘルパーVMのIPアドレス。"
+#   value       = libvirt_domain.helper.*.network_interface.0.addresses
+# }
 
 output "master_ips" {
   description = "マスターノードのIPアドレス。"
