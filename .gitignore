@@ -28,3 +28,4 @@ Chart.lock
 __pycache__
 .pytest_cache
 AWS
+.aider*
