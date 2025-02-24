@@ -67,7 +67,7 @@ resource "libvirt_domain" "masters" {
     wait_for_lease = true
   }
 
-  cloudinit = libvirt_cloudinit_disk.commoninit[count.index].id
+  cloudinit = libvirt_cloudinit_disk.commoninit[local.master_details[count.index].name].id
 
   cpu {
     mode = "host-passthrough"
@@ -105,7 +105,7 @@ resource "libvirt_domain" "workers" {
     wait_for_lease = true
   }
 
-  cloudinit = libvirt_cloudinit_disk.commoninit[var.masters_number + count.index].id
+  cloudinit = libvirt_cloudinit_disk.commoninit[local.worker_details[count.index].name].id
 
   cpu {
     mode = "host-passthrough"
