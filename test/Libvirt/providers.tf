@@ -7,16 +7,6 @@ terraform {
       version = ">= 0.7.6"
     }
   }
-
-  backend "s3" {
-    # Configure your backend settings here as needed
-    # Example:
-    # bucket = "your-terraform-state-bucket"
-    # key    = "libvirt/terraform.tfstate"
-    # region = "your-region"
-    skip_region_validation = true
-    region                 = "fra1"
-  }
 }
 
 provider "libvirt" {

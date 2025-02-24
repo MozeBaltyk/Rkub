@@ -1,3 +1,31 @@
+### Pool
+resource "libvirt_pool" "rkub" {
+  name = var.pool
+  type = "dir"
+  target {
+    path = local.rkub_pool_path
+  }
+}
+
+### Disks
+# Define libvirt volumes for master nodes
+resource "libvirt_volume" "master_disk" {
+  for_each = { for idx, master in local.master_details : idx => master }
+  name   = "${each.value.name}-disk-${var.product}-${var.release_version}.qcow2"
+  pool   = libvirt_pool.okub.name
+  size   = 30 * 1024 * 1024 * 1024  # 30 GB in bytes
+  format = "qcow2"
+}
+
+# Define libvirt volumes for worker nodes
+resource "libvirt_volume" "worker_disk" {
+  for_each = { for idx, worker in local.worker_details : idx => worker }
+  name   = "${each.value.name}-disk-${var.product}-${var.release_version}.qcow2"
+  pool   = libvirt_pool.okub.name
+  size   = 30 * 1024 * 1024 * 1024  # 30 GB in bytes
+  format = "qcow2"
+}
+
 # Fetch the OS image from local storage
 resource "libvirt_volume" "os_image" {
   name   = "${var.hostname}-${var.selected_version}-os_image"

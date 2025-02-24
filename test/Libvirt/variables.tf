@@ -70,12 +70,12 @@ variable "rh_password" {
 
 variable "pool" {
   description = "Libvirt storage pool name"
-  default     = "default"
+  default     = "rkub"
 }
 
 variable "clusterid" {
   description = "Cluster ID"
-  default     = "ocp4"
+  default     = "rkub"
 }
 
 variable "domain" {
@@ -90,7 +90,7 @@ variable "ip_type" {
 
 variable "network_name" {
   description = "Libvirt network name"
-  default     = "openshift4"
+  default     = "rkub"
 }
 
 variable "network_cidr" {
@@ -120,7 +120,7 @@ variable "masters_number" {
 
 variable "workers_number" {
   description = "Number of worker nodes"
-  default     = 2
+  default     = 0
 }
 
 variable "masters_mac_addresses" {
@@ -147,7 +147,8 @@ locals {
   poolend             = cidrhost(var.network_cidr, -2)
   ipid                = cidrhost(var.network_cidr, 0)
   os_name             = lookup(var.Versionning[var.selected_version], "os_name", "")
-  
+  rkub_pool_path      = "/srv/${var.pool}/pool"
+
   master_details = tolist([
     for a in range(var.masters_number) : {
       name = format("master%02d", a + 1)
