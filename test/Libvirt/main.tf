@@ -24,6 +24,12 @@ resource "libvirt_pool" "rkub_pool" {
   }
 }
 
+### TLS Private Key
+resource "tls_private_key" "global_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 ### Disks
 # Define libvirt volumes for master nodes
 resource "libvirt_volume" "master_disk" {
