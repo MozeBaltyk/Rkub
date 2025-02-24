@@ -53,11 +53,6 @@ variable "Versionning" {
 }
 
 # VM Configuration Variables
-variable "hostname" {
-  description = "Base hostname for the VMs"
-  default     = "node"
-}
-
 variable "rh_username" {
   description = "Red Hat username"
   default     = "rhel"
@@ -157,12 +152,12 @@ locals {
   poolend             = cidrhost(var.network_cidr, -2)
   ipid                = cidrhost(var.network_cidr, 0)
   os_name             = lookup(var.Versionning[var.selected_version], "os_name", "")
+  os_version_short    = lookup(var.Versionning[var.selected_version], "os_version_short", "")
   rkub_pool_path      = "/var/lib/libvirt/images/${var.pool}"
   
   master_details = tolist([
     for a in range(var.masters_number) : {
       name = format("master%02d", a + 1)
-      ip   = cidrhost(var.network_cidr, a + 10)
       mac  = var.masters_mac_addresses[a]
     }
   ])
@@ -170,7 +165,6 @@ locals {
   worker_details = tolist([
     for b in range(var.workers_number) : {
       name = format("worker%02d", b + 1)
-      ip   = cidrhost(var.network_cidr, b + 20)
       mac  = var.workers_mac_addresses[b]
     }
   ])

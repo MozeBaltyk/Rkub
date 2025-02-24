@@ -52,12 +52,6 @@ write_files:
     defer: true
     content: |
       ---
-      global_gateway_ip: ${gateway_ip}
-      global_broadcast_ip: ${broadcast_ip}
-      global_netmask: ${netmask}
-      global_poolstart: ${poolstart}
-      global_poolend: ${poolend}
-      global_ipid: ${ipid}
       global_domain: ${domain}
       global_network_cidr: ${network_cidr}
       global_master_details:
