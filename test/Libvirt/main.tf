@@ -1,20 +1,3 @@
-# Fetch the OS image from local storage
-resource "libvirt_volume" "os_image" {
-  name   = "${var.hostname}-${var.selected_version}-os_image"
-  pool   = var.pool
-  source = local.qcow2_image
-  format = "qcow2"
-}
-
-# Use CloudInit ISO to add SSH key to the instances
-resource "libvirt_cloudinit_disk" "commoninit" {
-  count          = var.masters_number + var.workers_number
-  name           = "${var.hostname}-${var.selected_version}-commoninit-${count.index}.iso"
-  pool           = var.pool
-  user_data      = data.template_cloudinit_config.config.rendered
-  network_config = data.template_file.network_config.rendered
-}
-
 ### Pool
 resource "libvirt_pool" "rkub_pool" {
   name = var.pool
@@ -24,10 +7,12 @@ resource "libvirt_pool" "rkub_pool" {
   }
 }
 
-### TLS Private Key
-resource "tls_private_key" "global_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+# Fetch the OS image from local storage
+resource "libvirt_volume" "os_image" {
+  name   = "${var.selected_version}-os_image"
+  pool   = libvirt_pool.rkub_pool.name
+  source = local.qcow2_image
+  format = "qcow2"
 }
 
 ### Disks
@@ -63,48 +48,6 @@ resource "libvirt_network" "network" {
   }
 }
 
-# Template for user data
-data "template_file" "user_data" {
-  template = file("${path.module}/24.4/cloud_init.cfg.tftpl")
-  vars = {
-    os_name        = local.os_name
-    hostname       = var.hostname
-    fqdn           = "${var.hostname}.${local.subdomain}"
-    domain         = local.subdomain
-    clusterid      = var.clusterid
-    timezone       = var.timezone
-    gateway_ip     = local.gateway_ip
-    broadcast_ip   = local.broadcast_ip
-    netmask        = local.netmask
-    network_cidr   = var.network_cidr
-    poolstart      = local.poolstart
-    poolend        = local.poolend
-    ipid           = local.ipid
-    master_details = indent(8, yamlencode(local.master_details))
-    worker_details = indent(8, yamlencode(local.worker_details))
-    public_key     = tls_private_key.global_key.public_key_openssh
-    rh_username    = var.rh_username
-    rh_password    = var.rh_password
-  }
-}
-
-# Cloud-init configuration
-data "template_cloudinit_config" "config" {
-  gzip          = false
-  base64_encode = false
-  
-  part {
-    filename     = "init.cfg"
-    content_type = "text/cloud-config"
-    content      = data.template_file.user_data.rendered
-  }
-}
-
-# Template for network configuration
-data "template_file" "network_config" {
-  template = file("${path.module}/24.4/network_config_${var.ip_type}.cfg")
-}
-
 # Create Master VMs
 resource "libvirt_domain" "masters" {
   count     = var.masters_number
@@ -121,7 +64,6 @@ resource "libvirt_domain" "masters" {
   network_interface {
     network_id     = libvirt_network.network.id
     mac            = local.master_details[count.index].mac
-    addresses      = [local.master_details[count.index].ip]
     wait_for_lease = true
   }
 
@@ -160,7 +102,6 @@ resource "libvirt_domain" "workers" {
   network_interface {
     network_id     = libvirt_network.network.id
     mac            = local.worker_details[count.index].mac
-    addresses      = [local.worker_details[count.index].ip]
     wait_for_lease = true
   }
 
