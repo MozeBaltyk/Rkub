@@ -4,8 +4,8 @@
 resource "local_file" "ansible_inventory" {
   content = templatefile("../inventory/hosts.tpl",
     {
-      controller_ips = libvirt_domain.masters.*.network_interface.0.addresses[0],
-      worker_ips     = var.workers_number > 0 ? libvirt_domain.workers.*.network_interface.0.addresses : [],
+      controller_ips = libvirt_domain.masters[*].network_interface[0].addresses[0],
+      worker_ips     = var.workers_number > 0 ? [for w in libvirt_domain.workers : w.network_interface[0].addresses[0]] : [],
       master_details = local.master_details,
       worker_details = local.worker_details,
     }
@@ -20,12 +20,12 @@ resource "local_file" "ansible_inventory" {
 
 output "master_ips" {
   description = "The IP addresses of the master VMs."
-  value       = libvirt_domain.masters.*.network_interface.0.addresses
+  value       = libvirt_domain.masters[*].network_interface[0].addresses
 }
 
 output "worker_ips" {
   description = "The IP addresses of the worker VMs."
-  value       = var.workers_number > 0 ? libvirt_domain.workers.*.network_interface.0.addresses : []
+  value       = var.workers_number > 0 ? [for w in libvirt_domain.workers : w.network_interface[0].addresses[0]] : []
 }
 
 # output "rendered_cloud_init" {
