@@ -5,8 +5,13 @@ resource "libvirt_pool" "rkub_pool" {
   target {
     path = local.rkub_pool_path
   }
+  xml { 
+    xslt = file("${path.module}/files/os_pool_permissions.xsl.tpl" ) 
+  }
 }
 
+
+### Disks
 # Fetch the OS image from local storage
 resource "libvirt_volume" "os_image" {
   name   = "${var.selected_version}-os_image"
@@ -15,23 +20,12 @@ resource "libvirt_volume" "os_image" {
   format = "qcow2"
 }
 
-### Disks
-# Define libvirt volumes for master nodes
-resource "libvirt_volume" "master_disk" {
-  for_each = { for idx, master in local.master_details : idx => master }
+resource "libvirt_volume" "resized_os_image" {
+  for_each = { for vm in concat(local.master_details, local.worker_details) : vm.name => vm }
   name     = "${each.value.name}-disk-${var.product}-${var.release_version}.qcow2"
+  base_volume_id = libvirt_volume.os_image.id
   pool     = libvirt_pool.rkub_pool.name
-  size     = 30 * 1024 * 1024 * 1024  # 30 GB in bytes
-  format   = "qcow2"
-}
-
-# Define libvirt volumes for worker nodes
-resource "libvirt_volume" "worker_disk" {
-  for_each = { for idx, worker in local.worker_details : idx => worker }
-  name     = "${each.value.name}-disk-${var.product}-${var.release_version}.qcow2"
-  pool     = libvirt_pool.rkub_pool.name
-  size     = 30 * 1024 * 1024 * 1024  # 30 GB in bytes
-  format   = "qcow2"
+  size     = 10 * 1024 * 1024 * 1024  # 10 GB in bytes
 }
 
 # Define Libvirt network
@@ -58,7 +52,7 @@ resource "libvirt_domain" "masters" {
   qemu_agent = true
 
   disk {
-    volume_id = libvirt_volume.os_image.id
+    volume_id = libvirt_volume.resized_os_image[local.master_details[count.index].name].id
   }
 
   network_interface {
@@ -96,7 +90,7 @@ resource "libvirt_domain" "workers" {
   qemu_agent = true
 
   disk {
-    volume_id = libvirt_volume.os_image.id
+    volume_id = libvirt_volume.resized_os_image[local.worker_details[count.index].name].id
   }
 
   network_interface {

@@ -145,15 +145,9 @@ locals {
   qcow2_image         = lookup(var.Versionning[var.selected_version], "os_URL", "")
   cloud_init_version  = lookup(var.Versionning[var.selected_version], "cloud_init_version", 0)
   subdomain           = "${var.clusterid}.${var.domain}"
-  gateway_ip          = cidrhost(var.network_cidr, 1)
-  broadcast_ip        = cidrhost(var.network_cidr, -1)
-  netmask             = cidrnetmask(var.network_cidr)
-  poolstart           = cidrhost(var.network_cidr, 10)
-  poolend             = cidrhost(var.network_cidr, -2)
-  ipid                = cidrhost(var.network_cidr, 0)
   os_name             = lookup(var.Versionning[var.selected_version], "os_name", "")
   os_version_short    = lookup(var.Versionning[var.selected_version], "os_version_short", "")
-  rkub_pool_path      = "/var/lib/libvirt/images/${var.pool}"
+  rkub_pool_path      = "/srv/${var.pool}/pool"
   
   master_details = tolist([
     for a in range(var.masters_number) : {
