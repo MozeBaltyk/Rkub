@@ -24,6 +24,9 @@ cni:
 {% else %}
 cni: {{ rke2_cni }}
 {% endif %}
+{% if rke2_cni == 'cilium' %}
+disable-kube-proxy: true
+{% endif %}
 tls-san:
   - cluster.local
   - {{ control_plane_endpoint }}

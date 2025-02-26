@@ -49,7 +49,7 @@ global_rke2_ha_mode: false
 global_rke2_api_ip: "{{ vip | default(global_master_ip) }}"
 global_rke2_cluster_cidr: "10.42.0.0/16" #Default Value
 global_rke2_service_cidr: "10.43.0.0/16" #Default Value
-global_rke2_cni: "canal"
+global_rke2_cni: "{{ cni | default('canal') }}"
 global_rke2_profile_activated: "{{ profile_cis | default('false') }}"
 global_rke2_disable: "{{ disable | default(omit) }}" # Valid items to not deploy: rke2-canal, rke2-coredns, rke2-ingress-nginx, rke2-metrics-server
 
