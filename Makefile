@@ -18,8 +18,11 @@ else ifeq ($(PROVIDER), AZ)
     USER_PRIVILEGED := terraform
     KEY_PATH := ./Azure/infra/.key.private
     AZ_SIZE_MATTERS ?= standard_d8s_v5
+else ifeq ($(PROVIDER), KVM)
+    USER_PRIVILEGED := ansible
+    KEY_PATH := ./Libvirt/.key.private
 else
-    $(error PROVIDER should be chosen between AZ or DO)
+    $(error PROVIDER should be chosen between DO, AZ or KVM)
 endif
 
 .PHONY: prerequis
@@ -34,6 +37,8 @@ ifeq ($(PROVIDER), DO)
 	@$(MAKE) do_quickstart
 else ifeq ($(PROVIDER), AZ)
 	@$(MAKE) az_quickstart
+else ifeq ($(PROVIDER), KVM)
+	@$(MAKE) kvm_quickstart
 else
 	@echo "PROVIDER should be chosen between AZ or DO"
 	@exit 1
@@ -46,6 +51,8 @@ ifeq ($(PROVIDER), DO)
 	@$(MAKE) do_cleanup
 else ifeq ($(PROVIDER), AZ)
 	@$(MAKE) az_cleanup
+else ifeq ($(PROVIDER), KVM)
+	@$(MAKE) kvm_cleanup
 else
 	@echo "PROVIDER should be chosen between AZ or DO"
 	@exit 1
@@ -116,6 +123,25 @@ az_quickstart:
 	  -e "airgap=false" \
 	  -e "method=rpm"
 
+.PHONY: kvm_quickstart
+## Create a RKE2 cluster on KVM
+kvm_quickstart:
+	# Create infra with Terrafrom
+	@cd ./test/Libvirt && tofu init
+	@cd ./test/Libvirt && tofu plan -out=plan.tfplan \
+	  -var "workers_number=$(WORKERS)" \
+	  -var "masters_number=$(MASTERS)"
+	@cd ./test/Libvirt && tofu apply "plan.tfplan"
+	# Wait cloud-init to finish
+	@sleep 60
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) -v
+	# Run playbooks
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
+	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
+	  -e "stable=true" \
+	  -e "airgap=false" \
+	  -e "method=rpm"
+
 
 .PHONY: do_cleanup
 ## Remove RKE2 cluster from Digital Ocean
@@ -149,7 +175,7 @@ az_cleanup:
 	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
 	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
 	done
-	# Create infra with Terrafrom
+	# Destroy infra with Terrafrom
 	@cd ./test/Azure/infra && terraform init
 	@cd ./test/Azure/infra && terraform plan -destroy -out=terraform.tfplan \
 	  -var "azure_subscription_id=${AZ_SUBS_ID}" \
@@ -158,6 +184,16 @@ az_cleanup:
 	  -var "azure_tenant_id=${AZ_TENANT_ID}" \
 	  -var "instance_size=$(AZ_SIZE_MATTERS)"
 	@cd ./test/Azure/infra && terraform apply "terraform.tfplan"
+
+.PHONY: kvm_cleanup
+## Remove RKE2 cluster from KVM
+kvm_cleanup:
+	# Create infra with Tofu
+	@cd ./test/Libvirt && tofu init
+	@cd ./test/Libvirt && tofu plan -destroy -out=plan.tfplan \
+	  -var "workers_number=$(WORKERS)" \
+	  -var "masters_number=$(MASTERS)"
+	@cd ./test/Libvirt && tofu apply "plan.tfplan"
 
 .PHONY: longhorn
 ## Install longhorn after quickstart on Digital Ocean

@@ -21,6 +21,7 @@ context
 node_modules
 package*.json
 *.tfstate
+*.tfplan
 hosts.ini
 .key*
 Chart.lock
