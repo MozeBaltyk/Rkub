@@ -8,6 +8,9 @@ runs:
     - name: Checkout files
       uses: actions/checkout@v4
 
+    #- name: Setup Opentofu
+    #  uses: opentofu/setup-opentofu@v1
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
