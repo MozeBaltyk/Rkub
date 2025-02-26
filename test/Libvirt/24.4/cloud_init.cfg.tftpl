@@ -26,19 +26,15 @@ disable_root: true
 resize_rootfs: true
 
 packages:
-  - qemu-guest-agent
   - git
   - python3-pip
   - libselinux-python3
-  - yq
   - tar
   - unzip
-  - vim
   - wget
   - curl
   - bash-completion
   - tree
-  - firewalld
 
 package_update: true
 package_upgrade: true
@@ -68,19 +64,19 @@ rh_subscription:
 %{ endif }
 
 ## Ansible part
-ansible:
-  install_method: pip
-  package_name: ansible
-  # run_user is only valid when install_method is pip
-  run_user: ansible
-  setup_controller:
-    repositories:
-      - path: /home/ansible/Rkub
-        source: https://github.com/MozeBaltyk/Rkub.git
-    run_ansible:
-      - playbook_dir: /home/ansible/Rkub
-        playbook_name: ./playbooks/tasks/provision.yml
-        extra_vars: "@/home/ansible/vars.yml"
+# ansible:
+#   install_method: pip
+#   package_name: ansible
+#   # run_user is only valid when install_method is pip
+#   run_user: ansible
+#   setup_controller:
+#     repositories:
+#       - path: /home/ansible/Rkub
+#         source: https://github.com/MozeBaltyk/Rkub.git
+#     run_ansible:
+#       - playbook_dir: /home/ansible/Rkub
+#         playbook_name: ./playbooks/tasks/provision.yml
+#         extra_vars: "@/home/ansible/vars.yml"
 
 bootcmd:
   - [ sh, -c, 'echo $(date) | sudo tee -a /root/bootcmd.log' ]

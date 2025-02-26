@@ -63,7 +63,7 @@ Currently only install:
 
 - Defined versions or versions from [Stable channels](https://update.rke2.io/v1-release/channels)
 
-- Canal CNI
+- CNI: Canal or Cilium
 
 - Digital Ocean
 
@@ -71,12 +71,12 @@ Currently only install:
 
 But the target would be to handle all the usecase below:
 
-| OS     | Versions                    | Method         | CNI    | Cloud providers |  Cluster Arch         | Extra Install   |
+| OS     | Versions                    | Method         | CNI    | Providers       |  Cluster Arch         | Extra Install   |
 |--------|-----------------------------|----------------|--------|-----------------|-----------------------|-----------------|
 | Rocky8 | Defined in this collection  | airgap tarball | Canal  | Digital Ocean   | Standalone            | Kubevip         |
-| Ubuntu | Stable channels             | airgap rpm     |        | AWS             | One Master, x Workers | Longhorn        |
+| Rocky9 | Stable channels             | airgap rpm     | Cilium | AWS             | One Master, x Workers | Longhorn        |
 |        | Custom                      | online tarball |        | Azure           | 3 Masters, x Workers  | Rancher         |
-|        |                             | online rpm     |        |                 |                       | Neuvector       |
+|        |                             | online rpm     |        | KVM             |                       | Neuvector       |
 
 ## Prerequisites
 

@@ -21,6 +21,8 @@ else ifeq ($(PROVIDER), AZ)
 else ifeq ($(PROVIDER), KVM)
     USER_PRIVILEGED := ansible
     KEY_PATH := ./Libvirt/.key.private
+	CPU_SIZE_MATTERS ?= 2
+	MEM_SIZE_MATTERS ?= 4096
 else
     $(error PROVIDER should be chosen between DO, AZ or KVM)
 endif
@@ -140,8 +142,10 @@ kvm_quickstart:
 	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
 	  -e "stable=true" \
 	  -e "airgap=false" \
-	  -e "method=rpm"
-
+	  -e "method=rpm" \
+	  -e "cpu=$(CPU_SIZE_MATTERS)" \
+	  -e "memoryMB=$(MEM_SIZE_MATTERS)" \
+	  ;
 
 .PHONY: do_cleanup
 ## Remove RKE2 cluster from Digital Ocean

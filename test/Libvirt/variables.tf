@@ -1,7 +1,7 @@
 # Version Selection
 variable "selected_version" {
   description = "Selected OS version"
-  default     = "fedora40_local"  # Can be changed to "fedora41" as needed
+  default     = "rocky9_local"  # Can be changed to "fedora41" as needed
 }
 
 # Version Mapping
@@ -47,6 +47,20 @@ variable "Versionning" {
       os_version_short   = 9
       os_version_long    = "9.5"
       os_URL             = "file:///var/lib/libvirt/images/rhel95.qcow2"
+      cloud_init_version = 24.4
+    }
+    rocky9 = {
+      os_name            = "rocky"
+      os_version_short   = 9
+      os_version_long    = "9.5"
+      os_URL             = "https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base-9.5-20241118.0.x86_64.qcow2"
+      cloud_init_version = 24.4
+    }
+    rocky9_local = {
+      os_name            = "rocky"
+      os_version_short   = 9
+      os_version_long    = "9.5"
+      os_URL             = "file:///var/lib/libvirt/images/Rocky-9.qcow2"
       cloud_init_version = 24.4
     }
   }
