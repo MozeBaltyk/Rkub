@@ -153,6 +153,7 @@ ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments be
 -e "archive=true"                                             # Archive tar.zst true or false (default value "true")
 -e "stable=false"                                             # Stable channels or take version as defined in Rkub collection (default value "false")
 -e "method=tarball"                                           # Method for install, value possible "tarball" or "rpm" (default value "tarball")
+-e "cni=canal"                                                # CNI for RKE2 cluster, value possible "canal" or "cilium" (default value "canal")
 -e "el=9"                                                     # RHEL version (take default value from localhost if OS is different from RedHat-like take value "8")
 -e "all=false"                                                # Add all components kubevip,longhorn,rancher,neuvector (default value "false")
 -e "kubevip=true longhorn=true rancher=true neuvector=true"   # Add extras components to package (default value from var 'all')
@@ -182,6 +183,7 @@ ansible-playbook mozebaltyk.rkub.hauler.yml        # All arguments below are not
 ansible-playbook mozebaltyk.rkub.install.yml       # All arguments below are not mandatory
 -e domain="example.com"                            # By default take the host domain from master server
 -e "method=tarball"                                # Method for install, value possible "tarball" or "rpm" (default value "tarball")
+-e "cni=canal"                                     # CNI for RKE2 cluster, value possible "canal" or "cilium" (default value "canal")
 -e "airgap=true"                                   # if servers have internet access then set airgap to false (default value "true")
   -e "stable=false"                                # if airgap false then choose btw Stable channels or version from this collection. (default value "false")
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
