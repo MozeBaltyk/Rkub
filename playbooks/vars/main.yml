@@ -54,7 +54,7 @@ global_rke2_profile_activated: "{{ profile_cis | default('false') }}"
 global_rke2_disable: "{{ disable | default(omit) }}" # Valid items to not deploy: rke2-canal, rke2-coredns, rke2-ingress-nginx, rke2-metrics-server
 
 # Etcd backup/restore
-global_rke2_etcd_snapshot_backup_dir: "{{ backup_dir | default('etcd_snapshots')}}"
+global_rke2_etcd_snapshot_backup_dir: "{{ backup_dir | default('etcd_snapshots') }}"
 global_rke2_etcd_snapshot_file: "{{ backup_file | default('') }}"
 
 # Etcd snapshot s3 options

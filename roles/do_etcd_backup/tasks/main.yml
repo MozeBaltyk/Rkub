@@ -8,7 +8,7 @@
 - name: Register if we can do an etcd backup
   ansible.builtin.set_fact:
     do_etcd_backup: true
-  when: 
+  when:
     - rke2_etcd_snapshot_file
     - ansible_facts.services['rke2-server.service']['state'] == 'running'
     - not ansible_check_mode
