@@ -1,14 +1,15 @@
 ---
 name: Release to Ansible Galaxy
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
+
   # Not needed anymore, since branch protection
   #push:
   #  branches: ["main"]
 
   # The branches below must be a subset of the branches above
-  #pull_request:
-  #  branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   lint:
