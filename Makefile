@@ -42,7 +42,7 @@ else ifeq ($(PROVIDER), AZ)
 else ifeq ($(PROVIDER), KVM)
 	@$(MAKE) kvm_quickstart
 else
-	@echo "PROVIDER should be chosen between AZ or DO"
+	@echo "PROVIDER should be chosen between AZ, DO or KVM"
 	@exit 1
 endif
 
@@ -61,29 +61,29 @@ else
 endif
 
 .PHONY: do_quickstart
-## Create a RKE2 cluster on Digital Ocean
+# Create a RKE2 cluster on Digital Ocean
 do_quickstart:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
 	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
 	done
 	# S3 bucket for Backend
-	@cd ./test/DO/backend && terraform init
-	@cd ./test/DO/backend && terraform plan -out=terraform.tfplan \
+	@cd ./test/DO/backend && tofu init
+	@cd ./test/DO/backend && tofu plan -out=tofu.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	@cd ./test/DO/backend && terraform apply "terraform.tfplan"
+	@cd ./test/DO/backend && tofu apply "tofu.tfplan"
 	# Create infra with Terrafrom
-	@cd ./test/DO/infra && terraform init -backend-config="bucket=terraform-backend-rkub-quickstart"
-	@cd ./test/DO/infra && terraform plan -out=terraform.tfplan \
+	@cd ./test/DO/infra && tofu init -backend-config="bucket=tofu-backend-rkub-quickstart"
+	@cd ./test/DO/infra && tofu plan -out=tofu.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
 	  -var "controller_count=$(MASTERS)" \
 	  -var "instance_size=$(DO_SIZE_MATTERS)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
+	@cd ./test/DO/infra && tofu apply "tofu.tfplan"
 	# Wait cloud-init to finish
 	@sleep 60
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
@@ -95,7 +95,7 @@ do_quickstart:
 	  -e "method=rpm"
 
 .PHONY: az_quickstart
-## Create a RKE2 cluster on Azure
+# Create a RKE2 cluster on Azure
 az_quickstart:
 	# Checks vars settings
 	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
@@ -105,14 +105,14 @@ az_quickstart:
 	@for i in {1..2}; do \
 	echo "Running command $$i time(s)"; \
 	cd ./test/Azure/infra; \
-	terraform init; \
-	terraform plan -out=terraform.tfplan \
+	tofu init; \
+	tofu plan -out=tofu.tfplan \
 	  -var "azure_subscription_id=$(AZ_SUBS_ID)" \
 	  -var "azure_client_id=$(AZ_CLIENT_ID)" \
 	  -var "azure_client_secret=$(AZ_CLIENT_SECRET)" \
 	  -var "azure_tenant_id=$(AZ_TENANT_ID)" \
 	  -var "instance_size=$(AZ_SIZE_MATTERS)"; \
-	terraform apply "terraform.tfplan"; \
+	tofu apply "tofu.tfplan"; \
 	cd -; \
 	done
 	# Wait cloud-init to finish
@@ -126,7 +126,7 @@ az_quickstart:
 	  -e "method=rpm"
 
 .PHONY: kvm_quickstart
-## Create a RKE2 cluster on KVM
+# Create a RKE2 cluster on KVM
 kvm_quickstart:
 	# Create infra with Terrafrom
 	@cd ./test/Libvirt && tofu init
@@ -148,49 +148,49 @@ kvm_quickstart:
 	  ;
 
 .PHONY: do_cleanup
-## Remove RKE2 cluster from Digital Ocean
+# Remove RKE2 cluster from Digital Ocean
 do_cleanup:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
 	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
 	done
 	# Delete infra with Terrafrom
-	@cd ./test/DO/infra && terraform init -backend-config="bucket=terraform-backend-rkub-quickstart"
-	@cd ./test/DO/infra && terraform plan -destroy -out=terraform.tfplan \
+	@cd ./test/DO/infra && tofu init -backend-config="bucket=tofu-backend-rkub-quickstart"
+	@cd ./test/DO/infra && tofu plan -destroy -out=tofu.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
 	  -var "controller_count=$(MASTERS)" \
 	  -var "instance_size=$(DO_SIZE_MATTERS)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	@cd ./test/DO/infra && terraform apply "terraform.tfplan"
+	@cd ./test/DO/infra && tofu apply "tofu.tfplan"
 	# Remove S3 bucket for Backend
-	@cd ./test/DO/backend && terraform init
-	@cd ./test/DO/backend && terraform plan -destroy -out=terraform.tfplan \
+	@cd ./test/DO/backend && tofu init
+	@cd ./test/DO/backend && tofu plan -destroy -out=tofu.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "spaces_access_key_id=$(AWS_ACCESS_KEY_ID)" \
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
-	@cd ./test/DO/backend && terraform apply "terraform.tfplan"
+	@cd ./test/DO/backend && tofu apply "tofu.tfplan"
 
 .PHONY: az_cleanup
-## Remove RKE2 cluster from Azure
+# Remove RKE2 cluster from Azure
 az_cleanup:
 	# Checks vars settings
 	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
 	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
 	done
 	# Destroy infra with Terrafrom
-	@cd ./test/Azure/infra && terraform init
-	@cd ./test/Azure/infra && terraform plan -destroy -out=terraform.tfplan \
+	@cd ./test/Azure/infra && tofu init
+	@cd ./test/Azure/infra && tofu plan -destroy -out=tofu.tfplan \
 	  -var "azure_subscription_id=${AZ_SUBS_ID}" \
 	  -var "azure_client_id=${AZ_CLIENT_ID}" \
 	  -var "azure_client_secret=${AZ_CLIENT_SECRET}" \
 	  -var "azure_tenant_id=${AZ_TENANT_ID}" \
 	  -var "instance_size=$(AZ_SIZE_MATTERS)"
-	@cd ./test/Azure/infra && terraform apply "terraform.tfplan"
+	@cd ./test/Azure/infra && tofu apply "tofu.tfplan"
 
 .PHONY: kvm_cleanup
-## Remove RKE2 cluster from KVM
+# Remove RKE2 cluster from KVM
 kvm_cleanup:
 	# Create infra with Tofu
 	@cd ./test/Libvirt && tofu init
@@ -220,7 +220,7 @@ build:
 	ansible-playbook ./playbooks/build.yml
 
 .PHONY: ee-container
-## Create an execution-env container with all dependencies inside
+# Create an execution-env container with all dependencies inside
 ee-container:
 	@printf "\e[1;34m[INFO]\e[m ## Build image $(EE_IMAGE_PATH) ##\n"
 	podman build --platform linux/amd64 -f scripts/docker/Containerfile -t $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) .
@@ -228,7 +228,7 @@ ee-container:
 	@printf "\e[1;32m[OK]\e[m Image $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) builded and saved in $(EE_IMAGE_PATH).\n"
 
 .PHONY: ee-exec
-## Create a container with all dependencies inside.
+# Load and Run exec-env with all dependencies inside.
 ee-exec:
 	@printf "\e[1;34m[INFO]\e[m ## Load image $(EE_IMAGE_PATH) ##\n"
 	podman load -i $(EE_IMAGE_PATH)

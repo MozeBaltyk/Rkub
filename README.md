@@ -143,8 +143,10 @@ Airgap actions are adressed in below procedure.
 
 then use it...
 
+NB: If targeted servers have an internet access then skip and go to step 5
+
 3. Build your package by running (works on Debian-like or Redhat-like and targets localhost).
-This step concern only an airgap install. If targeted servers have an internet access then skip and go to step 5:
+This step concern only an airgap install. 
 
 ```sh
 ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments below are not mandatory
@@ -160,7 +162,7 @@ ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments be
 -u admin -Kk                                                  # Other Ansible Arguments (like -vvv)
 ```
 
-4. Push your package to first controler:
+1. Push your package to first controler:
 
 ```sh
 ansible-playbook mozebaltyk.rkub.upload.yml        # All arguments below are not mandatory
