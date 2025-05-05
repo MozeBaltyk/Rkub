@@ -34,7 +34,8 @@ jobs:
 
       - name: Create Space Bucket
         run: |
-          sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          ## sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          ## sed -i -e 's/signature_v2.*$/signature_v2 = True/' /home/runner/work/_temp/s3cmd.conf
           if [[ $BUCKET != "terraform-backend-github" ]]; then s3cmd mb s3://${BUCKET}; fi
           sleep 10
 
@@ -380,6 +381,7 @@ jobs:
 
       - name: Remove Space bucket
         run: |
-          sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          ## sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          ## sed -i -e 's/signature_v2.*$/signature_v2 = True/' /home/runner/work/_temp/s3cmd.conf
           if [[ $BUCKET != "terraform-backend-github" ]]; then s3cmd rb s3://${BUCKET} --recursive; fi
           sleep 10
