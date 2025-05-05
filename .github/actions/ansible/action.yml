@@ -8,13 +8,10 @@ runs:
     - name: Checkout files
       uses: actions/checkout@v4
 
-    #- name: Setup Opentofu
-    #  uses: opentofu/setup-opentofu@v1
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
+    - name: Setup Tofu
+      uses: opentofu/setup-opentofu@v1
       with:
-        terraform_version: "1.7.3"
+        tofu_version: "1.7.3"
 
     - name: Get key
       run: |
@@ -24,33 +21,33 @@ runs:
       env:
         SSH_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
-    - name: Terraform Init
+    - name: Tofu Init
       id: init
       run: |
-        terraform init
+        tofu init
 
-    - name: Terraform plan
+    - name: Tofu plan
       id: plan
       run: |
-        terraform plan -out=terraform.tfplan \
+        tofu plan -out=terraform.tfplan \
         -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
         -var "do_token=${DO_PAT}" \
         -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
 
-    - name: Terraform Apply
+    - name: Tofu Apply
       run: |
-        terraform apply terraform.tfplan
+        tofu apply terraform.tfplan
 
-    - name: Terraform plan delete stack
+    - name: Tofu plan delete stack
       id: plan
       run: |
-        terraform plan -destroy -out=terraform.tfplan \
+        tofu plan -destroy -out=terraform.tfplan \
         -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
         -var "do_token=${DO_PAT}" \
         -var "terraform_backend_bucket_name=github-action-${{ github.run_id }}"
       continue-on-error: true
 
-    - name: Terraform Apply
+    - name: Tofu Apply
       run: |
-        terraform apply terraform.tfplan
+        tofu apply terraform.tfplan
       continue-on-error: true
