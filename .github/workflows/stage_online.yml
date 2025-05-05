@@ -34,7 +34,9 @@ jobs:
 
       - name: Create Space Bucket
         run: |
-          sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
+          which s3cmd
+          cat /home/runner/work/_temp/s3cmd.conf
+          ##sed -i -e 's/signature_v2.*$/signature_v2 = True/' ~/.s3cfg
           if [[ $BUCKET != "terraform-backend-github" ]]; then s3cmd mb s3://${BUCKET}; fi
           sleep 10
 
