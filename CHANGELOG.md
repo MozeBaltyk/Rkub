@@ -7,7 +7,7 @@
 
 - rke2 version: 1.31.8
 
-- kube-vip version: 0.8.7
+- kube-vip version: 0.9.1
 
 - cert-manager version: 1.17.2
 
