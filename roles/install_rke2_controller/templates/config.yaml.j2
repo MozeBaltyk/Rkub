@@ -24,7 +24,7 @@ cni:
 {% else %}
 cni: {{ rke2_cni }}
 {% endif %}
-{% if rke2_cni == 'cilium' %}
+{% if rke2_cni == 'cilium' or rke2_cni is none %}
 disable-kube-proxy: true
 {% endif %}
 tls-san:

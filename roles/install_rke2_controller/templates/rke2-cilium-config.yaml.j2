@@ -6,9 +6,27 @@ metadata:
   namespace: kube-system
 spec:
   valuesContent: |-
+    # KubeProxy Replacement
     kubeProxyReplacement: true
+    kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
+
+    # K8s API service
     k8sServiceHost: "localhost"
     k8sServicePort: "6443"
+
+    # -- Configure IP Address Management mode.
+    # ref: https://docs.cilium.io/en/stable/network/concepts/ipam/
+    ipam:
+      operator:
+        clusterPoolIPv4PodCIDRList: "10.42.0.0/16"
+
+    # Configure L2 announcements (LB-IPAM configuration)
+    l2announcements:
+      enabled: true
+    externalIPs:
+      enabled: true
+
+    # Hubble UI
     hubble:
       enabled: true
       relay:

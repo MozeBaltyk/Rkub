@@ -5,17 +5,17 @@
 
 ### Versions:
 
-- rke2 version: 1.31.4
+- rke2 version: 1.31.8
 
-- kube-vip version: 0.8.7
+- kube-vip version: 0.9.1
 
-- cert-manager version: 1.16.2
+- cert-manager version: 1.17.2
 
-- rancher version: 2.9.2
+- rancher version: 2.11.1
 
-- longhorn version: 1.7.2
+- longhorn version: 1.8.1
   
-- neuvector version: 2.8.3
+- neuvector version: 5.3.4
 
 <!-- End Release -->
 
