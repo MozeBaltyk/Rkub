@@ -120,8 +120,8 @@ make neuvector
 make cleanup
 ```
 
-NB: Quickstart is meant to deploy in DO a quick RKE2 cluster for testing purpose, and without taking into account airgap problematics.
-Airgap actions are adressed in below procedure.
+NB: By default, Quickstart is meant to deploy in DO a quick RKE2 cluster for testing purpose, and without taking into account airgap problematics.
+Airgap actions are adressed in below procedure. 
 
 ## Global Usage
 
@@ -216,6 +216,60 @@ ansible-playbook mozebaltyk.rkub.longhorn.yml      # All arguments below are not
 ansible-playbook mozebaltyk.rkub.neuvector.yml     # All arguments below are not mandatory
 -e domain="example.com"                            # Domain use for ingress, by default take the host domain from master server
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
+```
+
+## Developping purpose
+
+1. From an host with internet accces 
+
+- Clone this repository: `git clone -b main https://github.com/MozeBaltyk/Rkub.git`
+
+- Install prerequisites: `cd Rkub && make prerequis`
+
+2. Prepare your infra:
+
+```bash
+# Choose a Provider
+
+## For Digital Ocean providers (default one)
+export PROVIDER="DO"
+export DO_PAT="xxxxxxxxxx"
+export AWS_ACCESS_KEY_ID="xxxxxxxxxxxx"
+export AWS_SECRET_ACCESS_KEY="xxxxxxxxxxx"
+
+## For Azure
+export PROVIDER="AZ"
+export AZ_SUBS_ID="xxxxxxxxx" 
+export AZ_CLIENT_ID="xxxxxxxxxx"
+export AZ_CLIENT_SECRET="xxxxxxxxx"
+export AZ_TENANT_ID="xxxxxxxxxxx"
+
+## For KVM
+export PROVIDER="KVM"
+sudo curl https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2 -o /var/lib/libvirt/images/Rocky-9.qcow2
+
+# Choose how many workers and masters
+export WORKERS=2 # Default 0
+export MASTERS=3 # Default 1
+
+# Create RKE2 cluster on DO
+make infra
+
+# Adapt the extra-vars following your needs
+cd ./test && ansible-playbook ./playbooks/install.yml -u root --private-key ./DO/infra/.key.private -e "stable=true" -e "airgap=false" -e "method=rpm" -e "cni=cilium"
+
+# On your localhost or on first controller, checks
+kubecm ls
+k9s
+
+# Other components
+cd ..
+make longhorn
+make rancher
+make neuvector
+
+# Delete RKE2 cluster
+make cleanup
 ```
 
 ## Ansible collection in Container

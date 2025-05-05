@@ -82,28 +82,28 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Setup Tofu
+        uses: opentofu/setup-opentofu@v1
         with:
-          terraform_version: "1.7.3"
+          tofu_version: "1.7.3"
 
-      - name: Terraform Init
+      - name: Tofu Init
         id: init
         run: |
           cd ./DO/infra
-          terraform init -backend-config="bucket=${BUCKET}"
+          tofu init -backend-config="bucket=${BUCKET}"
 
-      - name: Terraform Validate
+      - name: Tofu Validate
         id: validate
         run: |
           cd ./DO/infra
-          terraform validate -no-color
+          tofu validate -no-color
 
-      - name: Terraform Plan
+      - name: Tofu Plan
         id: plan
         run: |
           cd ./DO/infra
-          terraform plan -out=terraform.tfplan \
+          tofu plan -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "token=${DO_PAT}" \
           -var "worker_count=${WORKER_COUNT}" \
@@ -116,14 +116,14 @@ jobs:
           -var "terraform_backend_bucket_name=${BUCKET}"
         continue-on-error: true
 
-      - name: Terraform Plan Status
+      - name: Tofu Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - name: Terraform Apply
+      - name: Tofu Apply
         run: |
           cd ./DO/infra
-          terraform apply terraform.tfplan
+          tofu apply terraform.tfplan
 
       # Save Artifacts
       - name: Install s3fs-fuse on Ubuntu
@@ -338,21 +338,21 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Setup Tofu
+        uses: opentofu/setup-opentofu@v1
         with:
-          terraform_version: "1.7.3"
+          tofu_version: "1.7.3"
 
-      - name: Terraform Init
+      - name: Tofu Init
         id: init
         run: |
-          terraform init -backend-config="bucket=${BUCKET}"
+          tofu init -backend-config="bucket=${BUCKET}"
         continue-on-error: true
 
-      - name: Terraform plan delete stack
+      - name: Tofu plan delete stack
         id: plan
         run: |
-          terraform plan -destroy -out=terraform.tfplan \
+          tofu plan -destroy -out=terraform.tfplan \
           -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
           -var "token=${DO_PAT}" \
           -var "worker_count=${WORKER_COUNT}" \
@@ -367,7 +367,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply terraform.tfplan
+          tofu apply terraform.tfplan
         continue-on-error: true
 
       - name: Set up S3cmd cli tool

@@ -1,2 +1,2 @@
 #Packages to install
-arkade jq yq just helm kubectl kubecm
+arkade jq yq just helm kubectl kubecm tofu

@@ -32,6 +32,20 @@ endif
 prerequis:
 	$(MAKE) -C ./scripts/prerequis all
 
+.PHONY: infra
+## Build an empty infra on choosen cloud provider (to launch ansible playbooks in second step)
+infra:
+ifeq ($(PROVIDER), DO)
+	@$(MAKE) do_infra
+else ifeq ($(PROVIDER), AZ)
+	@$(MAKE) az_infra
+else ifeq ($(PROVIDER), KVM)
+	@$(MAKE) kvm_infra
+else
+	@echo "PROVIDER should be chosen between AZ, DO or KVM"
+	@exit 1
+endif
+
 .PHONY: quickstart
 ## Create a RKE2 cluster on choosen cloud provider
 quickstart:
@@ -47,7 +61,7 @@ else
 endif
 
 .PHONY: cleanup
-## Cleanup RKE2 and VM from choosen cloud provider
+## Cleanup RKE2 and VM from choosen cloud provider (works for both quickstart or infra)
 cleanup:
 ifeq ($(PROVIDER), DO)
 	@$(MAKE) do_cleanup
@@ -60,9 +74,9 @@ else
 	@exit 1
 endif
 
-.PHONY: do_quickstart
-# Create a RKE2 cluster on Digital Ocean
-do_quickstart:
+.PHONY: do_infra
+# Create VMs on Digital Ocean
+do_infra:
 	# Checks vars settings
 	@for v in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY DO_PAT; do \
 	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
@@ -75,7 +89,7 @@ do_quickstart:
 	  -var "spaces_access_key_secret=$(AWS_SECRET_ACCESS_KEY)"
 	@cd ./test/DO/backend && tofu apply "tofu.tfplan"
 	# Create infra with Terrafrom
-	@cd ./test/DO/infra && tofu init -backend-config="bucket=tofu-backend-rkub-quickstart"
+	@cd ./test/DO/infra && tofu init -backend-config="bucket=terraform-backend-rkub-quickstart"
 	@cd ./test/DO/infra && tofu plan -out=tofu.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
@@ -87,16 +101,10 @@ do_quickstart:
 	# Wait cloud-init to finish
 	@sleep 60
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
-	# Run playbooks
-	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
-	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
-	  -e "stable=true" \
-	  -e "airgap=false" \
-	  -e "method=rpm"
 
-.PHONY: az_quickstart
-# Create a RKE2 cluster on Azure
-az_quickstart:
+.PHONY: az_infra
+# Create VMs on Azure
+az_infra:
 	# Checks vars settings
 	@for v in AZ_SUBS_ID AZ_CLIENT_ID AZ_CLIENT_SECRET AZ_TENANT_ID; do \
 	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
@@ -118,6 +126,37 @@ az_quickstart:
 	# Wait cloud-init to finish
 	@sleep 60
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u root -v
+
+.PHONY: kvm_infra
+# Create VMs cluster on KVM
+kvm_infra:
+	# Create infra with Terrafrom
+	@cd ./test/Libvirt && tofu init
+	@cd ./test/Libvirt && tofu plan -out=plan.tfplan \
+	  -var "workers_number=$(WORKERS)" \
+	  -var "masters_number=$(MASTERS)"
+	@cd ./test/Libvirt && tofu apply "plan.tfplan"
+	# Wait cloud-init to finish
+	@sleep 60
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) -v
+
+.PHONY: do_quickstart
+# Create a RKE2 cluster on Digital Ocean
+do_quickstart:
+	# Create the infra with Tofu
+	@$(MAKE) do_infra
+	# Run playbooks
+	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
+	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
+	  -e "stable=true" \
+	  -e "airgap=false" \
+	  -e "method=rpm"
+
+.PHONY: az_quickstart
+# Create a RKE2 cluster on Azure
+az_quickstart:
+	# Create the infra with Tofu
+	@$(MAKE) az_infra
 	# Run playbooks
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
 	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
@@ -128,15 +167,8 @@ az_quickstart:
 .PHONY: kvm_quickstart
 # Create a RKE2 cluster on KVM
 kvm_quickstart:
-	# Create infra with Terrafrom
-	@cd ./test/Libvirt && tofu init
-	@cd ./test/Libvirt && tofu plan -out=plan.tfplan \
-	  -var "workers_number=$(WORKERS)" \
-	  -var "masters_number=$(MASTERS)"
-	@cd ./test/Libvirt && tofu apply "plan.tfplan"
-	# Wait cloud-init to finish
-	@sleep 60
-	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible RKE2_CLUSTER -m shell -a "cloud-init status --wait" -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) -v
+	# Create the infra with Tofu
+	@$(MAKE) kvm_infra
 	# Run playbooks
 	@cd ./test && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook playbooks/install.yml \
 	  -u $(USER_PRIVILEGED) --private-key $(KEY_PATH) \
@@ -155,7 +187,7 @@ do_cleanup:
 	eval test -n \"\$$$$v\" || { echo "You must set environment variable $$v"; exit 1; } && echo $$v; \
 	done
 	# Delete infra with Terrafrom
-	@cd ./test/DO/infra && tofu init -backend-config="bucket=tofu-backend-rkub-quickstart"
+	@cd ./test/DO/infra && tofu init -backend-config="bucket=terraform-backend-rkub-quickstart"
 	@cd ./test/DO/infra && tofu plan -destroy -out=tofu.tfplan \
 	  -var "token=$(DO_PAT)" \
 	  -var "worker_count=$(WORKERS)" \
