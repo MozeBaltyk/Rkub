@@ -14,7 +14,7 @@ global_versions:
   cert_manager: "1.16.2"
   rancher: "2.11.1"
   longhorn: "1.7.2"
-  neuvector: "2.8.3"
+  neuvector: "5.3.4"
   helm: "3.16.4"
   nerdctl: "1.7.6"
   k9s: "0.32.4"
