@@ -9,13 +9,13 @@ global_extras_components:
   neuvector: "{{ neuvector | default(global_all_wanted) }}"
 
 global_versions:
-  rke2: "1.27.12"
-  kubevip: "0.8.0"
-  cert_manager: "1.14.1"
-  rancher: "2.8.1"
-  longhorn: "1.6.0"
-  neuvector: "2.7.2"
-  helm: "3.14.0"
+  rke2: "1.31.4"
+  kubevip: "0.8.7"
+  cert_manager: "1.16.2"
+  rancher: "2.9.2"
+  longhorn: "1.7.2"
+  neuvector: "2.8.3"
+  helm: "3.16.4"
   nerdctl: "1.7.6"
   k9s: "0.32.4"
   hauler: "1.0.3"
@@ -49,9 +49,27 @@ global_rke2_ha_mode: false
 global_rke2_api_ip: "{{ vip | default(global_master_ip) }}"
 global_rke2_cluster_cidr: "10.42.0.0/16" #Default Value
 global_rke2_service_cidr: "10.43.0.0/16" #Default Value
-global_rke2_cni: "canal"
+global_rke2_cni: "{{ cni | default('canal') }}"
 global_rke2_profile_activated: "{{ profile_cis | default('false') }}"
 global_rke2_disable: "{{ disable | default(omit) }}" # Valid items to not deploy: rke2-canal, rke2-coredns, rke2-ingress-nginx, rke2-metrics-server
+
+# Etcd backup/restore
+global_rke2_etcd_snapshot_backup_dir: "{{ backup_dir | default('etcd_snapshots') }}"
+global_rke2_etcd_snapshot_file: "{{ backup_file | default('') }}"
+
+# Etcd snapshot s3 options
+# Set either all these values or `rke2_etcd_snapshot_file` and `rke2_etcd_snapshot_source_dir`
+
+# rke2_etcd_snapshot_s3_options:
+  # s3_endpoint: "" # required
+  # access_key: "" # required
+  # secret_key: "" # required
+  # bucket: "" # required
+  # snapshot_name: "" # required.
+  # skip_ssl_verify: false # optional
+  # endpoint_ca: "" # optional. Can skip if using defaults
+  # region: "" # optional - defaults to us-east-1
+  # folder: "" # optional - defaults to top level of bucket
 
 # Longhorn
 default_longhorn_datapath: "/data/longhorn"

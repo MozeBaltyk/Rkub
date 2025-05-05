@@ -62,3 +62,11 @@
                   enable-ssl-passthrough: true
         dest: /var/lib/rancher/rke2/server/manifests/rke2-ingress-nginx-config.yaml
         mode: "0640"
+
+    # https://github.com/rancher/rke2-charts/blob/main/charts/rke2-cilium/rke2-cilium/1.17.100/values.yaml
+    - name: Configure Cilium as CNI on RKE2
+      ansible.builtin.template:
+        src: rke2-cilium-config.yaml.j2
+        dest: /var/lib/rancher/rke2/server/manifests/rke2-cilium-config.yaml
+        mode: "0640"
+      when: rke2_cni == 'cilium'

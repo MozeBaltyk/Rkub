@@ -10,6 +10,8 @@
         enabled: false
         masked: true
       retries: 5
+      failed_when: false
+      changed_when: false
 
     - name: Start and enable rke2-server
       ansible.builtin.systemd:
@@ -17,8 +19,10 @@
         state: started
         enabled: true
       notify: "Service (re)started"
-      async: 600
-      poll: 60
+      register: rke2_server_status
+      until: rke2_server_status is succeeded
+      retries: 10
+      delay: 30
 
     - name: Wait for k8s apiserver
       ansible.builtin.wait_for:

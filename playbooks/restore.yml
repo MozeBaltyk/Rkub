@@ -1,0 +1,9 @@
+---
+- name: Restore RKE2 etcd
+  hosts: RKE2_CONTROLLERS
+  gather_facts: true
+  become: true
+  vars_files: ../vars/main.yml
+  tags: controller
+  roles:
+    - {role: mozebaltyk.rkub.do_etcd_restore, tags: restore}

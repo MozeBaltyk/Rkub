@@ -10,6 +10,8 @@
         enabled: false
         masked: true
       retries: 5
+      failed_when: false
+      changed_when: false
 
     - name: Start and enable rke2-agent
       ansible.builtin.systemd:
@@ -17,6 +19,7 @@
         state: started
         enabled: true
       notify: "Service (re)started"
-      register: rke2_service
-      until: rke2_service is succeeded
-      retries: 5
+      register: rke2_agent_status
+      until: rke2_agent_status is succeeded
+      retries: 10
+      delay: 30

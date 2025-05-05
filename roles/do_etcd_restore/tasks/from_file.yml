@@ -1,0 +1,24 @@
+---
+- name: Create the RKE2 etcd snapshot dir
+  ansible.builtin.file:
+    state: directory
+    path: "{{ rke2_etcd_snapshot_destination_dir }}"
+    recurse: true
+    mode: 0755
+
+- name: Copy etcd snapshot file
+  ansible.builtin.copy:
+    src: "{{ rke2_etcd_snapshot_source_dir }}/{{ rke2_etcd_snapshot_file }}"
+    dest: "{{ rke2_etcd_snapshot_destination_dir }}/{{ rke2_etcd_snapshot_file }}"
+    mode: 0644
+    force: true
+
+- name: Restore etcd from a snapshot
+  ansible.builtin.shell: |
+    rke2 server \
+    --cluster-reset \
+    --cluster-reset-restore-path="{{ rke2_etcd_snapshot_destination_dir }}/{{ rke2_etcd_snapshot_file }}" \
+    --token {{ rke2_token }}
+  register: task_output # <- Registers the command output.
+  changed_when: task_output.rc != 0 # <- Uses the return code to define when the task has changed.
+  when: not ansible_check_mode

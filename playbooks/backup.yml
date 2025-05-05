@@ -1,0 +1,9 @@
+---
+- name: Backup RKE2 etcd
+  hosts: RKE2_CONTROLLERS[0]
+  gather_facts: true
+  become: true
+  vars_files: ../vars/main.yml
+  tags: controller
+  roles:
+    - {role: mozebaltyk.rkub.do_etcd_backup, tags: backup}

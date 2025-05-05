@@ -39,7 +39,7 @@ variable "domain" {
 }
 
 variable "region" {
-  description = "Unique bucket name for storing terraform backend data"
+  description = "DO location for all resources"
   default = "fra1"
 }
 
@@ -60,7 +60,7 @@ variable "terraform_backend_bucket_name" {
 }
 
 variable "mount_point" {
-  description = "Unique bucket name for storing terraform backend data"
+  description = "Mount point on VM to mount S3 bucket"
   default = "/opt/rkub"
 }
 

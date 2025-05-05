@@ -59,9 +59,9 @@
           "README.md"
         ],
         "matchStrings": [
-          "global_rke2_version: \"(?<currentValue>.*)\"\\n",
+          "rke2: \"(?<currentValue>.*)\"\\n",
           "- rke2 version: (?<currentValue>.*)\\n",
-          "- \\[RKE2 (?<currentValue>[^\\]]+)\\]\\(https://docs.rke2.io\\) - Security focused Kubernetes (channel stable)\\n"
+          "- \\[RKE2 (?<currentValue>[^\\]]+)\\]\\(https://docs.rke2.io\\) - Security focused Kubernetes\\n"
         ],
         "depNameTemplate": "rke2",
         "versioningTemplate": "semver-coerced",
@@ -74,7 +74,7 @@
           "playbooks/vars/main\\.y[a]?ml$"
         ],
         "matchStrings": [
-          "global_helm_version: \"(?<currentValue>.*?)\"\\n"
+          "helm: \"(?<currentValue>.*?)\"\\n"
         ],
         "datasourceTemplate": "git-refs",
         "depNameTemplate": "helm",
@@ -90,7 +90,7 @@
           "README.md"
         ],
         "matchStrings": [
-          "global_CERT_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "cert_manager: \"(?<currentValue>.*?)\"\\n",
           "- cert-manager version: (?<currentValue>.*)\\n",
           "- \\[Cert-manager (?<currentValue>[^\\]]+)\\]\\(https://cert-manager.io/docs/\\) - Certificate manager\\n"
         ],
@@ -108,7 +108,7 @@
           "README.md"
         ],
         "matchStrings": [
-          "global_RANCHER_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "rancher: \"(?<currentValue>.*?)\"\\n",
           "- rancher version: (?<currentValue>.*)\\n",
           "- \\[Rancher (?<currentValue>[^\\]]+)\\]\\(https://www.suse.com/products/suse-rancher/\\) - Multi-Cluster Kubernetes Management\\n"
         ],
@@ -125,7 +125,7 @@
           "README.md"
         ],
         "matchStrings": [
-          "global_LONGHORN_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "longhorn: \"(?<currentValue>.*?)\"\\n",
           "- longhorn version: (?<currentValue>.*)\\n",
           "- \\[Longhorn (?<currentValue>[^\\]]+)\\]\\(https://longhorn.io\\) - Unified storage layer\\n"
         ],
@@ -143,7 +143,7 @@
           "README.md"
         ],
         "matchStrings": [
-          "global_NEU_VERSION: \"(?<currentValue>.*?)\"\\n",
+          "neuvector: \"(?<currentValue>.*?)\"\\n",
           "- neuvector version: (?<currentValue>.*)\\n",
           "- \\[Neuvector (?<currentValue>[^\\]]+)\\]\\(https://neuvector.com/\\) - Kubernetes Security Platform\\n"
         ],
@@ -161,7 +161,7 @@
           "README.md"
         ],
         "matchStrings": [
-          "global_kubevip_version: \"(?<currentValue>.*?)\"\\n",
+          "kubevip: \"(?<currentValue>.*?)\"\\n",
           "- kube-vip version: (?<currentValue>.*)\\n",
           "- \\[Kube-vip (?<currentValue>[^\\]]+)\\]\\(https://kube-vip.io/\\) - Virtual IP and load balancer\\n"
         ],

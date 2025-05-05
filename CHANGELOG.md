@@ -1,21 +1,21 @@
 # CHANGELOG.md
 
 <!-- Release -->
-## 1.0.3 (2024-05-23)
+## 1.0.6 (2025-05-05)
 
 ### Versions:
 
-  - rke2 version: 1.27.12
+- rke2 version: 1.31.4
 
-  - kube-vip: 0.8.0
+- kube-vip version: 0.8.7
 
-  - cert-manager version: 1.14.1
+- cert-manager version: 1.16.2
 
-  - rancher version: 2.8.1
+- rancher version: 2.9.2
 
-  - longhorn version: 1.6.0
+- longhorn version: 1.7.2
   
-  - neuvector version: 2.7.2
+- neuvector version: 2.8.3
 
 <!-- End Release -->
 
@@ -36,6 +36,7 @@
   - [x] Improve collection to run as true collection
   - [x] CI workflows
   - [x] Quickstart script
+  - [x] Infra script for KVM or DO, to launch custom ansible-playbooks
 
 Use case:
   - [x] airgap

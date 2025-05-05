@@ -5,12 +5,12 @@ localhost ansible_connection=local
 
 [RKE2_CONTROLLERS]
 %{ for idx, ip in controller_ips ~}
-controller${idx} ansible_host=${ip} # Controller${idx}
+controller${idx + 1} ansible_host=${ip} # Controller${idx + 1}
 %{ endfor ~}
 
 [RKE2_WORKERS]
 %{ for idx, ip in worker_ips ~}
-worker${idx} ansible_host=${ip} # Worker${idx}
+worker${idx + 1} ansible_host=${ip} # Worker${idx + 1}
 %{ endfor ~}
 
 [RKE2_CLUSTER:children]

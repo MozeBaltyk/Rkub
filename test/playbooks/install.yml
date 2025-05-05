@@ -1,7 +1,7 @@
 ---
 - name: Install RKE2 Controlers
   hosts: RKE2_CONTROLLERS
-  gather_facts: true
+  gather_facts: false
   become: true
   vars_files: ../../playbooks/vars/main.yml
   tags: controller
@@ -10,7 +10,7 @@
 
 - name: Install RKE2 Workers
   hosts: RKE2_WORKERS
-  gather_facts: true
+  gather_facts: false
   become: true
   vars_files: ../../playbooks/vars/main.yml
   tags: worker

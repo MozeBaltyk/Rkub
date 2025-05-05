@@ -1,4 +1,19 @@
 ---
+# Common
+- name: "Deploy Neuvector"
+  run_once: true
+  become: true
+  become_user: "{{ admin_user }}"
+  become_method: ansible.builtin.sudo
+  become_flags: "-i"
+  block:
+    - name: Create an Label namespace
+      ansible.builtin.shell: >
+        export KUBECONFIG=/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml;
+        kubectl create namespace neuvector;
+        kubectl label  namespace neuvector "pod-security.kubernetes.io/enforce=privileged";
+      changed_when: false
+
 # Airgap
 - name: "Deploy Neuvector"
   run_once: true
@@ -81,8 +96,6 @@
             enabled: true
             runtimePath: /run/k3s/containerd/containerd.sock
           manager:
-            image:
-              repository: neuvector/manager
             ingress:
               enabled: true
               ingress:
@@ -90,21 +103,9 @@
             svc:
               type: ClusterIP
           controller:
-            image:
-              repository: neuvector/controller
             pvc:
               enabled: true
               capacity: 500Mi
-          enforcer:
-            image:
-              repository: neuvector/enforcer
-          internal:
-            certmanager:
-              enabled: true
-          cve:
-            updater:
-              image:
-                repository: neuvector/updater
         kubeconfig: "/home/{{ admin_user }}/.kube/{{ inventory_hostname }}.yaml"
 
 # Common

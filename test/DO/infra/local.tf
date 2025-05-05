@@ -8,8 +8,7 @@
 locals {
   cloud_init_config = yamlencode({
     packages = [
-      "ansible",
-      "make"
+      "python3.12"
     ]
   })
 }
@@ -39,6 +38,7 @@ locals {
       }
     },
     packages = [
+      "python3.12",
       "epel-release",
       "s3fs-fuse",
       "git",

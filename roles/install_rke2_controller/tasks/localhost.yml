@@ -30,6 +30,17 @@
           changed_when: false
           failed_when: false
 
+        - name: Ensure .kube/config file exist
+          ansible.builtin.stat:
+            path: "$HOME/.kube/config"
+          register: stat_result
+
+        - name: Create kube/config, if it doesnt exist already
+          ansible.builtin.file:
+            path: "$HOME/.kube/config"
+            state: touch
+          when: not stat_result.stat.exists
+
         - name: Add to kubecm
           ansible.builtin.command: "kubecm add -cf {{ rkub_local_kubeconfig }} --context-name {{ rkub_context_name }}"
           changed_when: false

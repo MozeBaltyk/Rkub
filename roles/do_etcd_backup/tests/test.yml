@@ -1,0 +1,6 @@
+---
+- name: Test etcd backup role
+  hosts: localhost
+  remote_user: root
+  roles:
+    - do_etcd_backup

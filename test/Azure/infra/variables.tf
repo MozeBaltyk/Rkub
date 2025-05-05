@@ -1,12 +1,9 @@
-variable "token" {
-  description = "Azure API Token"
-}
 
-### s-2vcpu-4gb
+### standard_d8s_v5 = 8vcpu/32G
 variable "instance_size" {
   type = string
-  description = "VM size"
-  default = "s-2vcpu-4gb"
+  description = "Instance type used for all linux virtual machines"
+  default = "standard_d8s_v5" 
 }
 
 variable "controller_count" {
@@ -21,18 +18,6 @@ variable "worker_count" {
   default = "2"
 }
 
-variable "az_user" {
-  type    = string
-  description = "user created on VM"
-  default = "terraform"
-}
-
-variable "az_system" {
-  type    = string
-  description = "os used for VM"
-  default = "rockylinux-8-x64"
-}
-
 variable "domain" {
   description = "Domain given to loadbalancer and VMs"
   default = "rkub.com"
@@ -40,7 +25,7 @@ variable "domain" {
 
 variable "region" {
   description = "Unique bucket name for storing terraform backend data"
-  default = "fra1"
+  default = "westeurope"
 }
 
 variable "airgap" {
@@ -82,4 +67,22 @@ variable "azure_client_secret" {
 
 variable "azure_tenant_id" {
   description = "Azure tenant ID"
+}
+
+variable "prefix" {
+  type        = string
+  description = "Prefix added to names of all resources"
+  default     = "slaz"
+}
+
+variable "node_username" {
+  type    = string
+  description = "user created on VM"
+  default = "terraform"
+}
+
+variable "az_system" {
+  type    = string
+  description = "os used for VM"
+  default = "9-lvm-gen2"
 }

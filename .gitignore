@@ -21,6 +21,7 @@ context
 node_modules
 package*.json
 *.tfstate
+*.tfplan
 hosts.ini
 .key*
 Chart.lock
@@ -28,3 +29,4 @@ Chart.lock
 __pycache__
 .pytest_cache
 AWS
+.aider*

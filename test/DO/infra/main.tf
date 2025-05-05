@@ -1,3 +1,5 @@
+# Digital Ocean Infrastructure Resources
+
 ###
 ### SSH
 ###
@@ -26,7 +28,7 @@ resource "digitalocean_ssh_key" "ssh_key" {
   name       = "rkub-${var.GITHUB_RUN_ID}-ssh"
   public_key = tls_private_key.global_key.public_key_openssh
 }
-
+ 
 ###
 ### VPC
 ###
@@ -40,12 +42,13 @@ resource "digitalocean_vpc" "rkub-project-network" {
 }
 
 # https://github.com/digitalocean/terraform-provider-digitalocean/issues/446
-resource "time_sleep" "wait_200_seconds_to_destroy" {
+resource "time_sleep" "wait_for_vpc" {
   depends_on = [digitalocean_vpc.rkub-project-network]
-  destroy_duration = "200s"
+  destroy_duration = "200s" # Adjust duration as needed
+  create_duration = "30s"  # Adjust duration as needed
 }
 resource "null_resource" "placeholder" {
-  depends_on = [time_sleep.wait_200_seconds_to_destroy]
+  depends_on = [time_sleep.wait_for_vpc]
 }
 #
 
@@ -54,42 +57,42 @@ resource "null_resource" "placeholder" {
 ###
 
 # Droplet Instance for RKE2 Cluster - Manager
+# name = "controller${count.index}.${var.domain}"
 resource "digitalocean_droplet" "controllers" {
     count = var.controller_count
     image = var.do_system
-    name = "controller${count.index}.${var.domain}"
+    name = "${format("%s%02d.%3s", "controller", count.index + 1, var.domain)}"
     region = var.region
     size = var.instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
       "controller",
-      "${var.do_system}_controllers",
+      "${var.do_system}",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
     # if airgap, S3 bucket is mounted on master to get the resources
-    user_data = var.airgap ? data.cloudinit_config.server_airgap_config.rendered : null
-}
-
-output "ip_address_controllers" {
-  value = digitalocean_droplet.controllers[*].ipv4_address
-  description = "The public IP address of your rke2 controllers."
+    user_data = var.airgap ? data.cloudinit_config.server_airgap_config.rendered : data.cloudinit_config.server_config.rendered
+    depends_on = [ null_resource.placeholder, digitalocean_ssh_key.ssh_key ] # Ensure VPC and SSH key are created first
 }
 
 # Droplet Instance for RKE2 Cluster - Workers
+# name = "worker${count.index}.${var.domain}"
 resource "digitalocean_droplet" "workers" {
     count = var.worker_count
     image = var.do_system
-    name = "worker${count.index}.${var.domain}"
+    name = "${format("%s%02d.%3s", "worker", count.index + 1, var.domain)}"
     region = var.region
     size = var.instance_size
     tags   = [
       "rkub-${var.GITHUB_RUN_ID}",
       "worker",
-      "${var.do_system}_workers",
+      "${var.do_system}",
       ]
     vpc_uuid = digitalocean_vpc.rkub-project-network.id
     ssh_keys = [ digitalocean_ssh_key.ssh_key.fingerprint ]
+    user_data = data.cloudinit_config.server_config.rendered
+    depends_on = [ null_resource.placeholder, digitalocean_ssh_key.ssh_key ] # Ensure VPC and SSH key are created first
 }
 
 ###
@@ -101,17 +104,4 @@ resource "digitalocean_project" "rkub" {
   purpose     = "Cluster k8s"
   environment = "Staging"
   resources = flatten([digitalocean_droplet.controllers.*.urn, digitalocean_droplet.workers.*.urn ])
-}
-
-###
-### Generate the hosts.ini file
-###
-resource "local_file" "ansible_inventory" {
-  content = templatefile("../../inventory/hosts.tpl",
-    {
-     controller_ips = digitalocean_droplet.controllers[*].ipv4_address,
-     worker_ips     = digitalocean_droplet.workers[*].ipv4_address
-    }
-  )
-  filename = "../../inventory/hosts.ini"
 }

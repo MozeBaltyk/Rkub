@@ -1,0 +1,20 @@
+---
+
+- name: Restore etcd from a s3 snapshot
+  ansible.builtin.shell: |
+    rke2 server \
+    --cluster-reset \
+    --etcd-s3 \
+    --cluster-reset-restore-path="{{ rke2_etcd_snapshot_s3_options.snapshot_name }}" \
+    --etcd-s3-bucket="{{ rke2_etcd_snapshot_s3_options.bucket }}" \
+    --etcd-s3-access-key="{{ rke2_etcd_snapshot_s3_options.access_key }}" \
+    --etcd-s3-secret-key="{{ rke2_etcd_snapshot_s3_options.secret_key }}" \
+    --etcd-s3-endpoint="{{ rke2_etcd_snapshot_s3_options.s3_endpoint }}" \
+    {{ ('--etcd-s3-region=' + rke2_etcd_snapshot_s3_options.region) if rke2_etcd_snapshot_s3_options.region is defined else '' }} \
+    {{ ('--etcd-s3-endpoint-ca=' + rke2_etcd_snapshot_s3_options.endpoint_ca) if rke2_etcd_snapshot_s3_options.endpoint_ca is defined else '' }} \
+    {{ ('--etcd-s3-folder=' + rke2_etcd_snapshot_s3_options.folder) if rke2_etcd_snapshot_s3_options.folder is defined else '' }} \
+    {{ ('--etcd-s3-skip-ssl-verify=' + rke2_etcd_snapshot_s3_options.skip_ssl_verify) if rke2_etcd_snapshot_s3_options.skip_ssl_verify is defined else '' }} \
+    --token {{ rke2_token }}
+  register: task_output # <- Registers the command output.
+  changed_when: task_output.rc != 0 # <- Uses the return code to define when the task has changed.
+  when: not ansible_check_mode

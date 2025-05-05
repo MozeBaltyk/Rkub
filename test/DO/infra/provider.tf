@@ -20,6 +20,7 @@ terraform {
       s3 = "https://fra1.digitaloceanspaces.com"
     }
     region                      = "fra1"
+    // backend                     = "terraform-backend-rkub-quickstart"
     key                         = "terraform.tfstate"
   }
 }

@@ -1,0 +1,30 @@
+---
+# tasks file for do_etcd_backup
+
+- name: Populate service facts
+  ansible.builtin.service_facts: {}
+  tags: [always]
+
+- name: Register if we can do an etcd backup
+  ansible.builtin.set_fact:
+    do_etcd_backup: true
+  when:
+    - rke2_etcd_snapshot_file
+    - ansible_facts.services['rke2-server.service']['state'] == 'running'
+    - not ansible_check_mode
+
+- name: Do etcd backup
+  block:
+    - name: Backup etcd from a snapshot
+      ansible.builtin.shell: |
+        rke2 etcd-snapshot save \
+        --name {{ rke2_etcd_snapshot_file }}
+      register: task_output # <- Registers the command output.
+      changed_when: task_output.rc != 0 # <- Uses the return code to define when the task has changed.
+
+    - name: Fetch backup to localhost
+      ansible.builtin.fetch:
+        src: "{{ rke2_etcd_snapshot_data_dir }}/{{ rke2_etcd_snapshot_file }}"
+        dest: "{{ rke2_etcd_snapshot_destination_dir }}/{{ rke2_etcd_snapshot_file }}"
+        flat: true
+        validate_checksum: true

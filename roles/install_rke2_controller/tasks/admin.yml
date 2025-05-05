@@ -75,6 +75,26 @@
     - not airgap_install
   block:
     # helm
+    - name: Install git
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - git
+      become: true
+      when:
+        - ansible_os_family == "RedHat"
+        - ansible_distribution_major_version | int >= 8
+
+    - name: Install git
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - git
+      become: true
+      when: ansible_os_family == "Debian"
+
     - name: Download Helm command line tool
       ansible.builtin.uri:
         url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
@@ -88,6 +108,7 @@
         creates: /usr/local/bin/helm
       environment:
         DESIRED_VERSION: "{{ helm_version | default('') }}"
+      failed_when: false
 
     # k9s
     - name: Get K9S binary latest release
