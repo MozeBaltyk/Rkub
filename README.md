@@ -22,7 +22,7 @@ This Ansible collection will install in airgap environnement RKE2 (one controler
 
 - [Rancher 2.11.1](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
 
-- [Longhorn 1.7.2](https://longhorn.io) - Unified storage layer
+- [Longhorn 1.8.1](https://longhorn.io) - Unified storage layer
 
 - [Neuvector 5.3.4](https://neuvector.com/) - Kubernetes Security Platform
 <!-- END -->
