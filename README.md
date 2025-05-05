@@ -91,7 +91,7 @@ NB regarding CNI:
 
 - A minimum of 2 hosts RHEL-like (2 vCPU and 8G of RAM) for the cluster RKE2 with 80G at least on target directory.
 
-## Quickstart
+## Quickstart on Digital Ocean
 
 As prerequisities for the quickstart, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` in Digital Ocean's API tabs. You can use my referrals links below, it helps a lot:
 
