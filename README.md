@@ -63,9 +63,9 @@ Currently only install:
 
 - Defined versions or versions from [Stable channels](https://update.rke2.io/v1-release/channels)
 
-- CNI: Canal or Cilium
+- CNI: `canal` or `cilium`* or `none`**
 
-- Digital Ocean
+- Digital Ocean or 
 
 - Standalone or x Masters / x Workers
 
@@ -75,8 +75,13 @@ But the target would be to handle all the usecase below:
 |--------|-----------------------------|----------------|--------|-----------------|-----------------------|-----------------|
 | Rocky8 | Defined in this collection  | airgap tarball | Canal  | Digital Ocean   | Standalone            | Kubevip         |
 | Rocky9 | Stable channels             | airgap rpm     | Cilium | AWS             | One Master, x Workers | Longhorn        |
-|        | Custom                      | online tarball |        | Azure           | 3 Masters, x Workers  | Rancher         |
+|        | Custom                      | online tarball | None   | Azure           | 3 Masters, x Workers  | Rancher         |
 |        |                             | online rpm     |        | KVM             |                       | Neuvector       |
+
+
+NB regarding CNI: 
+  - \* if `cilium` choosen, set as CNI, KubeProxy and LB (instead of servicelb)
+  - \*\* if `none` choosen, Kubeproxy, servicelb and CNI desactivated (allow deployment later on, not related to rke2)
 
 ## Prerequisites
 
@@ -88,7 +93,7 @@ But the target would be to handle all the usecase below:
 
 ## Quickstart
 
-As prerequisities, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` in Digital Ocean's API tabs. You can use my referrals links below, it helps a lot:
+As prerequisities for the quickstart, you will need a Digital Ocean accompte and set your `Token` and a `Spaces key` in Digital Ocean's API tabs. You can use my referrals links below, it helps a lot:
 
 <a href="https://www.digitalocean.com/?refcode=fb9479b3dbef&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img src="https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%203.svg" alt="DigitalOcean Referral Badge" /></a>
 
@@ -246,7 +251,7 @@ export AZ_TENANT_ID="xxxxxxxxxxx"
 
 ## For KVM
 export PROVIDER="KVM"
-sudo curl https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2 -o /var/lib/libvirt/images/Rocky-9.qcow2
+sudo curl https://dl.rockylinux.org/pub/rocky/8/images/x86_64/Rocky-8-GenericCloud-Base.latest.x86_64.qcow2 -o /var/lib/libvirt/images/Rocky-8.qcow2
 
 # Choose how many workers and masters
 export WORKERS=2 # Default 0
