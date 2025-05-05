@@ -20,7 +20,7 @@ This Ansible collection will install in airgap environnement RKE2 (one controler
 
 - [Cert-manager 1.16.2](https://cert-manager.io/docs/) - Certificate manager
 
-- [Rancher 2.9.2](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
+- [Rancher 2.11.1](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
 
 - [Longhorn 1.7.2](https://longhorn.io) - Unified storage layer
 

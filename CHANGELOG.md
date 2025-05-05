@@ -11,7 +11,7 @@
 
 - cert-manager version: 1.16.2
 
-- rancher version: 2.9.2
+- rancher version: 2.11.1
 
 - longhorn version: 1.7.2
   
