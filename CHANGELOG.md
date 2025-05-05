@@ -36,6 +36,7 @@
   - [x] Improve collection to run as true collection
   - [x] CI workflows
   - [x] Quickstart script
+  - [x] Infra script for KVM or DO, to launch custom ansible-playbooks
 
 Use case:
   - [x] airgap
