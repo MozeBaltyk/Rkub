@@ -1,7 +1,7 @@
 # Version Selection
 variable "selected_version" {
   description = "Selected OS version"
-  default     = "rocky9_local"  # Can be changed to "fedora41" as needed
+  default     = "rocky8"  # Can be changed to "fedora41" as needed
 }
 
 # Version Mapping
@@ -63,6 +63,20 @@ variable "Versionning" {
       os_URL             = "file:///var/lib/libvirt/images/Rocky-9.qcow2"
       cloud_init_version = 24.4
     }
+    rocky8 = {
+      os_name            = "rocky"
+      os_version_short   = 8
+      os_version_long    = "latest"
+      os_URL             = "https://dl.rockylinux.org/pub/rocky/8/images/x86_64/Rocky-8-GenericCloud-Base.latest.x86_64.qcow2"
+      cloud_init_version = 23.4
+    }
+    rocky8_local = {
+      os_name            = "rocky"
+      os_version_short   = 8
+      os_version_long    = "latest"
+      os_URL             = "file:///var/lib/libvirt/images/Rocky-8.qcow2"
+      cloud_init_version = 23.4
+    }
   }
 }
 
@@ -107,12 +121,12 @@ variable "network_cidr" {
   default     = "192.168.100.0/24"
 }
 
-variable "memoryMB" {
+variable "memory_size" {
   description = "Memory for each VM in MB"
   default     = 4096
 }
 
-variable "cpu" {
+variable "cpu_size" {
   description = "Number of CPUs for each VM"
   default     = 2
 }

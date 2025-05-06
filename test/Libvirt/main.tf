@@ -46,8 +46,8 @@ resource "libvirt_network" "network" {
 resource "libvirt_domain" "masters" {
   count     = var.masters_number
   name      = local.master_details[count.index].name
-  memory    = var.memoryMB
-  vcpu      = var.cpu
+  memory    = var.memory_size
+  vcpu      = var.cpu_size
   autostart = true
   qemu_agent = true
 
@@ -84,8 +84,8 @@ resource "libvirt_domain" "masters" {
 resource "libvirt_domain" "workers" {
   count     = var.workers_number
   name      = local.worker_details[count.index].name
-  memory    = var.memoryMB
-  vcpu      = var.cpu
+  memory    = var.memory_size
+  vcpu      = var.cpu_size
   autostart = true
   qemu_agent = true
 
