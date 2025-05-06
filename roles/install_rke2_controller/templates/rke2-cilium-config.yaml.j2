@@ -18,7 +18,7 @@ spec:
     # ref: https://docs.cilium.io/en/stable/network/concepts/ipam/
     ipam:
       operator:
-        clusterPoolIPv4PodCIDRList: "10.42.0.0/16"
+        clusterPoolIPv4PodCIDRList: "{{ rke2_cluster_cidr }}"
 
     # Configure L2 announcements (LB-IPAM configuration)
     l2announcements:
