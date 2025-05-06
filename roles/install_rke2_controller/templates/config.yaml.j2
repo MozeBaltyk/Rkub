@@ -15,7 +15,11 @@ data-dir: {{ rke2_data_dir }}
 cluster-cidr: {{ rke2_cluster_cidr }}
 service-cidr: {{ rke2_service_cidr }}
 # Config Controller
+{% if rke2_selinux_enable %}
 selinux: true
+{% else %}
+selinux: false
+{% endif %}
 {% if ( rke2_cni is defined ) and ( rke2_cni | type_debug == "list" ) %}
 cni:
 {% for cni in rke2_cni %}

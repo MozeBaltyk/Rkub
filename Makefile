@@ -23,6 +23,7 @@ else ifeq ($(PROVIDER), KVM)
     KEY_PATH := ./Libvirt/.key.private
 	CPU_SIZE_MATTERS ?= 2
 	MEM_SIZE_MATTERS ?= 4096
+	SELECTED_VERSION ?= rocky8
 else
     $(error PROVIDER should be chosen between DO, AZ or KVM)
 endif
@@ -134,7 +135,10 @@ kvm_infra:
 	@cd ./test/Libvirt && tofu init
 	@cd ./test/Libvirt && tofu plan -out=plan.tfplan \
 	  -var "workers_number=$(WORKERS)" \
-	  -var "masters_number=$(MASTERS)"
+	  -var "masters_number=$(MASTERS)" \
+	  -var "cpu_size=$(CPU_SIZE_MATTERS)" \
+	  -var "memory_size=$(MEM_SIZE_MATTERS)" \
+	  -var "selected_version=$(SELECTED_VERSION)"
 	@cd ./test/Libvirt && tofu apply "plan.tfplan"
 	# Wait cloud-init to finish
 	@sleep 60

@@ -21,6 +21,7 @@ rke2_cluster_cidr: "{{ global_rke2_cluster_cidr }}"
 rke2_service_cidr: "{{ global_rke2_service_cidr }}"
 rke2_cni: "{{ global_rke2_cni }}"
 rke2_profile_activated: "{{ global_rke2_profile_activated | bool }}"
+rke2_selinux_enable: "{{ ansible_selinux['status'] == 'enabled' | bool }}"
 
 # Firewall rules
 controller_firewalld_rules:
