@@ -252,7 +252,6 @@ export AZ_TENANT_ID="xxxxxxxxxxx"
 
 ## For KVM
 export PROVIDER="KVM"
-sudo curl https://dl.rockylinux.org/pub/rocky/8/images/x86_64/Rocky-8-GenericCloud-Base.latest.x86_64.qcow2 -o /var/lib/libvirt/images/Rocky-8.qcow2
 
 # Choose how many workers and masters
 export WORKERS=2 # Default 0
@@ -261,8 +260,8 @@ export MASTERS=3 # Default 1
 # Create RKE2 cluster on DO
 make infra
 
-# Adapt the extra-vars following your needs
-cd ./test && ansible-playbook ./playbooks/install.yml -u root --private-key ./DO/infra/.key.private -e "stable=true" -e "airgap=false" -e "method=rpm" -e "cni=cilium"
+# Providers = KVM/DO/Azure, then Adapt the extra-vars following your needs 
+cd ./test/<providers> && ansible-playbook ./playbooks/install.yml -e "stable=true" -e "airgap=false" -e "method=rpm" -e "cni=cilium"
 
 # On your localhost or on first controller, checks
 kubecm ls
@@ -341,9 +340,9 @@ Milestones:
 
 * More install customization and options
 
-* HA masters with kubevip
+* HA masters with kubevip or Cilium
 
-* Allow several providers (currently only DO)
+* Allow several providers (currently only DO, KVM or Azure)
 
 # Acknowledgements
 
