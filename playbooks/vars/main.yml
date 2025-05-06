@@ -17,8 +17,8 @@ global_versions:
   neuvector: "5.3.4"
   helm: "3.17.3"
   nerdctl: "1.7.6"
-  k9s: "0.32.4"
-  hauler: "1.0.3"
+  k9s: "0.50.4"
+  hauler: "1.2.4"
 
 global_rhel_version: "{{ el }}"
 
