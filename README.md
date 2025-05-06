@@ -57,31 +57,31 @@ Currently only install:
 
 - on Rocky8
 
-- airgap or online install
+- install type: airgap or online
 
-- tarball or rpm method
+- method install: tarball or rpm
 
-- Defined versions or versions from [Stable channels](https://update.rke2.io/v1-release/channels)
+- Defined versions in this collection or versions from [Stable channels](https://update.rke2.io/v1-release/channels)
 
 - CNI: `canal` or `cilium`* or `none`**
 
-- Digital Ocean or 
+- Digital Ocean or KVM or Azure
 
 - Standalone or x Masters / x Workers
 
 But the target would be to handle all the usecase below:
 
-| OS     | Versions                    | Method         | CNI    | Providers       |  Cluster Arch         | Extra Install   |
-|--------|-----------------------------|----------------|--------|-----------------|-----------------------|-----------------|
-| Rocky8 | Defined in this collection  | airgap tarball | Canal  | Digital Ocean   | Standalone            | Kubevip         |
-| Rocky9 | Stable channels             | airgap rpm     | Cilium | AWS             | One Master, x Workers | Longhorn        |
-|        | Custom                      | online tarball | None   | Azure           | 3 Masters, x Workers  | Rancher         |
-|        |                             | online rpm     |        | KVM             |                       | Neuvector       |
+| OS     | Versions                    | Method         | CNI    | LB      | Providers       |  Cluster Arch         | Extra Install   |
+|--------|-----------------------------|----------------|--------|---------|-----------------|-----------------------|-----------------|
+| Rocky8 | Defined in this collection  | airgap tarball | Canal  | Cilium  | Digital Ocean   | Standalone            | Kubevip         |
+| Rocky9 | Stable channels             | airgap rpm     | Cilium | Kubevip | AWS             | One Master, x Workers | Longhorn        |
+|        | Custom                      | online tarball | None   |         | Azure           | 3 Masters, x Workers  | Rancher         |
+|        |                             | online rpm     |        |         | KVM             |                       | Neuvector       |
 
 
 NB regarding CNI: 
-  - \* if `cilium` choosen, set as CNI, KubeProxy and LB (instead of servicelb)
-  - \*\* if `none` choosen, Kubeproxy, servicelb and CNI desactivated (allow deployment later on, not related to rke2)
+  - \* if `cilium` choosen, set as CNI and servicelb and the Kube-proxy.
+  - \*\* if `none` choosen, Kube-proxy, servicelb and CNI desactivated (allow deployment later on, not related to rke2)
 
 ## Prerequisites
 
@@ -161,7 +161,8 @@ ansible-playbook mozebaltyk.rkub.build.yml                    # All arguments be
 -e "stable=false"                                             # Stable channels or take version as defined in Rkub collection (default value "false")
 -e "method=tarball"                                           # Method for install, value possible "tarball" or "rpm" (default value "tarball")
 -e "cni=canal"                                                # CNI for RKE2 cluster, value possible "canal" or "cilium" (default value "canal")
--e "el=9"                                                     # RHEL version (take default value from localhost if OS is different from RedHat-like take value "8")
+-e "el=9"                                                     # RHEL version, value possible "8" or "9" 
+                                                              # (take default value from localhost if OS is different from RedHat-like take value "8")
 -e "all=false"                                                # Add all components kubevip,longhorn,rancher,neuvector (default value "false")
 -e "kubevip=true longhorn=true rancher=true neuvector=true"   # Add extras components to package (default value from var 'all')
 -u admin -Kk                                                  # Other Ansible Arguments (like -vvv)
@@ -190,7 +191,7 @@ ansible-playbook mozebaltyk.rkub.hauler.yml        # All arguments below are not
 ansible-playbook mozebaltyk.rkub.install.yml       # All arguments below are not mandatory
 -e domain="example.com"                            # By default take the host domain from master server
 -e "method=tarball"                                # Method for install, value possible "tarball" or "rpm" (default value "tarball")
--e "cni=canal"                                     # CNI for RKE2 cluster, value possible "canal" or "cilium" (default value "canal")
+-e "cni=canal"                                     # CNI for RKE2 cluster, value possible "canal" or "cilium" or "none" (default value "canal")
 -e "airgap=true"                                   # if servers have internet access then set airgap to false (default value "true")
   -e "stable=false"                                # if airgap false then choose btw Stable channels or version from this collection. (default value "false")
 -u admin -Kk                                       # Other Ansible Arguments (like -vvv)
