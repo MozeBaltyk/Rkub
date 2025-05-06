@@ -29,6 +29,21 @@
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
       },
       {
+        "matchPackagePatterns": ["nerdctl"],
+        "addLabels": ["nerdctl"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["k9s"],
+        "addLabels": ["k9s"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
+        "matchPackagePatterns": ["hauler"],
+        "addLabels": ["hauler"],
+        "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
+      },
+      {
         "matchPackagePatterns": ["cert-manager"],
         "addLabels": ["cert-manager"],
         "extractVersion": "^v(?<version>\\d+\\.\\d+.\\d+)"
@@ -79,6 +94,48 @@
         "datasourceTemplate": "git-refs",
         "depNameTemplate": "helm",
         "packageNameTemplate": "https://github.com/helm/helm",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "description": "Update Nerdctl binary version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$"
+        ],
+        "matchStrings": [
+          "nerdctl: \"(?<currentValue>.*?)\"\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "nerdctl",
+        "packageNameTemplate": "https://github.com/containerd/nerdctl",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "description": "Update k9s binary version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$"
+        ],
+        "matchStrings": [
+          "k9s: \"(?<currentValue>.*?)\"\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "k9s",
+        "packageNameTemplate": "https://github.com/derailed/k9s",
+        "versioningTemplate": "semver-coerced"
+      },
+      {
+        "description": "Update hauler binary version based on github repo",
+        "customType": "regex",
+        "fileMatch": [
+          "playbooks/vars/main\\.y[a]?ml$"
+        ],
+        "matchStrings": [
+          "hauler: \"(?<currentValue>.*?)\"\\n"
+        ],
+        "datasourceTemplate": "git-refs",
+        "depNameTemplate": "hauler",
+        "packageNameTemplate": "https://github.com/hauler-dev/hauler",
         "versioningTemplate": "semver-coerced"
       },
       {
