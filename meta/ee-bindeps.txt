@@ -1,9 +1,6 @@
 #For anible.utils
 python3-jmespath [platform:rpm]
 python3-jmespath [platform:dpkg]
-# Need to load images
-podman [platform:rpm]
-podman [platform:dpkg]
 openssl [platform:rpm]
 openssl [platform:dpkg]
 sshpass [platform:rpm]

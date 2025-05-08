@@ -272,6 +272,20 @@ ee-exec:
 	@printf "\e[1;34m[INFO]\e[m ## Launch container - $(EE_IMAGE):$(EE_TAG) ##\n"
 	podman run -it -v .:/rkub -v $(EE_PACKAGE_PATH):/root/$(EE_PACKAGE_NAME) $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) '/bin/bash'
 
+.PHONY: ee-builder
+# Use meta/execution-environment.yml and ansible-builder to build the package
+ee-builder:
+	@printf "\e[1;34m[INFO]\e[m ## Build image $(EE_IMAGE) ##\n"
+	ansible-builder build --tag $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) --container-runtime podman -f meta/execution-environment.yml
+
+.PHONY: ee-push
+# Push the image to the registry
+ee-push:
+	@printf "\e[1;32m[OK]\e[m Login to $(REGISTRY).\n"
+	podman login $(REGISTRY)
+	@printf "\e[1;34m[INFO]\e[m ## Push image $(EE_IMAGE):$(EE_TAG) to $(REGISTRY) ##\n"
+	podman push $(REGISTRY)/$(EE_IMAGE):$(EE_TAG) 
+	@printf "\e[1;32m[OK]\e[m Pushed.\n"
 
 # keep it at the end of your Makefile
 .DEFAULT_GOAL := show-help

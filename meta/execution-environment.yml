@@ -1,18 +1,33 @@
 ---
 version: 3
 
+build_arg_defaults:
+  ANSIBLE_GALAXY_CLI_COLLECTION_OPTS: '--pre'
+
 dependencies:
-  python: ee-requirements.txt
+  ansible_core:
+    package_pip: ansible-core
+  ansible_runner:
+    package_pip: ansible-runner
+  #python: ee-requirements.txt
   galaxy: ee-requirements.yml
-  system: ee-bindeps.txt
+  #system: ee-bindeps.txt
+  exclude:
+      python:
+        - docker
+      system:
+        - openshift-clients
 
 # Custom Dependencies
 additional_build_steps:
-  prepend_final: |
-    RUN pip3 install --upgrade pip setuptools
-  append_final:
-    - RUN $(MAKE) -C ./scripts/prerequis arkade
-    - RUN $(MAKE) -C ./scripts/prerequis images
+  prepend_base: |
+    RUN whoami
+    RUN cat /etc/os-release
+  append_final: |
+    RUN echo This is a post-install command!
+    RUN ls -la $HOME
+    RUN microdnf clean all
+    RUN rm -rf /var/cache/dnf
 
 images:
   base_image:
