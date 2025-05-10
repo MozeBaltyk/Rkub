@@ -15,7 +15,7 @@ global_versions:
   rancher: "2.11.1"
   longhorn: "1.8.1"
   neuvector: "5.3.4"
-  helm: "3.17.3"
+  helm: "3.18.0"
   nerdctl: "2.0.5"
   k9s: "0.50.4"
   hauler: "1.2.4"
