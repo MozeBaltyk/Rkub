@@ -18,7 +18,7 @@ repos:
       - id: check-yaml
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.37.0
+    rev: v1.37.1
     hooks:
       - id: yamllint
         args: [-c=.yamllint]
