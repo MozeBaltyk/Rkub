@@ -18,7 +18,7 @@ This Ansible collection will install in airgap environnement RKE2 (one controler
 
 - [Kube-vip 0.9.1](https://kube-vip.io/) - Virtual IP and load balancer
 
-- [Cert-manager 1.17.2](https://cert-manager.io/docs/) - Certificate manager
+- [Cert-manager 1.18.0](https://cert-manager.io/docs/) - Certificate manager
 
 - [Rancher 2.11.1](https://www.suse.com/products/suse-rancher/) - Multi-Cluster Kubernetes Management
 
