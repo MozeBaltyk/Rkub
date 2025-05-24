@@ -5,7 +5,7 @@
 
 ### Versions:
 
-- rke2 version: 1.31.8
+- rke2 version: 1.32.5
 
 - kube-vip version: 0.9.1
 
