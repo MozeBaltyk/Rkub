@@ -30,7 +30,6 @@ data "template_file" "common_network_config" {
 # Use CloudInit ISO to add SSH key to the instances
 resource "libvirt_cloudinit_disk" "commoninit" {
   for_each = { for vm in concat(local.master_details, local.worker_details) : vm.name => vm }
-
   name           = "${each.value.name}-commoninit.iso"
   pool           = var.pool
   user_data      = data.template_cloudinit_config.config[each.key].rendered

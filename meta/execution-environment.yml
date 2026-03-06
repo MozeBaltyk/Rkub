@@ -17,6 +17,9 @@ dependencies:
         - docker
       system:
         - openshift-clients
+      # Regular expression to exclude all from collections
+      # all_from_collections:
+      #  - .+
 
 # Custom Dependencies
 additional_build_steps:

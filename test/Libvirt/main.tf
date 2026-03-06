@@ -2,9 +2,8 @@
 resource "libvirt_pool" "rkub_pool" {
   name = var.pool
   type = "dir"
-  target {
-    path = local.rkub_pool_path
-  }
+  path = local.rkub_pool_path
+
   xml { 
     xslt = file("${path.module}/files/os_pool_permissions.xsl.tpl" ) 
   }
@@ -63,7 +62,8 @@ resource "libvirt_domain" "masters" {
 
   cloudinit = libvirt_cloudinit_disk.commoninit[local.master_details[count.index].name].id
 
-  cpu {
+  # cpu must be set as a map rather than a block
+  cpu = {
     mode = "host-passthrough"
   }
 
@@ -101,7 +101,8 @@ resource "libvirt_domain" "workers" {
 
   cloudinit = libvirt_cloudinit_disk.commoninit[local.worker_details[count.index].name].id
 
-  cpu {
+  # cpu must be set as a map rather than a block
+  cpu = {
     mode = "host-passthrough"
   }
 
